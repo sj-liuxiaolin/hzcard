@@ -376,10 +376,9 @@ function rebuildEditBar() {
   if (typeof enhanceText === 'function') enhanceText();
 }
 
-  }, 200);
-});
+})
 
-function rebuildEditBar() {
+ {
   var header = document.querySelector('.doc-header');
   if (header && !header.querySelector('.edit-bar')) {
     var eb = document.createElement('div');
@@ -847,8 +846,7 @@ window.addEventListener('load', function() {
         el.remove();
       }
     });
-  }, 200);
-});
+})
 
 
 
@@ -928,7 +926,7 @@ window.addEventListener('load', function() {
   }, 300);
 });
 
-function rebuildEditBar() {
+ {
   var header = document.querySelector('.doc-header');
   if (header && !header.querySelector('.edit-bar')) {
     var eb = document.createElement('div');

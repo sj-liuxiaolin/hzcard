@@ -615,22 +615,6 @@ function rebuildEditBar() {
   if (typeof enhanceText === 'function') enhanceText();
 }
 
-  }, 200);
-});
-
-function rebuildEditBar() {
-  var header = document.querySelector('.doc-header');
-  if (header && !header.querySelector('.edit-bar')) {
-    var eb = document.createElement('div');
-    eb.className = 'edit-bar';
-    eb.innerHTML = '<button class="edit-btn" id="editToggleBtn" onclick="toggleEdit()">🖊 编辑</button>';
-    header.insertBefore(eb, header.firstChild);
-  }
-  // 重新增强
-  if (typeof enhanceCards === 'function') enhanceCards();
-  if (typeof enhanceText === 'function') enhanceText();
-}
-
 
 </script>
 
@@ -1167,18 +1151,6 @@ window.addEventListener('load', function() {
     }
   }, 300);
 });
-
-function rebuildEditBar() {
-  var header = document.querySelector('.doc-header');
-  if (header && !header.querySelector('.edit-bar')) {
-    var eb = document.createElement('div');
-    eb.className = 'edit-bar';
-    eb.innerHTML = '<button class="edit-btn" id="editToggleBtn" onclick="toggleEdit()">🖊 编辑</button>';
-    header.insertBefore(eb, header.firstChild);
-  }
-  if (typeof enhanceCards === 'function') enhanceCards();
-  if (typeof enhanceText === 'function') enhanceText();
-}
 
 <script>
 // ====== CloudBase 数据库模块 ======
