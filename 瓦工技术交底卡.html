@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>瓦工技术交底卡</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: "Microsoft YaHei", -apple-system, "PingFang SC", sans-serif;
+  background: linear-gradient(135deg, #f0f2f5 0%, #e8eaf6 100%);
+  padding: 20px; color: #333; line-height: 1.6; min-height: 100vh;
+}
+.container { max-width: 960px; margin: 0 auto; background: #fff; border-radius: 12px; padding: 32px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+.doc-header { background: linear-gradient(135deg, #1a237e, #3949ab); color: white; padding: 16px 20px; border-radius: 8px; margin-bottom: 24px; }
+.doc-header h1 { font-size: 18px; font-weight: 600; }
+.doc-header p { font-size: 12px; opacity: 0.75; margin-top: 4px; }
+.edit-bar { display: flex; gap: 8px; justify-content: flex-end; margin-bottom: 10px; }
+.edit-btn { padding: 6px 14px; border: 1px solid rgba(255,255,255,0.4); border-radius: 6px; background: transparent; color: white; cursor: pointer; font-size: 12px; transition: all 0.2s; }
+.edit-btn:hover { background: rgba(255,255,255,0.15); }
+.edit-btn.active { background: #ff8f00; border-color: #ff8f00; color: #fff; }
+.chapter { margin-top: 28px; }
+.chapter:first-of-type { margin-top: 0; }
+.chapter-title { font-size: 16px; font-weight: 600; color: #1a237e; padding: 10px 14px; background: #e8eaf6; border-radius: 6px; margin-bottom: 12px; border-left: 4px solid #1a237e; }
+.sub-title { font-size: 14px; font-weight: 600; margin: 20px 0 10px; padding-left: 10px; }
+.sub-title.ok { color: #2e7d32; border-left: 3px solid #4caf50; }
+.sub-title.err { color: #c62828; border-left: 3px solid #f44336; }
+.standard-text { font-size: 14px; color: #444; margin: 4px 0; padding-left: 12px; position: relative; }
+.standard-text strong { color: #c62828; }
+.data-table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 13px; }
+.data-table th, .data-table td { border: 1px solid #ddd; padding: 6px 10px; text-align: center; }
+.data-table th { background: #f5f5f5; font-weight: 600; }
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 10px 0; }
+.card { background: #fafafa; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden; transition: box-shadow 0.2s; position: relative; }
+.card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.card-img { padding: 10px; text-align: center; background: #fff; position: relative; }
+.card-img img { width: 100%; max-width: 189px; height: 189px; object-fit: contain; border: 1px solid #ddd; border-radius: 6px; display: block; margin: 0 auto; background: #f5f5f5; }
+.card-desc-ok { background: #e8f5e9; padding: 8px 10px; text-align: center; font-size: 13px; color: #2e7d32; border-top: 1px solid #c8e6c9; font-weight: 500; }
+.card-desc-err { background: #fff3e0; padding: 8px 10px; text-align: center; font-size: 13px; color: #bf360c; border-top: 1px solid #ffe0b2; font-weight: 500; }
+.checklist { list-style: none; padding: 0; }
+.checklist li { padding: 4px 0; font-size: 14px; }
+.checklist li::before { content: "✔ "; color: #4caf50; font-weight: bold; }
+.editable-text { transition: all 0.2s; }
+.editing .editable-text { background: #fffde7; border: 1px dashed #fdd835; border-radius: 4px; padding: 2px 6px; cursor: text; outline: none; }
+.editing .editable-text:focus { background: #fff9c4; }
+.editing .card-desc-ok, .editing .card-desc-err { cursor: text; outline: none; }
+.editing .card-desc-ok:focus, .editing .card-desc-err:focus { background: #fff9c4; box-shadow: 0 0 0 2px #fdd835; }
+.editing .card-img img { cursor: pointer; outline: 3px dashed transparent; }
+.editing .card-img img:hover { outline-color: #fdd835; }
+.img-replace-btn { display: none; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); color: white; padding: 3px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; border: none; z-index: 5; }
+.editing .img-replace-btn { display: block; }
+.save-btn { display: none; padding: 8px 20px; background: #ff8f00; color: white; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; margin: 16px auto 0; }
+.save-btn:hover { background: #f57c00; }
+.saved-toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #2e7d32; color: white; padding: 10px 24px; border-radius: 8px; font-size: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 999; opacity: 0; transition: opacity 0.3s; }
+.saved-toast.show { opacity: 1; }
+@media (max-width: 640px) { body { padding: 10px; } .container { padding: 16px; } .cards { grid-template-columns: 1fr; gap: 16px; } .card-img img { max-width: 100%; height: auto; max-height: 260px; } .doc-header h1 { font-size: 16px; } }
+.help-box { background: #fff8e1; border: 1px solid #ffe082; border-radius: 8px; padding: 14px 18px; margin-top: 20px; }
+.help-box h3 { color: #f57f17; font-size: 14px; margin-bottom: 6px; }
+.help-box ol { padding-left: 18px; }
+.help-box li { margin: 4px 0; font-size: 13px; color: #555; }
+.help-box code { background: #fff; padding: 1px 5px; border-radius: 3px; font-family: monospace; border: 1px solid #ffe082; }
+.back-link { text-align: center; margin-top: 20px; }
+.back-link a { color: #666; font-size: 13px; text-decoration: none; padding: 6px 16px; border: 1px solid #ddd; border-radius: 20px; transition: all 0.2s; }
+.back-link a:hover { background: #f5f5f5; color: #1a237e; border-color: #1a237e; }
+
+/* ====== 编辑增强：图卡操作按钮 ====== */
+.card-tools { display: none; position: absolute; top: 4px; right: 4px; z-index: 6; gap: 4px; align-items: center; }
+.editing .card-tools { display: flex; }
+.editing .card-tools { display: flex; }
+.card-tool-btn {
+  background: rgba(0,0,0,0.7); color: white; border: none;
+  padding: 3px 8px; border-radius: 4px; font-size: 11px; cursor: pointer;
+  transition: background 0.15s;
+}
+.card-tool-btn:hover { background: rgba(0,0,0,0.9); }
+.card-tool-btn.del:hover { background: #c62828; }
+
+/* ====== cards 区域末尾的"添加新卡片"按钮 ====== */
+.cards-add-bar {
+  display: none; text-align: center; padding: 12px; margin-top: 8px;
+  border: 2px dashed #fdd835; border-radius: 8px; background: #fffde7;
+}
+.editing .cards-add-bar { display: block; }
+.cards-add-btn {
+  background: #ff8f00; color: white; border: none; padding: 8px 20px;
+  border-radius: 6px; font-size: 13px; cursor: pointer;
+}
+.cards-add-btn:hover { background: #f57c00; }
+
+/* ====== 段落加字按钮 ====== */
+.add-text-btn {
+  display: none; background: #ff8f00; color: white; border: none;
+  padding: 2px 10px; font-size: 11px; border-radius: 4px; margin: 2px 0;
+  cursor: pointer;
+}
+.editing .add-text-btn { display: inline-block; }
+
+/* ====== 文字格式工具栏（浮动） ====== */
+.format-toolbar {
+  display: none; position: fixed; z-index: 1000; background: #fff;
+  border: 1px solid #ddd; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  padding: 4px; gap: 2px; align-items: center;
+}
+.format-toolbar.show { display: flex; }
+.fmt-btn {
+  background: #fff; border: 1px solid #ddd; padding: 4px 8px; border-radius: 4px;
+  font-size: 12px; cursor: pointer; min-width: 28px;
+}
+.fmt-btn:hover { background: #f5f5f5; border-color: #1a237e; }
+.fmt-btn.bold { font-weight: 700; }
+.fmt-btn.italic { font-style: italic; }
+.fmt-select {
+  border: 1px solid #ddd; border-radius: 4px; padding: 3px 4px; font-size: 12px;
+  background: #fff; cursor: pointer;
+}
+.fmt-color {
+  width: 28px; height: 24px; border: 1px solid #ddd; border-radius: 4px;
+  cursor: pointer; padding: 0;
+}
+
+
+/* ====== 删除行按钮 ====== */
+.del-text-btn {
+  display: none; background: #c62828; color: white; border: none;
+  padding: 2px 10px; font-size: 11px; border-radius: 4px; margin: 2px 0 2px 8px;
+  cursor: pointer; vertical-align: middle;
+}
+.editing .del-text-btn { display: inline-block; }
+.del-text-btn:hover { background: #b71c1c; }
+
+</style>
+</head>
+<body>
+<div class="container">
+<div class="doc-header">
+  <div class="edit-bar" style="gap:6px;flex-wrap:wrap;">
+    <button class="edit-btn" onclick="importLocalData()" title="从JSON文件恢复">📥 导入</button>
+    <button class="edit-btn" onclick="exportLocalData()" title="导出编辑内容到JSON">📤 导出</button>
+    <button class="edit-btn" id="editToggleBtn" onclick="toggleEdit()">🖊 编辑</button>
+  </div>
+  <h1>🧱 瓦工技术交底卡</h1>
+  <p>适用：瓦工班组长 · 涵盖：地梁、墙体砌筑、墙地砖</p>
+</div>
+<div class="chapter">
+<h2 class="chapter-title">一、地梁浇筑标准</h2>
+<h3 class="sub-title ok" style="margin-top:14px;">关键参数</h3>
+<p class="standard-text">1. 竖向钢筋Φ8，横向钢筋Φ6</p>
+<p class="standard-text">2. 客房隔墙地梁200mm，卫生间100mm</p>
+<p class="standard-text">3. 拆模强度：长度2-8m≥75%，＞8m≥100%</p>
+<p class="standard-text">4. 使用木质专用模板（严禁加气块做模具）</p>
+</div>
+<div class="chapter">
+<h2 class="chapter-title">二、墙体砌筑标准</h2>
+<h3 class="sub-title ok" style="margin-top:14px;">过梁及构造柱</h3>
+<p class="standard-text">1. 墙体长度超过5米设置钢筋混凝土构造柱</p>
+<p class="standard-text">2. 墙体高度超过4米设置钢筋混凝土圈梁</p>
+<p class="standard-text">3. 新老墙体搭接钢丝网搭接＞150mm</p>
+<p class="standard-text">4. 灰缝不低于10mm，灰缝饱满</p>
+</div>
+<div class="chapter">
+<h2 class="chapter-title">三、墙地砖铺贴标准</h2>
+<h3 class="sub-title ok" style="margin-top:14px;">墙面砖</h3>
+<p class="standard-text">1. 瓷砖浸泡≥2小时，晾干后方可铺贴</p>
+<p class="standard-text">2. 瓷砖缝隙均匀，宽度≥2mm</p>
+<p class="standard-text">3. 空鼓率：单块砖≤15%，整体≤5%</p>
+<h3 class="sub-title ok" style="margin-top:14px;">地面砖</h3>
+<p class="standard-text">1. 地漏回字形切割、坡度正确</p>
+<p class="standard-text">2. 卫生间墙砖压地砖</p>
+<p class="standard-text">3. 过门石高于卫生间地面10-15mm</p>
+</div>
+<div class="chapter">
+<h2 class="chapter-title">验收关键点</h2>
+<p class="standard-text">1. 地梁钢筋规格、间距</p>
+<p class="standard-text">2. 墙体砌筑灰缝饱满度</p>
+<p class="standard-text">3. 墙地砖平整度（≤2mm/2m靠尺）</p>
+<p class="standard-text">4. 卫生间地面坡度（泼水试验）</p>
+<p class="standard-text">5. 空鼓率检测</p>
+</div>
+<div class="chapter">
+<h2 class="chapter-title">正确范例</h2>
+<div class="cards">
+  <div class="card">
+    <div class="card-img"><img src="images/瓦工/地梁_正确_01.jpg" alt="地梁浇筑"></div>
+    <div class="card-desc-ok">√ 地梁浇筑</div>
+  </div>
+  <div class="card">
+    <div class="card-img"><img src="images/瓦工/地梁_正确_02.jpg" alt="地梁浇筑"></div>
+    <div class="card-desc-ok">√ 地梁浇筑</div>
+  </div>
+  <div class="card">
+    <div class="card-img"><img src="images/瓦工/地梁_正确_03.jpg" alt="地梁浇筑"></div>
+    <div class="card-desc-ok">√ 地梁浇筑</div>
+  </div>
+  <div class="card">
+    <div class="card-img"><img src="images/瓦工/地梁_正确_04.jpg" alt="地梁浇筑"></div>
+    <div class="card-desc-ok">√ 地梁浇筑</div>
+  </div>
+  <div class="card">
+    <div class="card-img"><img src="images/瓦工/地梁_正确_05.jpg" alt="地梁浇筑"></div>
+    <div class="card-desc-ok">√ 地梁浇筑</div>
+  </div>
+  <div class="card">
+    <div class="card-img"><img src="images/瓦工/砌筑_正确_01.jpg" alt="墙体砌筑 2024年11月更新"></div>
+    <div class="card-desc-ok">√ 墙体砌筑 2024年11月更新</div>
+  </div>
+  <div class="card">
+    <div class="card-img"><img src="images/瓦工/砌筑_正确_02.jpg" alt="墙体砌筑 2024年11月更新"></div>
+    <div class="card-desc-ok">√ 墙体砌筑 2024年11月更新</div>
+  </div>
+  <div class="card">
+    <div class="card-img"><img src="images/瓦工/砌筑_正确_03.jpg" alt="墙体砌筑 2024年11月更新"></div>
+    <div class="card-desc-ok">√ 墙体砌筑 2024年11月更新</div>
+  </div>
+  <div class="card">
+    <div class="card-img"><img src="images/瓦工/砌筑_参考_01.png" alt="构造柱 墙体长度超过8米或超过层高的2倍时 ， ..."></div>
+    <div class="card-desc-ok">√ 构造柱 墙体长度超过8米或超过层高的2倍时 ， ...</div>
+  </div>
+</div>
+</div>
+<h2 class="chapter-title">错误范例</h2>
+<div class="cards">
+  <div class="card">
+    <div class="card-img"><img src="images/瓦工/地梁_错误_01.jpg" alt="地梁浇筑"></div>
+    <div class="card-desc-err">× 地梁浇筑</div>
+  </div>
+  <div class="card">
+    <div class="card-img"><img src="images/瓦工/地梁_错误_02.jpg" alt="地梁浇筑"></div>
+    <div class="card-desc-err">× 地梁浇筑</div>
+  </div>
+  <div class="card">
+    <div class="card-img"><img src="images/瓦工/地梁_错误_03.jpg" alt="地梁浇筑"></div>
+    <div class="card-desc-err">× 地梁浇筑</div>
+  </div>
+  <div class="card">
+    <div class="card-img"><img src="images/瓦工/砌筑_错误_01.jpg" alt="墙体砌筑 测试 灰缝不饱满隔音测试 19分贝！"></div>
+    <div class="card-desc-err">× 墙体砌筑 测试 灰缝不饱满隔音测试 19分贝！</div>
+  </div>
+  <div class="card">
+    <div class="card-img"><img src="images/瓦工/砌筑_错误_02.jpg" alt="墙体砌筑 测试 灰缝不饱满隔音测试 19分贝！"></div>
+    <div class="card-desc-err">× 墙体砌筑 测试 灰缝不饱满隔音测试 19分贝！</div>
+  </div>
+  <div class="card">
+    <div class="card-img"><img src="images/瓦工/砌筑_错误_03.png" alt="墙体砌筑"></div>
+    <div class="card-desc-err">× 墙体砌筑</div>
+  </div>
+</div>
+<div class="help-box"><h3>修改内容</h3><ol><li>点击顶部 <strong>编辑</strong> 按钮进入编辑模式</li><li>文字内容：直接点击文字即可修改</li><li>更换图片：编辑模式下点击图片下方的 <strong>更换图片</strong> 选择新图片</li><li>修改完成后点击 <strong>保存修改</strong>，下次打开自动恢复</li><li>也可直接替换文件夹中的图片文件：<code>images/瓦工/</code></li></ol></div><button class="save-btn" id="saveBtn" onclick="saveChanges()">保存修改</button><div class="saved-toast" id="savedToast">修改已保存</div><div class="back-link"><a href="index.html">返回资料库首页</a></div></div>
+<script>
+var isEditing = false;
+function toggleEdit() {
+  isEditing = !isEditing;
+  var c = document.querySelector('.container');
+  var b = document.getElementById('editToggleBtn');
+  var s = document.getElementById('saveBtn');
+  if (isEditing) {
+    c.classList.add('editing');
+    b.textContent = '退出编辑';
+    b.classList.add('active');
+    s.style.display = 'block';
+    document.querySelectorAll('.editable-text,.standard-text,.card-desc-ok,.card-desc-err,' +
+      '.chapter-title,.sub-title,.checklist li,.data-table td,.data-table th,' +
+      '.help-box li,.help-box h3,.help-box code').forEach(function(el) { el.contentEditable = true; });
+    document.querySelectorAll('.card-img').forEach(function(w) {
+      if(!w.querySelector('.img-replace-btn')) {
+        var btn = document.createElement('button');
+        btn.className = 'img-replace-btn';
+        btn.textContent = '更换图片';
+        btn.onclick = function(e){e.stopPropagation();var inp=document.createElement('input');inp.type='file';inp.accept='image/*';inp.onchange=function(ev){var f=ev.target.files[0];if(f){var r=new FileReader();r.onload=function(re){w.querySelector('img').src=re.target.result;};r.readAsDataURL(f);}};inp.click();};
+        w.appendChild(btn);
+      }
+    });
+  } else {
+    c.classList.remove('editing');
+    b.textContent = '编辑';
+    b.classList.remove('active');
+    s.style.display = 'none';
+    document.querySelectorAll('[contenteditable]').forEach(function(el){el.contentEditable=false;});
+  }
+}
+function saveChanges() {
+  var data = {html: document.querySelector('.container').innerHTML, savedAt: new Date().toLocaleString()};
+  localStorage.setItem(document.title, JSON.stringify(data));
+  var toast = document.getElementById('savedToast');
+  toast.classList.add('show');
+  setTimeout(function(){toast.classList.remove('show');},2000);
+  if(isEditing) toggleEdit();
+}
+
+// 优先从服务器拉取最新内容
+window.addEventListener('load', function() {
+  setTimeout(function() {
+    var pageName = location.pathname.split('/').pop().replace('.html', '');
+    apiLoad(pageName).then(function(resp) {
+      if (resp && resp.html && resp.html.length > 100) {
+        // 服务器有保存的版本，弹窗询问
+        var confirmLoad = confirm('🔄 检测到服务器有最新保存版本，是否加载？\n\n选"确定"加载最新版本（会覆盖当前显示）\n选"取消"使用本地默认版本');
+        if (confirmLoad) {
+          // 替换内容
+          var c = document.querySelector('.container');
+          c.innerHTML = resp.html;
+          // 重建编辑栏
+          rebuildEditBar();
+        }
+      }
+    }).catch(function() {
+      // 网络失败时退回 localStorage
+      var saved = localStorage.getItem(pageName);
+      if (saved) {
+        try {
+          var data = JSON.parse(saved);
+          if (confirm('📂 本地有缓存版本，是否加载？')) {
+            document.querySelector('.container').innerHTML = data.html;
+            rebuildEditBar();
+          }
+        } catch(e) {}
+      }
+    });
+  }, 200);
+});
+
+function rebuildEditBar() {
+  var header = document.querySelector('.doc-header');
+  if (header && !header.querySelector('.edit-bar')) {
+    var eb = document.createElement('div');
+    eb.className = 'edit-bar';
+    eb.innerHTML = '<button class="edit-btn" id="editToggleBtn" onclick="toggleEdit()">🖊 编辑</button>';
+    header.insertBefore(eb, header.firstChild);
+  }
+  // 重新增强
+  if (typeof enhanceCards === 'function') enhanceCards();
+  if (typeof enhanceText === 'function') enhanceText();
+}
+
+
+</script>
+
+<script>
+// ====== 图片替换通用函数 ======
+function replaceCardImage(imgEl, file) {
+  if (!file || !file.type.startsWith('image/')) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    imgEl.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// ====== 拖拽支持 ======
+document.addEventListener('dragenter', function(e) { e.preventDefault(); });
+document.addEventListener('dragover', function(e) { e.preventDefault(); });
+document.addEventListener('drop', function(e) { e.preventDefault(); });
+
+// ====== 粘贴支持（全局） ======
+document.addEventListener('paste', function(e) {
+  var container = document.querySelector('.container');
+  if (!container || !container.classList.contains('editing')) return;
+  var items = e.clipboardData.items;
+  for (var i = 0; i < items.length; i++) {
+    if (items[i].type.startsWith('image/')) {
+      var file = items[i].getAsFile();
+      // 找到当前焦点所在的卡片图片
+      var active = document.activeElement;
+      if (active && active.tagName === 'IMG' && active.closest('.card-img')) {
+        replaceCardImage(active, file);
+        e.preventDefault();
+        return;
+      }
+      // 否则替换第一个卡片图片
+      var firstImg = document.querySelector('.card-img img');
+      if (firstImg) {
+        replaceCardImage(firstImg, file);
+        e.preventDefault();
+        return;
+      }
+    }
+  }
+});
+
+// ====== 为每个卡片图片绑定拖拽 ======
+function setupDragDrop() {
+  document.querySelectorAll('.card-img').forEach(function(wrapper) {
+    // 移除已有监听避免重复
+    wrapper._dragSetup = wrapper._dragSetup || false;
+    if (wrapper._dragSetup) return;
+    wrapper._dragSetup = true;
+    
+    wrapper.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      this.style.outline = '3px dashed #fdd835';
+    });
+    wrapper.addEventListener('dragleave', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      this.style.outline = 'none';
+    });
+    wrapper.addEventListener('drop', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      this.style.outline = 'none';
+      var files = e.dataTransfer.files;
+      if (files.length > 0) {
+        var img = this.querySelector('img');
+        if (img) replaceCardImage(img, files[0]);
+      }
+    });
+    
+    // 点击图片也能触焦（方便粘贴）
+    var img = wrapper.querySelector('img');
+    if (img) {
+      img.setAttribute('tabindex', '0');
+      img.addEventListener('click', function() { this.focus(); });
+    }
+  });
+}
+
+// 页面加载后执行
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', setupDragDrop);
+} else {
+  setupDragDrop();
+}
+
+// 编辑模式切换时重新绑定（新增的btn不会影响已绑定的）
+var origToggle = window.toggleEdit;
+if (origToggle) {
+  window.toggleEdit = function() {
+    origToggle();
+    setTimeout(function() {
+      // 新版卡片加载后重新绑定
+      setupDragDrop();
+      // 新生成的img-replace-btn也要绑drag
+      document.querySelectorAll('.card-img').forEach(function(w) {
+        if (!w._dragSetup) {
+          w._dragSetup = true;
+          w.addEventListener('dragover', function(e) { e.preventDefault(); this.style.outline = '3px dashed #fdd835'; });
+          w.addEventListener('dragleave', function(e) { e.preventDefault(); this.style.outline = 'none'; });
+          w.addEventListener('drop', function(e) { e.preventDefault(); this.style.outline = 'none'; var f = e.dataTransfer.files[0]; if(f) { var img = this.querySelector('img'); if(img) replaceCardImage(img, f); } });
+        }
+      });
+    }, 100);
+  };
+}
+
+
+// ====== 图片计数器（生成唯一文件名）======
+var _imgCounter = 0;
+function nextImgId() { return 'new_' + Date.now() + '_' + (++_imgCounter); }
+
+// ====== 创建一张新卡片（带图）======
+function createNewCard(type) {
+  var typeClass = type === 'ok' ? 'card-desc-ok' : 'card-desc-err';
+  var prefix = type === 'ok' ? '√' : '×';
+  var card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = '<div class="card-tools">'
+    + '<button class="card-tool-btn" data-act="replace">📷 换图</button>'
+    + '<button class="card-tool-btn del" data-act="del">🗑 删除</button>'
+    + '</div>'
+    + '<div class="card-img" data-empty="1" style="position:relative;">'
+    + '<div style="padding:30px;color:#999;font-size:13px;background:#fafafa;border:2px dashed #ddd;cursor:pointer;">点击"换图"或拖拽图片到此处</div>'
+    + '</div>'
+    + '<div class="' + typeClass + '" contenteditable="true">' + prefix + ' 请编辑说明文字</div>';
+  // 绑定拖拽事件到占位符
+  setTimeout(function() {
+    var imgWrap = card.querySelector('.card-img');
+    if (imgWrap) {
+      imgWrap.addEventListener('dragover', function(e) { e.preventDefault(); this.style.outline = '3px dashed #fdd835'; });
+      imgWrap.addEventListener('dragleave', function(e) { e.preventDefault(); this.style.outline = 'none'; });
+      imgWrap.addEventListener('drop', function(e) {
+        e.preventDefault();
+        this.style.outline = 'none';
+        var files = e.dataTransfer.files;
+        if (files.length > 0) {
+          var f = files[0];
+          var reader = new FileReader();
+          reader.onload = function(re) {
+            var img = document.createElement('img');
+            img.src = re.target.result;
+            img.alt = '';
+            img.style.width = '100%';
+            img.style.maxWidth = '189px';
+            img.style.height = '189px';
+            img.style.objectFit = 'contain';
+            img.style.display = 'block';
+            img.style.margin = '0 auto';
+            imgWrap.removeAttribute('data-empty');
+            imgWrap.innerHTML = '';
+            imgWrap.appendChild(img);
+            // 重新绑定拖拽
+            imgWrap.addEventListener('dragover', function(e) { e.preventDefault(); this.style.outline = '3px dashed #fdd835'; });
+            imgWrap.addEventListener('dragleave', function(e) { e.preventDefault(); this.style.outline = 'none'; });
+            imgWrap.addEventListener('drop', function(e) { e.preventDefault(); this.style.outline = 'none'; var files = e.dataTransfer.files; if (files.length > 0) { var f2 = files[0]; var r2 = new FileReader(); r2.onload = function(re2) { var img2 = imgWrap.querySelector('img'); if (img2) img2.src = re2.target.result; }; r2.readAsDataURL(f2); } });
+          };
+          reader.readAsDataURL(f);
+        }
+      });
+      // 点击占位符也能换图
+      imgWrap.addEventListener('click', function(e) {
+        if (imgWrap.getAttribute('data-empty') === '1') {
+          var input = document.createElement('input');
+          input.type = 'file'; input.accept = 'image/*';
+          input.onchange = function(ev) {
+            var f = ev.target.files[0]; if (!f) return;
+            var reader = new FileReader();
+            reader.onload = function(re) {
+              var img = document.createElement('img');
+              img.src = re.target.result; img.alt = '';
+              img.style.width = '100%'; img.style.maxWidth = '189px'; img.style.height = '189px'; img.style.objectFit = 'contain'; img.style.display = 'block'; img.style.margin = '0 auto';
+              imgWrap.removeAttribute('data-empty'); imgWrap.innerHTML = ''; imgWrap.appendChild(img);
+              // 重新绑定拖拽
+              imgWrap.addEventListener('dragover', function(e) { e.preventDefault(); this.style.outline = '3px dashed #fdd835'; });
+              imgWrap.addEventListener('dragleave', function(e) { e.preventDefault(); this.style.outline = 'none'; });
+              imgWrap.addEventListener('drop', function(e) { e.preventDefault(); this.style.outline = 'none'; var files = e.dataTransfer.files; if (files.length > 0) { var f2 = files[0]; var r2 = new FileReader(); r2.onload = function(re2) { var img2 = imgWrap.querySelector('img'); if (img2) img2.src = re2.target.result; }; r2.readAsDataURL(f2); } });
+            };
+            reader.readAsDataURL(f);
+          };
+          input.click();
+        }
+      });
+    }
+  }, 10);
+  return card;
+}
+
+// ====== 给cards块绑定"添加新卡片"按钮 + 重绑删除/换图 ======
+function enhanceCards() {
+  document.querySelectorAll('.cards, .cards-2').forEach(function(cardsBox) {
+    // 判断是 ok 还是 err 区
+    var isOk = cardsBox.previousElementSibling;
+    var isErr = false;
+    if (isOk && isOk.classList.contains('sub-title')) {
+      if (isOk.classList.contains('err')) isErr = true;
+    }
+    var type = isErr ? 'err' : 'ok';
+
+    // 加"添加新卡片"按钮
+    if (!cardsBox.nextElementSibling || !cardsBox.nextElementSibling.classList.contains('cards-add-bar')) {
+      var bar = document.createElement('div');
+      bar.className = 'cards-add-bar';
+      bar.innerHTML = '<button class="cards-add-btn" data-type="' + type + '">➕ 在此处添加一张' + (type==='ok'?'正确':'错误')+'范例</button>';
+      cardsBox.parentNode.insertBefore(bar, cardsBox.nextSibling);
+      bar.querySelector('.cards-add-btn').onclick = function() {
+        var card = createNewCard(type);
+        cardsBox.appendChild(card);
+        bindCardTools(card);
+        // 滚到新卡片
+        card.scrollIntoView({behavior:'smooth', block:'center'});
+      };
+    }
+
+    // 给现有卡片绑定工具按钮
+    cardsBox.querySelectorAll('.card').forEach(bindCardTools);
+  });
+}
+
+// ====== 给单张卡片绑定工具按钮（换图/删除）======
+function bindCardTools(card) {
+  if (card._bound) return;
+  card._bound = true;
+
+  // 如果没有 tools div 则添加
+  var tools = card.querySelector('.card-tools');
+  if (!tools) {
+    tools = document.createElement('div');
+    tools.className = 'card-tools';
+    tools.innerHTML = '<button class="card-tool-btn" data-act="replace">📷 换图</button>'
+      + '<button class="card-tool-btn del" data-act="del">🗑 删除</button>';
+    card.insertBefore(tools, card.firstChild);
+  }
+
+  tools.querySelectorAll('.card-tool-btn').forEach(function(btn) {
+    btn.onclick = function(e) {
+      e.stopPropagation();
+      var act = btn.getAttribute('data-act');
+      if (act === 'del') {
+        if (confirm('确定删除这张卡片？')) {
+          card.remove();
+        }
+      } else if (act === 'replace') {
+        var input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.onchange = function(ev) {
+          var f = ev.target.files[0];
+          if (!f) return;
+          var reader = new FileReader();
+          reader.onload = function(re) {
+            var img = card.querySelector('.card-img img');
+            if (!img) {
+              // 占位符替换为img
+              var imgWrap = card.querySelector('.card-img');
+              imgWrap.removeAttribute('data-empty');
+              imgWrap.innerHTML = '<button class="img-replace-btn">📷 更换图片</button><img src="' + re.target.result + '" alt="">';
+            } else {
+              img.src = re.target.result;
+            }
+          };
+          reader.readAsDataURL(f);
+        };
+        input.click();
+      }
+    };
+  });
+}
+
+// ====== 给每个 standard-text / chapter-title 等 加"+"按钮（在末尾加新段）======
+function enhanceText() {
+  document.querySelectorAll('.standard-text, .chapter-title, .sub-title, .checklist li, .card-desc-ok, .card-desc-err').forEach(function(el) {
+    if (el._textEnhanced) return;
+    el._textEnhanced = true;
+    el.addEventListener('mouseenter', function() {
+      if (!isEditing) return;
+      if (el.querySelector(':scope > .add-text-btn')) return;
+      var btn = document.createElement('button');
+      btn.className = 'add-text-btn';
+      btn.textContent = '＋ 加一行';
+      btn.contentEditable = false;
+      btn.onclick = function(e) {
+        e.stopPropagation();
+        var p = document.createElement('p');
+        p.className = el.className;
+        p.contentEditable = 'true';
+        p.textContent = '（新段落，请编辑）';
+        el.parentNode.insertBefore(p, el.nextSibling);
+        enhanceText();
+        p.focus();
+      };
+      el.appendChild(btn);
+    });
+    el.addEventListener('mouseleave', function() {
+      var b = el.querySelector(':scope > .add-text-btn');
+      if (b) b.remove();
+    });
+  });
+}
+
+// ====== 文字格式工具栏（选中文字时弹出）======
+var fmtToolbar = null;
+function setupFormatToolbar() {
+  if (fmtToolbar) return;
+  fmtToolbar = document.createElement('div');
+  fmtToolbar.className = 'format-toolbar';
+  fmtToolbar.innerHTML =
+    '<button class="fmt-btn bold" data-cmd="bold" title="加粗">B</button>'
+    + '<select class="fmt-select" data-cmd="fontSize" title="字号">'
+    + '<option value="3">小</option><option value="4" selected>正常</option>'
+    + '<option value="5">中</option><option value="6">大</option><option value="7">特大</option>'
+    + '</select>'
+    + '<input type="color" class="fmt-color" data-cmd="foreColor" title="颜色" value="#c62828">'
+    + '<button class="fmt-btn" data-cmd="hiliteColor" title="背景色" style="background:#fff59d;">🖍</button>'
+    + '<button class="fmt-btn" data-cmd="justifyLeft" title="左对齐">⇤</button>'
+    + '<button class="fmt-btn" data-cmd="justifyCenter" title="居中">⇔</button>';
+  document.body.appendChild(fmtToolbar);
+
+  fmtToolbar.querySelectorAll('[data-cmd]').forEach(function(el) {
+    el.addEventListener('mousedown', function(e) {
+      e.preventDefault();
+      var cmd = el.getAttribute('data-cmd');
+      if (el.tagName === 'SELECT') {
+        document.execCommand('fontSize', false, el.value);
+      } else if (el.type === 'color') {
+        document.execCommand('foreColor', false, el.value);
+      } else if (cmd === 'hiliteColor') {
+        document.execCommand('hiliteColor', false, '#fff59d');
+      } else {
+        document.execCommand(cmd, false, null);
+      }
+    });
+  });
+}
+
+function showFormatToolbar() {
+  if (!isEditing) return;
+  var sel = window.getSelection();
+  if (!sel || sel.isCollapsed) {
+    fmtToolbar.classList.remove('show');
+    return;
+  }
+  var range = sel.getRangeAt(0);
+  var rect = range.getBoundingClientRect();
+  if (!rect.width) return;
+  fmtToolbar.classList.add('show');
+  fmtToolbar.style.top = (rect.top - 40) + 'px';
+  fmtToolbar.style.left = rect.left + 'px';
+}
+document.addEventListener('selectionchange', showFormatToolbar);
+// 火狐兼容：mouseup也触发工具栏
+document.addEventListener('mouseup', function(e) {
+  setTimeout(showFormatToolbar, 10);
+});
+// 点击时如果选中了文字也触发
+document.addEventListener('click', function(e) {
+  setTimeout(showFormatToolbar, 10);
+});
+
+// ====== 在 toggleEdit 里补强 ======
+var _origToggle = window.toggleEdit;
+window.toggleEdit = function() {
+  _origToggle();
+  if (isEditing) {
+    setTimeout(function() {
+      enhanceCards();
+      enhanceText();
+      setupFormatToolbar();
+    }, 50);
+  } else {
+    if (fmtToolbar) fmtToolbar.classList.remove('show');
+  }
+};
+
+// ====== 页面加载后预绑定（仅在非编辑模式下隐藏，但不阻止增强）======
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function() {
+    enhanceCards();
+    enhanceText();
+    setupFormatToolbar();
+  });
+} else {
+  enhanceCards();
+  enhanceText();
+  setupFormatToolbar();
+}
+
+
+
+// ====== 增强文字行操作：加行 + 删除行 ======
+function enhanceText() {
+  document.querySelectorAll('.standard-text, .chapter-title, .sub-title, .checklist li, .card-desc-ok, .card-desc-err').forEach(function(el) {
+    if (el._textEnhanced) return;
+    el._textEnhanced = true;
+
+    // 清理空行（内容为空或只有空格/请编辑字样）
+    var txt = el.textContent.trim();
+    if (!txt || txt === '（新段落，请编辑）' || txt === '(新段落，请编辑)') {
+      el.remove();
+      return;
+    }
+
+    el.addEventListener('mouseenter', function() {
+      if (!isEditing) return;
+      if (el.querySelector(':scope > .add-text-btn')) return;
+      var addBtn = document.createElement('button');
+      addBtn.className = 'add-text-btn';
+      addBtn.textContent = '＋ 加一行';
+      addBtn.contentEditable = false;
+      addBtn.onclick = function(e) {
+        e.stopPropagation();
+        var p = document.createElement('p');
+        p.className = el.className;
+        p.contentEditable = 'true';
+        p.textContent = '（新段落，请编辑）';
+        el.parentNode.insertBefore(p, el.nextSibling);
+        enhanceText();
+        p.focus();
+      };
+      el.appendChild(addBtn);
+
+      var delBtn = document.createElement('button');
+      delBtn.className = 'del-text-btn';
+      delBtn.textContent = '× 删除';
+      delBtn.contentEditable = false;
+      delBtn.onclick = function(e) {
+        e.stopPropagation();
+        if (confirm('确定删除这行？')) {
+          el.remove();
+        }
+      };
+      el.appendChild(delBtn);
+    });
+    el.addEventListener('mouseleave', function() {
+      var b = el.querySelector(':scope > .add-text-btn');
+      if (b) b.remove();
+      var d = el.querySelector(':scope > .del-text-btn');
+      if (d) d.remove();
+    });
+  });
+}
+
+// ====== 页面加载时清理localStorage里的空行 ======
+window.addEventListener('load', function() {
+  setTimeout(function() {
+    document.querySelectorAll('.standard-text, .checklist li').forEach(function(el) {
+      var txt = el.textContent.trim();
+      if (!txt || txt === '（新段落，请编辑）' || txt === '(新段落，请编辑)') {
+        el.remove();
+      }
+    });
+  }, 200);
+});
+
+
+
+// ====== 本地持久化：localStorage + JSON文件导入导出 ======
+function exportLocalData() {
+  var pageName = location.pathname.split('/').pop().replace('.html', '');
+  var html = document.querySelector('.container').innerHTML;
+  var data = {
+    page: pageName,
+    html: html,
+    savedAt: new Date().toLocaleString(),
+    version: '1.0'
+  };
+  var blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = pageName + '_' + Date.now() + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  alert('✅ 已导出到下载文件夹：' + a.download);
+}
+
+function importLocalData() {
+  var input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json,application/json';
+  input.onchange = function(e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(re) {
+      try {
+        var data = JSON.parse(re.target.result);
+        if (data.html) {
+          if (confirm('确定用这个文件覆盖当前页面内容？\n\n文件名：' + file.name + '\n保存时间：' + (data.savedAt || '未知'))) {
+            document.querySelector('.container').innerHTML = data.html;
+            // 同时写入 localStorage
+            var pageName = location.pathname.split('/').pop().replace('.html', '');
+            localStorage.setItem(pageName, JSON.stringify({html: data.html, savedAt: data.savedAt || '导入'}));
+            alert('✅ 导入成功！\n记得点底部"💾 保存修改"按钮确认');
+            rebuildEditBar();
+          }
+        } else {
+          alert('⚠️ 文件格式不对，没有html字段');
+        }
+      } catch (err) {
+        alert('❌ 解析失败：' + err.message);
+      }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+window.exportLocalData = exportLocalData;
+window.importLocalData = importLocalData;
+
+
+// 页面加载时检查localStorage，有的话提示用户
+window.addEventListener('load', function() {
+  setTimeout(function() {
+    var pageName = location.pathname.split('/').pop().replace('.html', '');
+    var saved = localStorage.getItem(pageName);
+    if (saved) {
+      try {
+        var data = JSON.parse(saved);
+        if (data.html && data.html.length > 200) {
+          var dlg = '📂 检测到浏览器有上次编辑内容（保存于 ' + data.savedAt + '）\n\n选"确定"加载本地编辑版（推荐）\n选"取消"使用原始版本';
+          if (confirm(dlg)) {
+            document.querySelector('.container').innerHTML = data.html;
+            rebuildEditBar();
+          }
+        }
+      } catch(e) {}
+    }
+  }, 300);
+});
+
+function rebuildEditBar() {
+  var header = document.querySelector('.doc-header');
+  if (header && !header.querySelector('.edit-bar')) {
+    var eb = document.createElement('div');
+    eb.className = 'edit-bar';
+    eb.innerHTML = '<button class="edit-btn" id="editToggleBtn" onclick="toggleEdit()">🖊 编辑</button>';
+    header.insertBefore(eb, header.firstChild);
+  }
+  if (typeof enhanceCards === 'function') enhanceCards();
+  if (typeof enhanceText === 'function') enhanceText();
+}
+</script>
+
+</body></html>

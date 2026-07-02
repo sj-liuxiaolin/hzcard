@@ -1,0 +1,20 @@
+__pycache__/
+*.pyc
+*.db
+*.log
+*.py
+!requirements.txt
+node_modules/
+.DS_Store
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+images_meta.json
+tmp/
+.temp/
+
+# 大文件：营建手册原始PPTX（在线版已包含全部内容）
+【标准类】营建技术手册-通用版（2025年第一版）-v1.2.pptx
