@@ -206,6 +206,7 @@ body {
     <button class="edit-btn" onclick="importLocalData()" title="从JSON文件恢复">📥 导入</button>
     <button class="edit-btn" onclick="exportLocalData()" title="导出编辑内容到JSON">📤 导出</button>
     <button class="edit-btn" id="editToggleBtn" onclick="toggleEdit()">🖊 编辑</button>
+    <button class="edit-btn" id="saveTopBtn" onclick="saveChanges()" style="background:#ff8f00;border-color:#ff8f00;">💾 保存</button>
   </div>
   <h1>🔧 水工技术交底卡</h1>
   <p>适用：水工班组长 · 涵盖：给水管道、排水管道、卫生间防水</p>
@@ -501,23 +502,32 @@ function saveChanges() {
   var pageName = location.pathname.split('/').pop().replace('.html', '');
   var html = document.querySelector('.container').innerHTML;
   var toast = document.getElementById('savedToast');
-  toast.textContent = '⏳ 保存中...';
+
+  // 先退出编辑模式（避免锁定造成卡顿）
+  if (isEditing) toggleEdit();
+
+  try {
+    // 保存到 localStorage
+    localStorage.setItem(pageName, JSON.stringify({
+      html: html,
+      savedAt: new Date().toLocaleString()
+    }));
+    // 显示成功提示
+    toast.textContent = '✅ 已保存（' + new Date().toLocaleTimeString() + '）';
+  } catch (e) {
+    toast.textContent = '❌ 保存失败：' + e.message;
+  }
+
+  // 强制重排后再加 show 类（确保过渡动画正确触发）
+  toast.classList.remove('show');
+  void toast.offsetWidth;
   toast.classList.add('show');
 
-  // 保存到 localStorage
-  localStorage.setItem(pageName, JSON.stringify({
-    html: html,
-    savedAt: new Date().toLocaleString()
-  }));
-
-  // 保存成功
-  setTimeout(function() {
-    toast.textContent = '✅ 已保存到本地浏览器（' + new Date().toLocaleTimeString() + '）';
-    toast.classList.add('show');
-    setTimeout(function() { toast.classList.remove('show'); }, 3000);
-  }, 100);
-
-  if (isEditing) toggleEdit();
+  // 3秒后自动隐藏
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(function() {
+    toast.classList.remove('show');
+  }, 3000);
 }
 
 // load saved on page load

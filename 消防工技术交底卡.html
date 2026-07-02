@@ -137,6 +137,7 @@ body {
     <button class="edit-btn" onclick="importLocalData()" title="从JSON文件恢复">📥 导入</button>
     <button class="edit-btn" onclick="exportLocalData()" title="导出编辑内容到JSON">📤 导出</button>
     <button class="edit-btn" id="editToggleBtn" onclick="toggleEdit()">🖊 编辑</button>
+    <button class="edit-btn" id="saveTopBtn" onclick="saveChanges()" style="background:#ff8f00;border-color:#ff8f00;">💾 保存</button>
   </div>
   <h1>🔥 消防工技术交底卡</h1>
   <p>适用：消防工班组长 · 涵盖：消防施工标准</p>
@@ -236,12 +237,32 @@ function toggleEdit() {
   }
 }
 function saveChanges() {
-  var data = {html: document.querySelector('.container').innerHTML, savedAt: new Date().toLocaleString()};
-  localStorage.setItem(document.title, JSON.stringify(data));
+  var pageName = location.pathname.split('/').pop().replace('.html', '');
+  var html = document.querySelector('.container').innerHTML;
   var toast = document.getElementById('savedToast');
+
+  // 先退出编辑模式
+  if (isEditing) toggleEdit();
+
+  try {
+    localStorage.setItem(pageName, JSON.stringify({
+      html: html,
+      savedAt: new Date().toLocaleString()
+    }));
+    toast.textContent = '✅ 已保存（' + new Date().toLocaleTimeString() + '）';
+  } catch (e) {
+    toast.textContent = '❌ 保存失败：' + e.message;
+  }
+
+  // 强制重排后加 show 类
+  toast.classList.remove('show');
+  void toast.offsetWidth;
   toast.classList.add('show');
-  setTimeout(function(){toast.classList.remove('show');},2000);
-  if(isEditing) toggleEdit();
+
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(function() {
+    toast.classList.remove('show');
+  }, 3000);
 }
 
 // 优先从服务器拉取最新内容
