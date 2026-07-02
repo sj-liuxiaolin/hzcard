@@ -356,7 +356,7 @@ function rebuildEditBar() {
   if (header && !header.querySelector('.edit-bar')) {
     var eb = document.createElement('div');
     eb.className = 'edit-bar';
-    eb.innerHTML = '<button class="edit-btn" onclick="importLocalData()">📥 导入</button><button class="edit-btn" onclick="exportLocalData()">📤 导出</button><button class="edit-btn" id="editToggleBtn" onclick="toggleEdit()">🖊 编辑</button><button class="edit-btn" onclick="saveChanges()" style="background:#ff8f00;border-color:#ff8f00;">💾 保存</button>';
+    eb.innerHTML = '<button class="edit-btn" onclick="importLocalData()">📥 导入</button><button class="edit-btn" onclick="exportLocalData()">📤 导出</button><button class="edit-btn" id="editToggleBtn2" onclick="toggleEdit()">🖊 编辑</button><button class="edit-btn" onclick="saveChanges()" style="background:#ff8f00;border-color:#ff8f00;">💾 保存</button>';
     header.insertBefore(eb, header.firstChild);
   }
   if (typeof enhanceCards === 'function') enhanceCards();
@@ -370,7 +370,7 @@ function rebuildEditBar() {
   if (header && !header.querySelector('.edit-bar')) {
     var eb = document.createElement('div');
     eb.className = 'edit-bar';
-    eb.innerHTML = '<button class="edit-btn" id="editToggleBtn" onclick="toggleEdit()">🖊 编辑</button>';
+    eb.innerHTML = '<button class="edit-btn" id="editToggleBtn3" onclick="toggleEdit()">🖊 编辑</button>';
     header.insertBefore(eb, header.firstChild);
   }
   // 重新增强
@@ -893,32 +893,14 @@ window.exportLocalData = exportLocalData;
 window.importLocalData = importLocalData;
 
 
-// 页面加载时检查localStorage，有的话提示用户
-window.addEventListener('load', function() {
-  setTimeout(function() {
-    var pageName = location.pathname.split('/').pop().replace('.html', '');
-    var saved = localStorage.getItem(pageName);
-    if (saved) {
-      try {
-        var data = JSON.parse(saved);
-        if (data.html && data.html.length > 200) {
-          var dlg = '📂 检测到浏览器有上次编辑内容（保存于 ' + data.savedAt + '）\n\n选"确定"加载本地编辑版（推荐）\n选"取消"使用原始版本';
-          if (confirm(dlg)) {
-            document.querySelector('.container').innerHTML = data.html;
-            rebuildEditBar();
-          }
-        }
-      } catch(e) {}
-    }
-  }, 300);
-});
+// 重复的load监听已删除（保留第一个）
 
  {
   var header = document.querySelector('.doc-header');
   if (header && !header.querySelector('.edit-bar')) {
     var eb = document.createElement('div');
     eb.className = 'edit-bar';
-    eb.innerHTML = '<button class="edit-btn" id="editToggleBtn" onclick="toggleEdit()">🖊 编辑</button>';
+    eb.innerHTML = '<button class="edit-btn" id="editToggleBtn4" onclick="toggleEdit()">🖊 编辑</button>';
     header.insertBefore(eb, header.firstChild);
   }
   if (typeof enhanceCards === 'function') enhanceCards();
