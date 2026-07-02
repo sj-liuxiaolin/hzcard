@@ -131,7 +131,19 @@ body {
 </style>
 
 <!-- CloudBase Web SDK -->
-<script src="https://imgcache.qq.com/qzone/cloudbase-js-sdk/1.7.2/cloudbase.full.js"></script>
+<!-- CloudBase Web SDK（异步加载，不阻塞页面） -->
+<script>
+  // 异步加载SDK，失败也不影响页面交互
+  (function() {
+    var s = document.createElement('script');
+    s.src = 'https://imgcache.qq.com/qzone/cloudbase-js-sdk/1.7.2/cloudbase.full.js';
+    s.async = true;
+    s.defer = true;
+    s.onload = function() { window.__TCB_SDK_READY = true; };
+    s.onerror = function() { window.__TCB_SDK_FAIL = true; };
+    document.head.appendChild(s);
+  })();
+</script>
 </head>
 <body>
 <div class="container">
@@ -940,6 +952,16 @@ let tcbDb = null;
 
 async function tcbInit() {
   if (tcbApp) return tcbApp;
+  // 等SDK加载（最多等5秒）
+  var waitCount = 0;
+  while (typeof cloudbase === 'undefined' && waitCount < 50) {
+    await new Promise(function(r) { setTimeout(r, 100); });
+    waitCount++;
+  }
+  if (typeof cloudbase === 'undefined') {
+    console.warn('[CloudBase] SDK加载超时，使用本地模式');
+    return null;
+  }
   try {
     tcbApp = await cloudbase.init({ env: TCB_ENV_ID });
     tcbDb = tcbApp.database();
