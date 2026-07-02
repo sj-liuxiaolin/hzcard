@@ -195,6 +195,9 @@ body {
 .del-text-btn:hover { background: #b71c1c; }
 
 </style>
+
+<!-- CloudBase Web SDK -->
+<script src="https://imgcache.qq.com/qzone/cloudbase-js-sdk/1.7.2/cloudbase.full.js"></script>
 </head>
 <body>
 
@@ -503,31 +506,36 @@ function saveChanges() {
   var html = document.querySelector('.container').innerHTML;
   var toast = document.getElementById('savedToast');
 
-  // 先退出编辑模式（避免锁定造成卡顿）
+  // 先退出编辑模式
   if (isEditing) toggleEdit();
 
+  // 1. 保存到 localStorage（本地备份）
   try {
-    // 保存到 localStorage
     localStorage.setItem(pageName, JSON.stringify({
       html: html,
       savedAt: new Date().toLocaleString()
     }));
-    // 显示成功提示
-    toast.textContent = '✅ 已保存（' + new Date().toLocaleTimeString() + '）';
   } catch (e) {
-    toast.textContent = '❌ 保存失败：' + e.message;
+    console.error('localStorage保存失败', e);
   }
 
-  // 强制重排后再加 show 类（确保过渡动画正确触发）
+  // 2. 异步保存到云端
+  toast.textContent = '⏳ 保存中...';
   toast.classList.remove('show');
   void toast.offsetWidth;
   toast.classList.add('show');
 
-  // 3秒后自动隐藏
-  clearTimeout(window._toastTimer);
-  window._toastTimer = setTimeout(function() {
-    toast.classList.remove('show');
-  }, 3000);
+  tcbSave(pageName, html).then(function(ok) {
+    if (ok) {
+      toast.textContent = '✅ 已同步到云端（' + new Date().toLocaleTimeString() + '）';
+    } else {
+      toast.textContent = '⚠️ 云端保存失败，已存到本地';
+    }
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(function() {
+      toast.classList.remove('show');
+    }, 3000);
+  });
 }
 
 // load saved on page load
@@ -536,31 +544,66 @@ function saveChanges() {
 window.addEventListener('load', function() {
   setTimeout(function() {
     var pageName = location.pathname.split('/').pop().replace('.html', '');
-    apiLoad(pageName).then(function(resp) {
-      if (resp && resp.html && resp.html.length > 100) {
-        // 服务器有保存的版本，弹窗询问
-        var confirmLoad = confirm('🔄 检测到服务器有最新保存版本，是否加载？\n\n选"确定"加载最新版本（会覆盖当前显示）\n选"取消"使用本地默认版本');
-        if (confirmLoad) {
-          // 替换内容
-          var c = document.querySelector('.container');
-          c.innerHTML = resp.html;
-          // 重建编辑栏
-          rebuildEditBar();
+
+    // 1. 先从云端拉取
+    tcbLoad(pageName).then(function(cloudHtml) {
+      if (cloudHtml && cloudHtml.length > 200) {
+        // 云端有内容
+        var saved = localStorage.getItem(pageName);
+        var localHtml = null;
+        try { localHtml = saved ? JSON.parse(saved).html : null; } catch(e) {}
+
+        if (localHtml && localHtml !== cloudHtml) {
+          // 本地和云端不一致，询问用户
+          var useCloud = confirm('🔄 检测到云端和本地内容不一致：\n\n选"确定"使用云端最新版本\n选"取消"使用本地版本');
+          if (useCloud) {
+            document.querySelector('.container').innerHTML = cloudHtml;
+            rebuildEditBar();
+          } else {
+            // 同步到云端
+            tcbSave(pageName, localHtml);
+          }
+        } else {
+          // 只有云端有内容
+          if (!localHtml) {
+            if (confirm('☁️ 检测到云端有保存的版本（其他设备可能编辑过），是否加载？')) {
+              document.querySelector('.container').innerHTML = cloudHtml;
+              rebuildEditBar();
+            }
+          }
         }
+        return;
       }
-    }).catch(function() {
-      // 网络失败时退回 localStorage
+
+      // 2. 云端没数据，用 localStorage
       var saved = localStorage.getItem(pageName);
       if (saved) {
         try {
           var data = JSON.parse(saved);
-          if (confirm('📂 本地有缓存版本，是否加载？')) {
-            document.querySelector('.container').innerHTML = data.html;
-            rebuildEditBar();
+          if (data.html && data.html.length > 200) {
+            if (confirm('📂 本地有缓存版本（' + data.savedAt + '），是否加载？')) {
+              document.querySelector('.container').innerHTML = data.html;
+              rebuildEditBar();
+            }
           }
         } catch(e) {}
       }
     });
+  }, 500);
+});
+
+function rebuildEditBar() {
+  var header = document.querySelector('.doc-header');
+  if (header && !header.querySelector('.edit-bar')) {
+    var eb = document.createElement('div');
+    eb.className = 'edit-bar';
+    eb.innerHTML = '<button class="edit-btn" onclick="importLocalData()">📥 导入</button><button class="edit-btn" onclick="exportLocalData()">📤 导出</button><button class="edit-btn" id="editToggleBtn" onclick="toggleEdit()">🖊 编辑</button><button class="edit-btn" onclick="saveChanges()" style="background:#ff8f00;border-color:#ff8f00;">💾 保存</button>';
+    header.insertBefore(eb, header.firstChild);
+  }
+  if (typeof enhanceCards === 'function') enhanceCards();
+  if (typeof enhanceText === 'function') enhanceText();
+}
+
   }, 200);
 });
 
@@ -1125,6 +1168,76 @@ function rebuildEditBar() {
   if (typeof enhanceCards === 'function') enhanceCards();
   if (typeof enhanceText === 'function') enhanceText();
 }
+
+<script>
+// ====== CloudBase 数据库模块 ======
+const TCB_ENV_ID = 'huazhu-standards-d6e18800f314d32';
+const TCB_COLLECTION = 'cards';
+
+let tcbApp = null;
+let tcbDb = null;
+
+async function tcbInit() {
+  if (tcbApp) return tcbApp;
+  try {
+    tcbApp = await cloudbase.init({ env: TCB_ENV_ID });
+    tcbDb = tcbApp.database();
+    console.log('[CloudBase] 初始化成功', TCB_ENV_ID);
+    return tcbApp;
+  } catch (e) {
+    console.error('[CloudBase] 初始化失败', e);
+    return null;
+  }
+}
+
+// 从云端拉取内容
+async function tcbLoad(key) {
+  try {
+    await tcbInit();
+    if (!tcbDb) return null;
+    const res = await tcbDb.collection(TCB_COLLECTION).where({ key: key }).limit(1).get();
+    if (res.data && res.data.length > 0) {
+      console.log('[CloudBase] 加载成功', key, '长度', res.data[0].html.length);
+      return res.data[0].html;
+    }
+    return null;
+  } catch (e) {
+    console.error('[CloudBase] 加载失败', e);
+    return null;
+  }
+}
+
+// 保存到云端
+async function tcbSave(key, html) {
+  try {
+    await tcbInit();
+    if (!tcbDb) return false;
+    // 查询是否已存在
+    const exist = await tcbDb.collection(TCB_COLLECTION).where({ key: key }).limit(1).get();
+    const data = {
+      key: key,
+      html: html,
+      updatedAt: new Date().toISOString()
+    };
+    if (exist.data && exist.data.length > 0) {
+      // 更新
+      await tcbDb.collection(TCB_COLLECTION).doc(exist.data[0]._id).set(data);
+    } else {
+      // 新增
+      await tcbDb.collection(TCB_COLLECTION).add(data);
+    }
+    console.log('[CloudBase] 保存成功', key, '长度', html.length);
+    return true;
+  } catch (e) {
+    console.error('[CloudBase] 保存失败', e);
+    return false;
+  }
+}
+
+window.tcbLoad = tcbLoad;
+window.tcbSave = tcbSave;
+</script>
+
 </script>
 
 </body>
