@@ -23,3 +23,12 @@ tmp/
 _hidden_cards/
 hide_other_cards.py
 make_simple_index.py
+
+# 不上传历史归档
+_archive_旧版本/
+_hidden_cards/
+
+# 不上传 ZIP 包
+_zip_*.zip
+
+# 不上传旧的 V1 卡片（重命名为 V1 后缀）

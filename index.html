@@ -3,57 +3,728 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>华住筹建规范资料库</title>
+<title>华住筹建规范资料库 V2.0</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
-         background: #f5f5f7; min-height: 100vh; padding: 20px; }
-  .container { max-width: 720px; margin: 0 auto; }
-  .header { text-align: center; padding: 30px 0 20px; }
-  .header h1 { font-size: 24px; color: #1d1d1f; margin-bottom: 8px; }
-  .header p { color: #666; font-size: 14px; }
-  .card { background: white; border-radius: 16px; padding: 24px; margin: 20px 0;
-          box-shadow: 0 2px 12px rgba(0,0,0,0.08); transition: transform 0.2s, box-shadow 0.2s;
-          display: block; text-decoration: none; color: inherit; }
-  .card:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,0.12); }
-  .card-icon { font-size: 48px; text-align: center; margin-bottom: 16px; }
-  .card-title { font-size: 18px; font-weight: 600; color: #1d1d1f; text-align: center; margin-bottom: 8px; }
-  .card-desc { font-size: 13px; color: #666; text-align: center; line-height: 1.6; }
-  .footer { text-align: center; color: #999; font-size: 12px; padding: 30px 0; }
-  .notice { background: #fff3cd; border-left: 4px solid #ff8f00; padding: 12px 16px;
-            border-radius: 8px; margin: 20px 0; font-size: 13px; color: #856404; }
-  .back-btn { display: inline-block; padding: 8px 16px; background: #f0f0f0; border-radius: 8px;
-              text-decoration: none; color: #1d1d1f; font-size: 14px; margin-bottom: 20px; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --primary: #1565c0;
+  --primary-dark: #0d47a1;
+  --accent: #ff9800;
+  --success: #43a047;
+  --danger: #c62828;
+  --bg: #f5f5f7;
+  --card-bg: #fff;
+  --text: #1d1d1f;
+  --text-2: #666;
+  --border: #e0e0e0;
+}
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: linear-gradient(135deg, #e3f2fd 0%, #f5f5f7 100%);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.5;
+  padding: 0;
+}
+
+/* ====== 头部 ====== */
+.app-header {
+  background: linear-gradient(135deg, #1565c0, #0d47a1);
+  color: #fff;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+}
+.app-header .brand { display: flex; align-items: center; gap: 12px; }
+.app-header .logo { font-size: 32px; }
+.app-header h1 { font-size: 20px; font-weight: 700; }
+.app-header .sub { font-size: 12px; opacity: 0.85; margin-top: 2px; }
+.app-header .user-bar { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.user-bar .avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.user-bar .role-tag {
+  background: rgba(255,255,255,0.15);
+  padding: 2px 8px; border-radius: 4px;
+  font-size: 11px;
+}
+.user-bar button {
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.3);
+  padding: 4px 12px; border-radius: 4px;
+  font-size: 12px; cursor: pointer;
+}
+.user-bar button:hover { background: rgba(255,255,255,0.3); }
+
+/* ====== 主体容器 ====== */
+.container { max-width: 1200px; margin: 0 auto; padding: 24px 20px; }
+
+/* ====== 管理员控制台 ====== */
+.admin-panel {
+  background: #fff3e0;
+  border: 1px solid #ffb74d;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.admin-panel .icon { font-size: 24px; }
+.admin-panel .text { flex: 1; }
+.admin-panel .text strong { color: var(--danger); }
+.admin-panel .text div { font-size: 12px; color: var(--text-2); margin-top: 4px; }
+.admin-panel button {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.admin-panel button:hover { background: #f57c00; }
+
+/* ====== 工种卡网格 ====== */
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 8px 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title .count {
+  background: var(--primary);
+  color: #fff;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.worker-card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  transition: all 0.25s;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.worker-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(21, 101, 192, 0.2);
+}
+.worker-card .cover {
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 56px;
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+}
+.worker-card .body { padding: 16px; flex: 1; }
+.worker-card .name { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.worker-card .desc { font-size: 12px; color: var(--text-2); line-height: 1.5; }
+.worker-card .footer {
+  padding: 10px 16px;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: var(--text-2);
+}
+.worker-card .badge {
+  background: var(--primary);
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+/* 颜色主题 */
+.worker-card.shuigong .cover { background: linear-gradient(135deg, #e1f5fe, #b3e5fc); }
+.worker-card.wagong .cover { background: linear-gradient(135deg, #fff3e0, #ffe0b2); }
+.worker-card.qiangdi .cover { background: linear-gradient(135deg, #fce4ec, #f8bbd0); }
+.worker-card.mugong .cover { background: linear-gradient(135deg, #e8f5e9, #c8e6c9); }
+.worker-card.diangong .cover { background: linear-gradient(135deg, #fff9c4, #fff59d); }
+.worker-card.youqi .cover { background: linear-gradient(135deg, #f3e5f5, #e1bee7); }
+.worker-card.nuantong .cover { background: linear-gradient(135deg, #ffebee, #ffcdd2); }
+
+/* ====== 登录弹窗 ====== */
+.modal-mask {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+.modal-mask.show { display: flex; }
+.login-box {
+  background: #fff;
+  border-radius: 16px;
+  padding: 32px;
+  width: 92%;
+  max-width: 420px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  animation: popIn 0.3s;
+}
+@keyframes popIn {
+  from { transform: scale(0.85); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.login-box h2 {
+  text-align: center;
+  font-size: 22px;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+.login-box .sub {
+  text-align: center;
+  color: var(--text-2);
+  font-size: 13px;
+  margin-bottom: 24px;
+}
+.login-tabs {
+  display: flex;
+  border-bottom: 2px solid #f0f0f0;
+  margin-bottom: 20px;
+}
+.login-tab {
+  flex: 1;
+  text-align: center;
+  padding: 10px 0;
+  font-size: 14px;
+  color: var(--text-2);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.2s;
+}
+.login-tab.active {
+  color: var(--primary);
+  border-color: var(--primary);
+  font-weight: 600;
+}
+.login-form { display: none; }
+.login-form.active { display: block; }
+.form-row { margin-bottom: 16px; }
+.form-row label {
+  display: block;
+  font-size: 13px;
+  color: var(--text-2);
+  margin-bottom: 6px;
+}
+.form-row input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.form-row input:focus { border-color: var(--primary); }
+.form-row .hint {
+  font-size: 11px;
+  color: var(--text-2);
+  margin-top: 4px;
+}
+.form-actions { display: flex; gap: 8px; margin-top: 20px; }
+.btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-default { background: #f5f5f5; color: var(--text); }
+.btn-default:hover { background: #e0e0e0; }
+.btn-wx {
+  background: #07c160;
+  color: #fff;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  width: 100%; margin-top: 10px;
+}
+.btn-wx:hover { background: #06b357; }
+
+.err-msg {
+  background: #ffebee;
+  color: var(--danger);
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-bottom: 12px;
+  display: none;
+}
+.err-msg.show { display: block; }
+
+/* ====== 管理员-用户管理 ====== */
+.admin-section {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  display: none;
+}
+.admin-section.show { display: block; }
+.admin-section h3 {
+  font-size: 16px;
+  color: var(--primary);
+  margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+.admin-section .row {
+  display: flex; gap: 8px; align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 13px;
+}
+.admin-section .row:last-child { border-bottom: none; }
+.admin-section .row .name { flex: 1; font-weight: 500; }
+.admin-section .row .role {
+  padding: 2px 8px; border-radius: 4px;
+  font-size: 11px;
+}
+.role-admin { background: #ffebee; color: var(--danger); }
+.role-user { background: #e3f2fd; color: var(--primary); }
+.role-blocked { background: #f5f5f5; color: #999; }
+.admin-section .row button {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--text-2);
+}
+.admin-section .row button:hover { background: #f5f5f5; }
+.admin-section .row button.del { color: var(--danger); border-color: #ffcdd2; }
+.admin-section .add-row { display: flex; gap: 8px; margin-top: 12px; }
+.admin-section .add-row input {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 13px;
+  outline: none;
+}
+.admin-section .add-row button {
+  background: var(--success);
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* ====== 底部 ====== */
+.footer {
+  text-align: center;
+  color: #999;
+  font-size: 12px;
+  padding: 30px 0 20px;
+}
+.footer .version {
+  display: inline-block;
+  background: var(--primary);
+  color: #fff;
+  padding: 2px 10px;
+  border-radius: 10px;
+  font-weight: 600;
+  margin-left: 6px;
+}
+
+@media (max-width: 600px) {
+  .app-header { padding: 12px 14px; }
+  .app-header h1 { font-size: 17px; }
+  .app-header .sub { display: none; }
+  .container { padding: 16px 12px; }
+  .cards-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .worker-card .cover { height: 70px; font-size: 40px; }
+  .worker-card .body { padding: 10px; }
+  .worker-card .name { font-size: 14px; }
+}
 </style>
 </head>
 <body>
-<div class="container">
-  <a href="_hidden_cards/index_original.html" class="back-btn">← 查看完整版（暂未发布）</a>
 
-  <div class="header">
-    <h1>🔧 华住筹建规范资料库</h1>
-    <p>技术交底卡 · 班组长扫码查看</p>
-  </div>
-
-  <div class="notice">
-    <strong>📌 当前版本（V1.0 内测）</strong><br>
-    暂只发布水工技术交底卡，其他工种卡片正在完善中
-  </div>
-
-  <a href="水工技术交底卡.html" class="card">
-    <div class="card-icon">🔧</div>
-    <div class="card-title">水工技术交底卡</div>
-    <div class="card-desc">
-      适用：水工班组长<br>
-      涵盖：给水管道 · 排水管道 · 卫生间防水<br>
-      包含 27 张正反案例图
+<div class="app-header">
+  <div class="brand">
+    <div class="logo">🏨</div>
+    <div>
+      <h1>华住筹建规范资料库</h1>
+      <div class="sub">技术交底卡 · 班组长扫码查看 · 管理员在线编辑</div>
     </div>
-  </a>
-
-  <div class="footer">
-    华住集团 · 筹建规范资料库 V1.0<br>
-    <a href="水工错误范例图集.html" style="color: #1976d2;">查看水工错误范例图集</a>
+  </div>
+  <div class="user-bar" id="userBar">
+    <!-- 动态显示：未登录显示"登录"按钮，已登录显示头像+用户名 -->
   </div>
 </div>
+
+<div class="container">
+
+  <!-- 管理员控制台 -->
+  <div class="admin-panel" id="adminPanel" style="display:none">
+    <div class="icon">⚙️</div>
+    <div class="text">
+      <strong>管理员模式</strong>
+      <div>当前拥有全部工种卡的编辑、用户管理权限</div>
+    </div>
+    <button onclick="toggleUserMgmt()">👥 用户管理</button>
+    <button onclick="logout()">🚪 退出登录</button>
+  </div>
+
+  <!-- 管理员-用户管理面板 -->
+  <div class="admin-section" id="userMgmt">
+    <h3>👥 用户管理（白名单）</h3>
+    <div id="userList"></div>
+    <div class="add-row">
+      <input type="text" id="newName" placeholder="姓名">
+      <input type="text" id="newPhone" placeholder="手机号">
+      <button onclick="addUser()">➕ 添加</button>
+    </div>
+  </div>
+
+  <!-- 工种卡区 -->
+  <div class="section-title">
+    📋 技术交底卡 <span class="count" id="totalCount">8</span>
+  </div>
+  <div class="cards-grid" id="cardsGrid"></div>
+
+  <div class="footer">
+    华住集团 · 筹建规范资料库 <span class="version">V2.0</span>
+    <br>来源：华住集团《营建技术手册-通用版》v1.2（2025年第一版）
+  </div>
+</div>
+
+<!-- 登录弹窗 -->
+<div class="modal-mask" id="loginModal">
+  <div class="login-box">
+    <h2>🔐 登录验证</h2>
+    <p class="sub">华住筹建规范资料库</p>
+    <div id="errMsg" class="err-msg"></div>
+    <div class="login-tabs">
+      <div class="login-tab active" data-tab="password" onclick="switchTab('password')">用户名+密码</div>
+      <div class="login-tab" data-tab="sms" onclick="switchTab('sms')">手机号验证</div>
+    </div>
+    <form class="login-form active" id="formPwd" onsubmit="return loginPwd(event)">
+      <div class="form-row">
+        <label>用户名</label>
+        <input type="text" id="loginName" placeholder="请输入用户名" autocomplete="username">
+      </div>
+      <div class="form-row">
+        <label>密码</label>
+        <input type="password" id="loginPwd" placeholder="请输入密码" autocomplete="current-password">
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-default" onclick="closeLogin()">取消</button>
+        <button type="submit" class="btn btn-primary">登 录</button>
+      </div>
+    </form>
+    <form class="login-form" id="formSms" onsubmit="return loginSms(event)">
+      <div class="form-row">
+        <label>手机号</label>
+        <input type="tel" id="loginPhone" placeholder="11位手机号" maxlength="11">
+      </div>
+      <div class="form-row">
+        <label>验证码</label>
+        <div style="display:flex;gap:8px">
+          <input type="text" id="smsCode" placeholder="6位验证码" maxlength="6" style="flex:1">
+          <button type="button" class="btn btn-default" id="sendSmsBtn" onclick="sendSms()" style="flex:0 0 100px">获取验证码</button>
+        </div>
+        <div class="hint">本机演示模式：验证码固定为 <b>888888</b></div>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-default" onclick="closeLogin()">取消</button>
+        <button type="submit" class="btn btn-primary">登 录</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+// ========== 工种卡数据 ==========
+var CARDS = [
+  { id: 'shuigong', name: '水工技术交底卡', desc: '给水·排水·防水', emoji: '💧', color: 'shuigong', href: '水工技术交底卡.html', count: 3 },
+  { id: 'tongceng', name: '同层排水交底卡', desc: '同层排水抬高·管沟防水', emoji: '🪠', color: 'shuigong', href: '同层排水技术交底卡.html', count: 1 },
+  { id: 'wagong', name: '瓦工技术交底卡', desc: '地梁·墙体·轻钢龙骨', emoji: '🧱', color: 'wagong', href: '瓦工技术交底卡.html', count: 73 },
+  { id: 'qiangdi', name: '墙地砖交底卡', desc: '卫生间墙地砖·SPC板·美缝', emoji: '🟫', color: 'qiangdi', href: '墙地砖技术交底卡.html', count: 29 },
+  { id: 'mugong', name: '木工技术交底卡', desc: '吊顶·龙骨·检修口', emoji: '🪚', color: 'mugong', href: '木工技术交底卡.html', count: 46 },
+  { id: 'diangong', name: '电工技术交底卡', desc: '强弱电·桥架·消防', emoji: '⚡', color: 'diangong', href: '电工技术交底卡.html', count: 41 },
+  { id: 'youqi', name: '油漆技术交底卡', desc: '墙面·基层·涂料', emoji: '🎨', color: 'youqi', href: '油漆技术交底卡.html', count: 13 },
+  { id: 'nuantong', name: '暖通技术交底卡', desc: '空调·新风·地暖', emoji: '❄️', color: 'nuantong', href: '暖通技术交底卡.html', count: 18 },
+];
+
+// ========== 用户白名单（演示用，真实部署改用 CloudBase） ==========
+var USERS_KEY = 'huazhu_users_v2';
+var SESSION_KEY = 'huazhu_session_v2';
+
+function getDefaultUsers() {
+  return [
+    { name: '林总', phone: '13800000000', pwd: 'admin123', role: 'admin' },
+    { name: '张工', phone: '13900000001', pwd: 'user123', role: 'user' },
+    { name: '王工', phone: '13900000002', pwd: 'user123', role: 'user' },
+    { name: '李工', phone: '13900000003', pwd: 'user123', role: 'user' },
+  ];
+}
+function getUsers() {
+  try {
+    var u = JSON.parse(localStorage.getItem(USERS_KEY));
+    if (Array.isArray(u) && u.length > 0) return u;
+  } catch(e) {}
+  var d = getDefaultUsers();
+  localStorage.setItem(USERS_KEY, JSON.stringify(d));
+  return d;
+}
+function saveUsers(u) { localStorage.setItem(USERS_KEY, JSON.stringify(u)); }
+
+// ========== 会话 ==========
+function getSession() {
+  try { return JSON.parse(localStorage.getItem(SESSION_KEY)) || null; } catch(e) { return null; }
+}
+function setSession(s) { localStorage.setItem(SESSION_KEY, JSON.stringify(s)); }
+function clearSession() { localStorage.removeItem(SESSION_KEY); }
+
+// ========== 渲染卡片 ==========
+function renderCards() {
+  var session = getSession();
+  var isAdmin = session && session.role === 'admin';
+  var html = '';
+  for (var i = 0; i < CARDS.length; i++) {
+    var c = CARDS[i];
+    html += '<a class="worker-card ' + c.color + '" href="' + c.href + '">' +
+            '  <div class="cover">' + c.emoji + '</div>' +
+            '  <div class="body">' +
+            '    <div class="name">' + c.name + '</div>' +
+            '    <div class="desc">' + c.desc + '</div>' +
+            '  </div>' +
+            '  <div class="footer">' +
+            '    <span>📷 ' + c.count + ' 张图例</span>' +
+            (isAdmin ? '    <span class="badge">可编辑</span>' : '    <span>查看 →</span>') +
+            '  </div>' +
+            '</a>';
+  }
+  document.getElementById('cardsGrid').innerHTML = html;
+  document.getElementById('totalCount').textContent = CARDS.length;
+}
+
+// ========== 头部用户栏 ==========
+function renderUserBar() {
+  var session = getSession();
+  var bar = document.getElementById('userBar');
+  if (session) {
+    var roleLabel = session.role === 'admin' ? '管理员' : '员工';
+    bar.innerHTML = '<div class="avatar">👤</div>' +
+                    '<div><div>' + escapeHtml(session.name) + '</div>' +
+                    '<div class="role-tag">' + roleLabel + '</div></div>' +
+                    '<button onclick="logout()">退出</button>';
+  } else {
+    bar.innerHTML = '<button onclick="openLogin()">🔐 登录</button>';
+  }
+  // 管理员面板
+  document.getElementById('adminPanel').style.display = (session && session.role === 'admin') ? 'flex' : 'none';
+}
+
+// ========== 登录弹窗 ==========
+function openLogin() {
+  document.getElementById('loginModal').classList.add('show');
+  hideErr();
+  switchTab('password');
+}
+function closeLogin() {
+  document.getElementById('loginModal').classList.remove('show');
+}
+function switchTab(tab) {
+  document.querySelectorAll('.login-tab').forEach(function(el) {
+    el.classList.toggle('active', el.dataset.tab === tab);
+  });
+  document.querySelectorAll('.login-form').forEach(function(el) {
+    el.classList.remove('active');
+  });
+  document.getElementById(tab === 'password' ? 'formPwd' : 'formSms').classList.add('active');
+  hideErr();
+}
+function showErr(msg) {
+  var el = document.getElementById('errMsg');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+function hideErr() { document.getElementById('errMsg').classList.remove('show'); }
+
+// 用户名+密码登录
+function loginPwd(e) {
+  e.preventDefault();
+  var name = document.getElementById('loginName').value.trim();
+  var pwd = document.getElementById('loginPwd').value;
+  if (!name || !pwd) { showErr('请输入用户名和密码'); return false; }
+  var users = getUsers();
+  var u = users.find(function(x) { return x.name === name && x.pwd === pwd; });
+  if (!u) { showErr('用户名或密码错误（可联系管理员添加）'); return false; }
+  setSession({ name: u.name, role: u.role, loginAt: Date.now() });
+  closeLogin();
+  renderUserBar();
+  renderCards();
+  alert('✅ 登录成功！欢迎 ' + u.name + (u.role === 'admin' ? '（管理员）' : '（员工）'));
+  return false;
+}
+
+// 手机号验证码登录（演示模式，验证码固定888888）
+function sendSms() {
+  var phone = document.getElementById('loginPhone').value.trim();
+  if (!/^1\d{10}$/.test(phone)) { showErr('请输入正确的11位手机号'); return; }
+  showErr('');
+  var btn = document.getElementById('sendSmsBtn');
+  btn.disabled = true; btn.textContent = '已发送 (60)';
+  var n = 60;
+  var t = setInterval(function() {
+    n--;
+    btn.textContent = '已发送 (' + n + ')';
+    if (n <= 0) { clearInterval(t); btn.disabled = false; btn.textContent = '获取验证码'; }
+  }, 1000);
+  // 真实场景调短信API,这里只是演示
+  showErr(''); 
+  // 提示: 验证码已"发送"
+  setTimeout(function() { alert('📱 验证码已发送（演示模式: 固定 888888）'); }, 100);
+}
+function loginSms(e) {
+  e.preventDefault();
+  var phone = document.getElementById('loginPhone').value.trim();
+  var code = document.getElementById('smsCode').value.trim();
+  if (!/^1\d{10}$/.test(phone)) { showErr('请输入正确的11位手机号'); return false; }
+  if (code !== '888888') { showErr('验证码错误（演示模式请填 888888）'); return false; }
+  var users = getUsers();
+  var u = users.find(function(x) { return x.phone === phone; });
+  if (!u) { showErr('该手机号不在白名单内，请联系管理员添加'); return false; }
+  setSession({ name: u.name, role: u.role, loginAt: Date.now() });
+  closeLogin();
+  renderUserBar();
+  renderCards();
+  alert('✅ 登录成功！欢迎 ' + u.name + (u.role === 'admin' ? '（管理员）' : '（员工）'));
+  return false;
+}
+
+// ========== 退出 ==========
+function logout() {
+  if (!confirm('确认退出登录？')) return;
+  clearSession();
+  document.getElementById('userMgmt').classList.remove('show');
+  renderUserBar();
+  renderCards();
+}
+
+// ========== 用户管理（仅管理员） ==========
+function toggleUserMgmt() {
+  var panel = document.getElementById('userMgmt');
+  if (panel.classList.contains('show')) { panel.classList.remove('show'); return; }
+  renderUserList();
+  panel.classList.add('show');
+}
+function renderUserList() {
+  var users = getUsers();
+  var session = getSession();
+  var html = '';
+  for (var i = 0; i < users.length; i++) {
+    var u = users[i];
+    var isSelf = session && session.name === u.name;
+    html += '<div class="row">' +
+            '  <div class="name">' + escapeHtml(u.name) + (isSelf ? ' <span style="color:#999;font-size:11px">(我自己)</span>' : '') + '</div>' +
+            '  <div style="color:#999;font-size:12px">' + escapeHtml(u.phone) + '</div>' +
+            '  <div class="role role-' + u.role + '">' + (u.role === 'admin' ? '管理员' : '员工') + '</div>' +
+            '  <button onclick="changeRole(' + i + ')">改角色</button>' +
+            (isSelf ? '' : '  <button class="del" onclick="removeUser(' + i + ')">删除</button>') +
+            '</div>';
+  }
+  document.getElementById('userList').innerHTML = html;
+}
+function addUser() {
+  var name = document.getElementById('newName').value.trim();
+  var phone = document.getElementById('newPhone').value.trim();
+  if (!name || !phone) { alert('请输入姓名和手机号'); return; }
+  if (!/^1\d{10}$/.test(phone)) { alert('手机号格式错误'); return; }
+  var users = getUsers();
+  if (users.find(function(u) { return u.phone === phone; })) { alert('该手机号已存在'); return; }
+  users.push({ name: name, phone: phone, pwd: 'user123', role: 'user' });
+  saveUsers(users);
+  document.getElementById('newName').value = '';
+  document.getElementById('newPhone').value = '';
+  renderUserList();
+  alert('✅ 已添加员工：' + name);
+}
+function removeUser(idx) {
+  var users = getUsers();
+  if (!confirm('确认删除员工「' + users[idx].name + '」？')) return;
+  users.splice(idx, 1);
+  saveUsers(users);
+  renderUserList();
+}
+function changeRole(idx) {
+  var users = getUsers();
+  var u = users[idx];
+  var newRole = u.role === 'admin' ? 'user' : 'admin';
+  if (!confirm('将「' + u.name + '」角色从「' + (u.role === 'admin' ? '管理员' : '员工') + '」改为「' + (newRole === 'admin' ? '管理员' : '员工') + '」？')) return;
+  users[idx].role = newRole;
+  saveUsers(users);
+  renderUserList();
+}
+
+// ========== 工具 ==========
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, function(c) {
+    return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
+  });
+}
+
+// ========== 初始化 ==========
+renderCards();
+renderUserBar();
+
+// 点击遮罩关闭登录框
+document.getElementById('loginModal').addEventListener('click', function(e) {
+  if (e.target.id === 'loginModal') closeLogin();
+});
+
+// 拦截: 未登录用户访问子页面
+// 通过 <a href="..."> 直接跳转,在子页面里读取 session
+// 简单方案: 子页面检测不到 session 自动跳回首页
+// 已登录用户: 管理员显示完整功能,普通用户隐藏编辑/保存按钮
+</script>
+
 </body>
 </html>

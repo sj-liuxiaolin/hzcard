@@ -3,1462 +3,749 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>水工技术交底卡 — 给水·排水·防水</title>
+<title>水工技术交底卡</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  font-family: "Microsoft YaHei", -apple-system, "PingFang SC", sans-serif;
-  background: linear-gradient(135deg, #f0f2f5 0%, #e8eaf6 100%);
-  padding: 20px; color: #333; line-height: 1.6; min-height: 100vh;
-}
-
-.container { max-width: 960px; margin: 0 auto; background: #fff; border-radius: 12px; padding: 32px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-
-/* ====== 头部 ====== */
-.doc-header { background: linear-gradient(135deg, #1a237e, #3949ab); color: white; padding: 16px 20px; border-radius: 8px; margin-bottom: 24px; }
-.doc-header h1 { font-size: 18px; font-weight: 600; }
-.doc-header p { font-size: 12px; opacity: 0.75; margin-top: 4px; }
-
-/* ====== 章节标题 ====== */
-.chapter { margin-top: 28px; }
-.chapter:first-of-type { margin-top: 0; }
-.chapter-title {
-  font-size: 16px; font-weight: 600; color: #1a237e;
-  padding: 10px 14px; background: #e8eaf6; border-radius: 6px;
-  margin-bottom: 12px; border-left: 4px solid #1a237e;
-}
-
-/* ====== 子标题（正确/错误范例） ====== */
-.sub-title {
-  font-size: 14px; font-weight: 600;
-  margin: 20px 0 10px; padding-left: 10px;
-}
-.sub-title.ok { color: #2e7d32; border-left: 3px solid #4caf50; }
-.sub-title.err { color: #c62828; border-left: 3px solid #f44336; }
-.sub-title.table-title { color: #1565c0; border-left: 3px solid #42a5f5; }
-
-/* ====== 标准文字 ====== */
-.standard-text { font-size: 14px; color: #444; margin: 4px 0; padding-left: 12px; position: relative; }
-.standard-text::before { content: "•"; position: absolute; left: 0; color: #3949ab; }
-.standard-text strong { color: #c62828; }
-
-/* ====== 数据表格 ====== */
-.data-table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 13px; }
-.data-table th, .data-table td { border: 1px solid #ddd; padding: 6px 10px; text-align: center; }
-.data-table th { background: #f5f5f5; font-weight: 600; color: #333; }
-.data-table tr:nth-child(even) { background: #fafafa; }
-
-/* ====== 图片卡片网格 ====== */
-.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 10px 0; }
-.cards-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 10px 0; }
-
-.card {
-  background: #fafafa; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden;
-  transition: box-shadow 0.2s; position: relative;
-}
-.card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-
-.card-img { padding: 10px; text-align: center; background: #fff; }
-.card-img img { width: 100%; max-width: 189px; height: 189px; object-fit: contain; border: 1px solid #ddd; border-radius: 6px; display: block; margin: 0 auto; background: #f5f5f5; }
-
-.card-desc-ok { background: #e8f5e9; padding: 8px 10px; text-align: center; font-size: 13px; color: #2e7d32; border-top: 1px solid #c8e6c9; font-weight: 500; }
-.card-desc-err { background: #fff3e0; padding: 8px 10px; text-align: center; font-size: 13px; color: #bf360c; border-top: 1px solid #ffe0b2; font-weight: 500; }
-
-/* ====== 验收清单 ====== */
-.checklist { list-style: none; padding: 0; }
-.checklist li { padding: 4px 0; font-size: 14px; }
-.checklist li::before { content: "✔ "; color: #4caf50; font-weight: bold; }
-
-/* ====== 手机端 ====== */
-@media (max-width: 640px) {
-  body { padding: 10px; }
-  .container { padding: 16px; }
-  .cards { grid-template-columns: 1fr; gap: 16px; }
-  .cards-2 { grid-template-columns: 1fr; gap: 16px; }
-  .card-img img { max-width: 100%; height: auto; max-height: 260px; }
-  .doc-header h1 { font-size: 16px; }
-}
-
-/* ====== 使用说明 ====== */
-.help-box { background: #fff8e1; border: 1px solid #ffe082; border-radius: 8px; padding: 14px 18px; margin-top: 20px; }
-.help-box h3 { color: #f57f17; font-size: 14px; margin-bottom: 6px; }
-.help-box ol { padding-left: 18px; }
-.help-box li { margin: 4px 0; font-size: 13px; color: #555; }
-.help-box code { background: #fff; padding: 1px 5px; border-radius: 3px; font-family: monospace; border: 1px solid #ffe082; }
-
-/* ====== 编辑模式 ====== */
-.edit-bar { display: flex; gap: 8px; justify-content: flex-end; margin-bottom: 10px; }
-.edit-btn {
-  padding: 6px 14px; border: 1px solid rgba(255,255,255,0.4); border-radius: 6px;
-  background: transparent; color: white; cursor: pointer; font-size: 12px; transition: all 0.2s;
-}
-.edit-btn:hover { background: rgba(255,255,255,0.15); }
-.edit-btn.active { background: #ff8f00; border-color: #ff8f00; color: #fff; }
-.editable-text { transition: all 0.2s; }
-.editing .editable-text { background: #fffde7; border: 1px dashed #fdd835; border-radius: 4px; padding: 2px 6px; cursor: text; outline: none; }
-.editing .editable-text:focus { background: #fff9c4; border-color: #f9a825; }
-.editing .card-desc-ok, .editing .card-desc-err { cursor: text; outline: none; }
-.editing .card-desc-ok:focus, .editing .card-desc-err:focus { background: #fff9c4; box-shadow: 0 0 0 2px #fdd835; }
-.editing .card-img img { cursor: pointer; outline: 3px dashed transparent; }
-.editing .card-img img:hover { outline-color: #fdd835; }
-.img-replace-btn {
-  display: none; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%);
-  background: rgba(0,0,0,0.7); color: white; padding: 3px 10px; border-radius: 4px;
-  font-size: 11px; cursor: pointer; border: none; z-index: 5;
-}
-.editing .img-replace-btn { display: block; }
-.card-img { position: relative; }
-.save-btn {
-  display: none; padding: 8px 20px; background: #ff8f00; color: white;
-  border: none; border-radius: 6px; font-size: 14px; cursor: pointer; margin: 16px auto 0;
-  transition: all 0.2s;
-}
-.save-btn:hover { background: #f57c00; }
-.saved-toast {
-  position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-  background: #2e7d32; color: white; padding: 10px 24px; border-radius: 8px;
-  font-size: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 999;
-  opacity: 0; transition: opacity 0.3s;
-}
-.saved-toast.show { opacity: 1; }
-
-/* ====== 返回 ====== */
-.back-link { text-align: center; margin-top: 20px; }
-.back-link a { color: #666; font-size: 13px; text-decoration: none; padding: 6px 16px; border: 1px solid #ddd; border-radius: 20px; transition: all 0.2s; }
-.back-link a:hover { background: #f5f5f5; color: #1a237e; border-color: #1a237e; }
-
-/* ====== 编辑增强：图卡操作按钮 ====== */
-.card-tools {
-  display: none; position: absolute; top: 4px; right: 4px; z-index: 6;
-  gap: 4px; align-items: center;
-}
+body { font-family: -apple-system, "Microsoft YaHei", sans-serif; background: #f5f5f5; color: #333; line-height: 2; }
+.header { background: #1565c0; color: #fff; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; position: sticky; top: 0; z-index: 100; }
+.header h1 { font-size: 18px; font-weight: 600; }
+.header .subtitle { font-size: 12px; opacity: 0.85; }
+.toolbar { display: flex; gap: 6px; flex-wrap: wrap; }
+.tool-btn { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3); padding: 6px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; white-space: nowrap; transition: all 0.15s; }
+.tool-btn:hover { background: rgba(255,255,255,0.3); }
+.tool-btn.active { background: #ff9800; border-color: #ff9800; }
+.tool-btn.save { background: #43a047; border-color: #43a047; display: none; }
+.tool-btn.save.active { display: block; }
+.container { max-width: 900px; margin: 0 auto; padding: 16px; }
+.chapter { background: #fff; border-radius: 10px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.chapter-title { background: #e3f2fd; color: #1565c0; padding: 12px 16px; font-size: 16px; font-weight: 600; border-left: 4px solid #1565c0; }
+.text-block { padding: 16px; font-size: 14px; line-height: 2; color: #444; outline: none; min-height: 60px; }
+.text-block:focus { background: #fffde7; }
+.editing .text-block { background: #fffde7; border: 2px dashed #ffc107; border-radius: 6px; margin: 8px; padding: 12px; }
+.editing .card-desc { background: #fffde7 !important; border: 2px dashed #ffc107 !important; border-radius: 4px !important; outline: none !important; cursor: text !important; pointer-events: auto !important; user-select: text !important; -webkit-user-select: text !important; }
+.editing .card-desc:focus { background: #ffffff !important; border-color: #ff9800 !important; }
+.text-block p { margin: 0; }
+.text-block strong { color: #c62828; }
+.sub-title { padding: 8px 16px; font-size: 14px; font-weight: 600; color: #2e7d32; }
+.sub-title.err { color: #c62828; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; padding: 8px 16px 16px; }
+.card { background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; position: relative; transition: box-shadow 0.2s; }
+.card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.1); }
+.card-img { width: 100%; aspect-ratio: 4/3; overflow: hidden; background: #f0f0f0; cursor: pointer; }
+.card-img img { width: 100%; height: 100%; object-fit: contain; }
+.card-desc { padding: 8px; font-size: 12px; line-height: 1.4; }
+.card-desc.ok { color: #2e7d32; }
+.card-desc.err { color: #c62828; }
+.card-tools { display: none; position: absolute; top: 4px; right: 4px; z-index: 5; gap: 4px; }
 .editing .card-tools { display: flex; }
-.card-tool-btn {
-  background: rgba(0,0,0,0.7); color: white; border: none;
-  padding: 3px 8px; border-radius: 4px; font-size: 11px; cursor: pointer;
-  transition: background 0.15s;
-}
-.card-tool-btn:hover { background: rgba(0,0,0,0.9); }
+.card-tool-btn { background: rgba(0,0,0,0.65); color: #fff; border: none; border-radius: 4px; padding: 3px 8px; font-size: 11px; cursor: pointer; white-space: nowrap; }
+.card-tool-btn:hover { background: rgba(0,0,0,0.85); }
 .card-tool-btn.del:hover { background: #c62828; }
+.add-card-bar { display: none; padding: 0 16px 16px; }
+.editing .add-card-bar { display: block; }
+.add-card-btn { width: 100%; padding: 16px; border: 2px dashed #ff9800; background: #fff8e1; color: #e65100; font-size: 13px; font-weight: 600; border-radius: 8px; cursor: pointer; }
+.add-card-btn:hover { background: #ffe0b2; }
+.fmt-toolbar { position: absolute; display: none; background: #fff; border: 1px solid #ccc; border-radius: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.15); padding: 4px; z-index: 9999; gap: 2px; align-items: center; }
+.fmt-toolbar.show { display: flex; }
+.fmt-toolbar button, .fmt-toolbar select, .fmt-toolbar input { border: 1px solid #ddd; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 13px; min-width: 28px; background: #fff; }
+.fmt-toolbar button:hover { background: #f0f0f0; }
+.fmt-toolbar input[type=color] { height: 28px; width: 32px; padding: 2px; }
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 10px 20px; border-radius: 8px; font-size: 14px; z-index: 99999; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+.toast.show { opacity: 1; }
 
-/* ====== cards 区域末尾的"添加新卡片"按钮 ====== */
-.cards-add-bar {
-  display: none; text-align: center; padding: 12px; margin-top: 8px;
-  border: 2px dashed #fdd835; border-radius: 8px; background: #fffde7;
+/* ====== 大图预览 ====== */
+.img-viewer {
+  display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 999999; align-items: center; justify-content: center;
 }
-.editing .cards-add-bar { display: block; }
-.cards-add-btn {
-  background: #ff8f00; color: white; border: none; padding: 8px 20px;
-  border-radius: 6px; font-size: 13px; cursor: pointer;
+.img-viewer.show { display: flex; }
+.img-viewer-mask {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.85);
 }
-.cards-add-btn:hover { background: #f57c00; }
-
-/* ====== 段落加字按钮 ====== */
-.add-text-btn {
-  display: none; background: #ff8f00; color: white; border: none;
-  padding: 2px 10px; font-size: 11px; border-radius: 4px; margin: 2px 0;
-  cursor: pointer;
+.img-viewer-img {
+  position: relative; max-width: 92vw; max-height: 92vh;
+  object-fit: contain; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  background: #fff; border-radius: 4px;
 }
-.editing .add-text-btn { display: inline-block; }
-
-/* ====== 文字格式工具栏（浮动） ====== */
-.format-toolbar {
-  display: none; position: fixed; z-index: 1000; background: #fff;
-  border: 1px solid #ddd; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  padding: 4px; gap: 2px; align-items: center;
+.img-viewer-close {
+  position: absolute; top: 16px; right: 24px; color: #fff;
+  font-size: 36px; line-height: 1; cursor: pointer; user-select: none;
+  width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
+  background: rgba(0, 0, 0, 0.5); border-radius: 50%;
 }
-.format-toolbar.show { display: flex; }
-.fmt-btn {
-  background: #fff; border: 1px solid #ddd; padding: 4px 8px; border-radius: 4px;
-  font-size: 12px; cursor: pointer; min-width: 28px;
+.img-viewer-close:hover { background: rgba(0, 0, 0, 0.8); }
+.source { background: #fff8e1; border-left: 4px solid #ff9800; padding: 6px 16px; font-size: 11px; color: #5d4037; }
+@media (max-width: 600px) {
+  .header { padding: 8px 12px; }
+  .header h1 { font-size: 15px; }
+  .tool-btn { padding: 5px 8px; font-size: 12px; }
+  .container { padding: 8px; }
+  .cards { grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 8px; }
+  .card-desc { font-size: 11px; }
 }
-.fmt-btn:hover { background: #f5f5f5; border-color: #1a237e; }
-.fmt-btn.bold { font-weight: 700; }
-.fmt-btn.italic { font-style: italic; }
-.fmt-select {
-  border: 1px solid #ddd; border-radius: 4px; padding: 3px 4px; font-size: 12px;
-  background: #fff; cursor: pointer;
-}
-.fmt-color {
-  width: 28px; height: 24px; border: 1px solid #ddd; border-radius: 4px;
-  cursor: pointer; padding: 0;
-}
-
-
-/* ====== 删除行按钮 ====== */
-.del-text-btn {
-  display: none; background: #c62828; color: white; border: none;
-  padding: 2px 10px; font-size: 11px; border-radius: 4px; margin: 2px 0 2px 8px;
-  cursor: pointer; vertical-align: middle;
-}
-.editing .del-text-btn { display: inline-block; }
-.del-text-btn:hover { background: #b71c1c; }
-
 </style>
-
-<!-- CloudBase Web SDK（异步加载，不阻塞页面） -->
-<script>
-  // 异步加载SDK，失败也不影响页面交互
-  (function() {
-    var s = document.createElement('script');
-    s.src = 'https://imgcache.qq.com/qzone/cloudbase-js-sdk/1.7.2/cloudbase.full.js';
-    s.async = true;
-    s.defer = true;
-    s.onload = function() { window.__TCB_SDK_READY = true; };
-    s.onerror = function() { window.__TCB_SDK_FAIL = true; };
-    document.head.appendChild(s);
-  })();
-</script>
 </head>
 <body>
 
-<div class="container">
-
-<!-- ====== 头部 ====== -->
-<div class="doc-header">
-  <div class="edit-bar" style="gap:6px;flex-wrap:wrap;">
-    <button class="edit-btn" onclick="importLocalData()" title="从JSON文件恢复">📥 导入</button>
-    <button class="edit-btn" onclick="exportLocalData()" title="导出编辑内容到JSON">📤 导出</button>
-    <button class="edit-btn" id="editToggleBtn" onclick="toggleEdit()">🖊 编辑</button>
-    <button class="edit-btn" id="saveTopBtn" onclick="saveChanges()" style="background:#ff8f00;border-color:#ff8f00;">💾 保存</button>
+<div class="header">
+  <div>
+    <h1>🔧 水工技术交底卡</h1>
+    <div class="subtitle">来源：华住集团《营建技术手册-通用版》v1.2（2025年第一版）</div>
   </div>
-  <h1>🔧 水工技术交底卡</h1>
-  <p>适用：水工班组长 · 涵盖：给水管道、排水管道、卫生间防水</p>
+  <div class="toolbar">
+    <button class="tool-btn" onclick="importData()">📥 导入</button>
+    <button class="tool-btn" onclick="exportData()">📤 导出</button>
+    <button class="tool-btn" id="editBtn" onclick="toggleEdit()">🖊 编辑</button>
+    <button class="tool-btn save" id="saveBtn" onclick="saveData()">💾 保存</button>
+  </div>
 </div>
 
-<!-- ============================================================ -->
-<!-- ====== 第一章：给水管道 ====== -->
-<!-- ============================================================ -->
+<div class="container" id="container">
 <div class="chapter">
+    <div class="chapter-title">一、给水管道施工标准</div>
+    <div class="text-block" contenteditable="true" style="line-height:2">
+      <p>1、 室内给水（冷热水）<strong style="color:#c62828">严禁走地敷设</strong>，给水管（冷热水）进房<strong style="color:#c62828">必须安装阀门</strong>以便切断检修，位置放在马桶上方检修口内（有检修管井的可以放置在管井内）；所有接头、阀门与管道连接处不得有松动、渗漏，安装完毕及时用管卡固定，管材与管件或阀门之间不得有松动；</p>
+      <p>2、 室内外热、回水给水管道均需作保温处理，室外管均需做保温铝皮保护处理，同时固定可靠；</p>
+      <p>3、 在管道安装前需提前套好橡塑保温棉（厚度<strong style="color:#c62828">≧3.0厘米</strong>），管道弯头处需做支架，给水管道需要使用<strong style="color:#c62828">角铁支架</strong>；</p>
+      <p>4、 管道穿过墙壁和楼板，应设置<strong style="color:#c62828">金属套管</strong>；</p>
+      <p>5、 安装在墙壁内的套管其两端与饰面相平。安装在楼板内的套管，其顶部高出建筑装饰地面20mm，底部应与楼板底面相平，潮湿或用水部位的套管，其顶部应高出建筑地面50mm；</p>
+      <p>6、 穿过楼板的套管与管道间环缝间隙宜控制在10～15mm之间，且用<strong style="color:#c62828">阻燃密实材料填实</strong>，管道的接口不得设在套管内；</p>
+    </div>
 
-<h2 class="chapter-title">一、给水管道施工标准</h2>
+    <div class="sub-title">✅ 正确范例</div>
+    <div class="cards" data-section="WATER-给水-正确">
+      <div class="card">
+        <div class="card-tools">
+          <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>
+          <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button>
+        </div>
+        <div class="card-img" onclick="changeImage(this)"><img src="images/水工/P047_给水_ok_01.jpg" alt="图例"></div>
+        <div class="card-desc ok" contenteditable="true" style="pointer-events: auto; user-select: text;">消防管道及给水主管道须安装支架，使用U型卡槽固定</div>
+      </div>
+      <div class="card">
+        <div class="card-tools">
+          <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>
+          <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button>
+        </div>
+        <div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_图片_01.png" alt="图片&gt;&lt;/div&gt;
+        &lt;div class=" card-desc="" ok"="" contenteditable="false" style="pointer-events: auto; user-select: text;">走廊天花管道合理分布：电在上、水在下；电管让水管、水管让风管、有压力管让无压力管</div>
+      </div>
+      <div class="card">
+        <div class="card-tools">
+          <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>
+          <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button>
+        </div>
+        <div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_图片_02.png" alt="图片&gt;&lt;/div&gt;
+        &lt;div class=" card-desc="" ok"="" contenteditable="false" style="pointer-events: auto; user-select: text;">屋面水箱管道须做保温，铝皮包扎覆裹，并标注水流方向</div>
+      </div>
+    <div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_图片_03.png" alt="图片&gt;&lt;/div&gt;&lt;div class=" card-desc="" ok"="" contenteditable="false">屋面水箱管道须做保温，铝皮包扎覆裹，并标注水流方向</div></div><div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_图片_04.png" alt="图片&gt;&lt;/div&gt;&lt;div class=" card-desc="" ok"="" contenteditable="false">客房水管（冷热水） 阀门须放置于马桶上方检修口内</div></div><div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_图片_05.png" alt="图片&gt;&lt;/div&gt;&lt;div class=" card-desc="" ok"="" contenteditable="false">马桶后侧水管与插座位置需隐藏在马桶背后</div></div><div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_图片_06.png" alt="图片&gt;&lt;/div&gt;&lt;div class=" card-desc="" ok"="" contenteditable="false">卫生间墙面出水口施工时需考虑墙砖的厚度并要求齐平</div></div></div>
+    <div class="add-card-bar"><button class="add-card-btn" onclick="addCard(this,'WATER-给水-正确')">＋ 添加图例</button></div>
 
-<div class="paragraph-block" contenteditable="false" data-section="一、给水管道施工标准">
-  <p class="standard-line">室内给水（冷热水）<strong>严禁走地敷设</strong>，进房必须安装阀门以便切断检修，位置放在马桶上方检修口内</p><p class="standard-line">所有接头、阀门与管道连接处不得有松动、渗漏，安装完毕及时用管卡固定</p><p class="standard-line">室内外热、回水给水管道均需作保温处理，室内水平冷水管和室外管均需作保温（铝皮）处理</p><p class="standard-line">管道安装前需提前套好橡塑保温棉（厚度≧3.0厘米），管道弯头处需做支架，给水管道需要使用角铁支架</p><p class="standard-line">冷热水管<strong>严禁同槽敷设</strong>，间距不小于150mm，安装左热右冷</p><p class="standard-line">走顶、墙面开竖槽、<strong>禁止开横槽</strong></p><p class="standard-line">1、管道穿过墙壁和楼板，应设置金属套管。</p><p class="standard-line">2、安装在墙壁内的套管其两端与饰面相平。安装在楼板内的套管，其顶部高出建筑装饰地面20mm，底部应与楼板底面相平，潮湿或用水部位的套管，其顶部应高出建筑地面50mm。</p><p class="standard-line">3、穿过楼板的套管与管道间环缝间隙宜控制在10～15mm之间，且用阻燃密实材料填实。管道的接口不得设在套管内。</p>
-  <button class="add-text-btn" onclick="addNewTextLine(this)" type="button" title="加一行">＋ 加一行</button>
-</div>
+    <div class="sub-title err">❌ 错误范例</div>
+    <div class="cards" data-section="WATER-给水-错误">
 
-<h3 class="sub-title table-title">管道支架最大间距</h3>
-<table class="data-table">
-  <tr><th>管径（mm）</th><td>12</td><td>14</td><td>16</td><td>18</td><td>20</td><td>25</td><td>32</td><td>40</td><td>50</td><td>63</td><td>75</td><td>90</td><td>110</td></tr>
-  <tr><th>立管</th><td>0.5</td><td>0.6</td><td>0.7</td><td>0.8</td><td>0.9</td><td>1.0</td><td>1.1</td><td>1.3</td><td>1.6</td><td>1.8</td><td>2.0</td><td>2.2</td><td>2.4</td></tr>
-  <tr><th>水平管<br>（冷水）</th><td>0.4</td><td>0.4</td><td>0.5</td><td>0.5</td><td>0.6</td><td>0.7</td><td>0.8</td><td>0.9</td><td>1.0</td><td>1.1</td><td>1.2</td><td>1.35</td><td>1.55</td></tr>
-  <tr><th>水平管<br>（热水）</th><td>0.2</td><td>0.2</td><td>0.25</td><td>0.3</td><td>0.3</td><td>0.35</td><td>0.4</td><td>0.5</td><td>0.6</td><td>0.7</td><td>0.8</td><td>0.9</td><td>1.0</td></tr>
-</table>
+    <div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_图片_07.png" alt="图片&gt;&lt;/div&gt;&lt;div class=" card-desc="" err"="" contenteditable="false">客房水管（冷热水） 阀门须放置于马桶上方检修口内<br><br></div></div><div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_图片_08.png" alt="图片&gt;&lt;/div&gt;&lt;div class=" card-desc="" err"="" contenteditable="false">卫生间墙面出水口施工时需考虑墙砖的厚度并要求齐平<br><br></div></div><div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_图片_09.png" alt="图片&gt;&lt;/div&gt;&lt;div class=" card-desc="" err"="" contenteditable="false"><div align="center">孔洞未吊模</div></div></div><div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_图片_10.png" alt="图片&gt;&lt;/div&gt;&lt;div class=" card-desc="" err"="" contenteditable="false"><div align="center">孔洞未吊模</div></div></div></div>
+    <div class="add-card-bar"><button class="add-card-btn" onclick="addCard(this,'WATER-给水-错误')">＋ 添加图例</button></div>
+  </div>
+  <div class="chapter">
+    <div class="chapter-title">二、排水施工标准</div>
+    <div class="text-block" contenteditable="true" style="line-height:2">
+      <p>1、 废、污<strong style="color:#c62828">必须分流</strong>，禁止共用立管；</p>
+      <p>2、 排污主立管须使用<strong style="color:#c62828">中空螺旋消音管</strong>，经客房区域及卫生间排水做隔音处理；</p>
+      <p>3、 排气管径不小于110mm（按审核图纸施工），淋浴房地漏下水管须用<strong style="color:#c62828">75mmPVC管</strong>，马桶干区与淋浴湿区存水弯共用，脸盆单独存水弯，排水、排污出屋面通气管不得合并；</p>
+      <p>4、 出屋面管路须高于女儿墙并加盖风帽，排气管出屋面须高于废、污通气管<strong style="color:#c62828">600mm</strong>以上并加盖风帽；</p>
+      <p>5、 立管安装到顶层后，出屋面管的高度应符合华住要求并安装透气帽；高层建筑PVC排水管≥100的必须加设<strong style="color:#c62828">阻火圈</strong>，紧贴顶板，至少3个固定点；</p><p>6、为了减少管道的局部阻力和防止污物堵塞管道 ，排水管与排水管立管的连接应采用<b><font color="#c62828">两个45°弯头连接</font></b> ，排水管道的横管与横管、横管与立管的连接应采用<b><font color="#c62828">斜三通或90°斜四通</font></b> ，预埋的管道接口处应进行临时封堵 ， 防止堵塞。<br>7、横向汇合排管每间隔10-15m需设清扫检修口。</p><p>8、排水横管需按照华住隔音方案进行隔音材料包裹处理 ，桔子品牌有所区别：使用<b><font color="#c62828">25厚隔音毡包裹</font></b> ，外层使用2mm厚层隔音垫包裹密实 ，形成多层式的结构 ，使用胶体稳固粘接 ，包扎布外胶圈紧固；<br>9、管道井需<b><font color="#c62828">砌筑到顶</font></b> ，井道内楼板洞口需封堵；</p>
+    </div>
 
-<h3 class="sub-title ok">正确范例</h3>
-<div class="cards">
-  <div class="card">
-  <div class="card-tools" style="display:none;">
-    <button class="card-tool-btn" onclick="changeCardImage(this)" type="button" title="更换图片">📷 换图</button>
-    <button class="card-tool-btn del" onclick="deleteCard(this)" type="button" title="删除此图">🗑 删除</button>
-  </div>
-    <div class="card-img"><img src="images/水工/给水_正确_01.jpg" alt="正确范例1"></div>
-    <div class="card-desc-ok">√ 消防管道及主管道安装支架使用U型卡槽固定</div>
-  </div>
-  <div class="card">
-  <div class="card-tools" style="display:none;">
-    <button class="card-tool-btn" onclick="changeCardImage(this)" type="button" title="更换图片">📷 换图</button>
-    <button class="card-tool-btn del" onclick="deleteCard(this)" type="button" title="删除此图">🗑 删除</button>
-  </div>
-    <div class="card-img"><img src="images/水工/给水_正确_02.jpg" alt="正确范例2"></div>
-    <div class="card-desc-ok">√ 管道排列整齐、管卡间距均匀</div>
-  </div>
-  <div class="card">
-  <div class="card-tools" style="display:none;">
-    <button class="card-tool-btn" onclick="changeCardImage(this)" type="button" title="更换图片">📷 换图</button>
-    <button class="card-tool-btn del" onclick="deleteCard(this)" type="button" title="删除此图">🗑 删除</button>
-  </div>
-    <div class="card-img"><img src="images/水工/给水_正确_03.jpg" alt="正确范例3"></div>
-    <div class="card-desc-ok">√ 屋面水箱管道保温、铝皮包扎覆裹</div>
-  </div>
-  <div class="card">
-  <div class="card-tools" style="display:none;">
-    <button class="card-tool-btn" onclick="changeCardImage(this)" type="button" title="更换图片">📷 换图</button>
-    <button class="card-tool-btn del" onclick="deleteCard(this)" type="button" title="删除此图">🗑 删除</button>
-  </div>
-    <div class="card-img"><img src="images/水工/给水_正确_金属套管_01.jpg" alt="金属套管"></div>
-    <div class="card-desc-ok">√ 管道穿过墙壁和楼板，应设置金属套管</div>
-  </div>
+    <div class="sub-title">✅ 正确范例</div>
+    <div class="cards" data-section="WATER-排水-正确">
+      <div class="card">
+        <div class="card-tools">
+          <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>
+          <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button>
+        </div>
+        <div class="card-img" onclick="changeImage(this)"><img src="images/水工/P057_排水_ok_01.jpg" alt="图例"></div>
+        <div class="card-desc ok" contenteditable="true" style="pointer-events: auto; user-select: text;"><div align="center">排水点位开孔使用专用模具</div></div>
+      </div>
+      <div class="card">
+        <div class="card-tools">
+          <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>
+          <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button>
+        </div>
+        <div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_v4_图片_01.png" alt="图片"></div>
+        <div class="card-desc ok" contenteditable="true" style="pointer-events: auto; user-select: text;"><div align="center">排水点位开孔使用专用模具</div></div>
+      </div>
+      <div class="card">
+        <div class="card-tools">
+          <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>
+          <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button>
+        </div>
+        <div class="card-img" onclick="changeImage(this)"><img src="images/水工/P061_排水_ok_01.jpg" alt="图例"></div>
+        <div class="card-desc ok" contenteditable="true" style="pointer-events: auto; user-select: text;">侧排风时需增加轴流风机，排风扇主管道与PVC管道连接使用金属管箍</div>
+      </div>
+      <div class="card">
+        <div class="card-tools">
+          <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>
+          <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button>
+        </div>
+        <div class="card-img" onclick="changeImage(this)"><img src="images/水工/P062_排水_ok_01.jpg" alt="图例"></div>
+        <div class="card-desc ok" contenteditable="true" style="pointer-events: auto; user-select: text;">马桶管弯头须带清扫口；排气管立管须在最底端做引流管</div>
+      </div>
+      <div class="card">
+        <div class="card-tools">
+          <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>
+          <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button>
+        </div>
+        <div class="card-img" onclick="changeImage(this)"><img src="images/水工/P064_排水_ok_01.jpg" alt="图例"></div>
+        <div class="card-desc ok" contenteditable="true" style="pointer-events: auto; user-select: text;">排水管与立管用两个45°弯头连接；横管与横管、横管与立管用斜三通或90°斜四通；预埋接口临时封堵</div>
+      </div>
+      <div class="card">
+        <div class="card-tools">
+          <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>
+          <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button>
+        </div>
+        <div class="card-img" onclick="changeImage(this)"><img src="images/水工/P065_排水_ok_01.jpg" alt="图例"></div>
+        <div class="card-desc ok" contenteditable="true" style="pointer-events: auto; user-select: text;">排水横管按华住隔音方案包裹：25厚隔音毡+2mm隔音垫多层结构，胶圈紧固；管道井砌筑到顶</div>
+      </div>
+    <div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_v4_图片_02.png" alt="图片"></div><div class="card-desc ok" contenteditable="true" style="pointer-events: auto; user-select: text;">&nbsp;出屋面管路需高于女儿墙并加盖风帽 ，排气管出屋面的管路需高于废、污通气管600mm以上并加盖风帽；</div></div><div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_v4_图片_03.png" alt="图片"></div><div class="card-desc ok" contenteditable="true" style="pointer-events: auto; user-select: text;">高层建筑PVC排水管≥100的必须加设阻火圈 ， 阻火圈固定牢固 ，紧贴顶板 ，至少3个固定 点。</div></div><div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_v4_图片_04.png" alt="图片"></div><div class="card-desc ok" contenteditable="true" style="pointer-events: auto; user-select: text;">卫生间下水管道采用隔音棉包裹处理</div></div><div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_v4_图片_05.png" alt="图片"></div><div class="card-desc ok" contenteditable="true" style="pointer-events: auto; user-select: text;"><div align="center">排水管道成品支模</div></div></div><div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_v4_图片_06.png" alt="图片"></div><div class="card-desc ok" contenteditable="true" style="pointer-events: auto; user-select: text;">侧排风时需增加轴流风机</div></div><div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_v4_图片_07.png" alt="图片"></div><div class="card-desc ok" contenteditable="true" style="pointer-events: auto; user-select: text;">连接需要使用金属管箍</div></div><div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_v4_图片_08.png" alt="图片"></div><div class="card-desc ok" contenteditable="true" style="pointer-events: auto; user-select: text;">马桶管弯头须带清扫口；</div></div><div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_v4_图片_09.png" alt="图片"></div><div class="card-desc ok" contenteditable="true" style="pointer-events: auto; user-select: text;">排气管立管须在最底端做引流管</div></div><div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_v4_图片_10.png" alt="图片"></div><div class="card-desc ok" contenteditable="true" style="pointer-events: auto; user-select: text;"><div align="center">干湿区地漏共用存水弯</div></div></div><div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_v4_图片_11.png" alt="图片"></div><div class="card-desc ok" contenteditable="true" style="pointer-events: auto; user-select: text;">采用两个45°弯头连接</div></div><div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_v4_图片_12.png" alt="图片"></div><div class="card-desc ok" contenteditable="true" style="pointer-events: auto; user-select: text;">排水横管需按照华住隔音方案进行隔音材料包裹处理</div></div><div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_v4_图片_13.png" alt="图片"></div><div class="card-desc ok" contenteditable="true" style="pointer-events: auto; user-select: text;">消毒间及隔油池下水需要使用PVC管道连接</div></div><div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_v4_图片_14.png" alt="图片"></div><div class="card-desc ok" contenteditable="true" style="pointer-events: auto; user-select: text;">消毒间及隔油池下水需要使用PVC管道连接</div></div></div>
+    <div class="add-card-bar"><button class="add-card-btn" onclick="addCard(this,'WATER-排水-正确')">＋ 添加图例</button></div>
 
-  <div class="cards-add-bar">
-    <button class="cards-add-btn" onclick="addNewCard(this)" type="button">
-      ＋ 在此处添加一张图例
-    </button>
+    <div class="sub-title err">❌ 错误范例</div>
+    <div class="cards" data-section="WATER-排水-错误">
+      <div class="card">
+        <div class="card-tools">
+          <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>
+          <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button>
+        </div>
+        <div class="card-img" onclick="changeImage(this)"><img src="images/水工/P058_排水_err_01.jpg" alt="图例"></div>
+        <div class="card-desc err" contenteditable="true" style="pointer-events: auto; user-select: text;"><div align="center">连续开孔</div></div>
+      </div>
+      <div class="card">
+        <div class="card-tools">
+          <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>
+          <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button>
+        </div>
+        <div class="card-img" onclick="changeImage(this)"><img src="images/水工/P059_排水_err_01.jpg" alt="图例"></div>
+        <div class="card-desc err" contenteditable="true" style="pointer-events: auto; user-select: text;"><div align="center">离墙太远</div></div>
+      </div>
+    <div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_v4_图片_15.png" alt="图片"></div><div class="card-desc err" contenteditable="true" style="pointer-events: auto; user-select: text;"><div align="center">污、 废未分流</div></div></div><div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_v4_图片_16.png" alt="图片"></div><div class="card-desc err" contenteditable="true" style="pointer-events: auto; user-select: text;"><div align="center">可见台盆下水需使用P弯</div></div></div></div>
+    <div class="add-card-bar"><button class="add-card-btn" onclick="addCard(this,'WATER-排水-错误')">＋ 添加图例</button></div>
   </div>
-</div>
+  <div class="chapter">
+    <div class="chapter-title">三、卫生间防水施工标准</div>
+    <div class="text-block" contenteditable="true" style="line-height:2"><p>1、 防水材料地面<b><font color="#c62828">丙纶、墙面JS防水涂料</font></b>；&nbsp;防水高度：淋浴区<strong style="color:#c62828">1800mm</strong>（顶喷<strong style="color:#c62828">20</strong><strong>00</strong><strong style="color:#c62828">mm</strong>）、台盆处<strong style="color:#c62828">1400mm</strong>、马桶后<strong style="color:#c62828">400mm</strong>、其它墙面<strong style="color:#c62828">400mm</strong>；</p>
+      <p>2、 丙纶施工在转角处须上转，卫生间干湿分离止水坎可使用废弃石材，两段封堵好；</p>
+      <p>3、 防水施工完成后，闭水试验<strong style="color:#c62828">不得低于48小时</strong>；</p>
+      <p>4、 首层无地下室须做<strong style="color:#c62828">防潮处理</strong>；⭐⭐⭐⭐⭐</p>
+    </div>
 
-<h3 class="sub-title err">错误范例</h3>
-<div class="cards">
-  <div class="card">
-  <div class="card-tools" style="display:none;">
-    <button class="card-tool-btn" onclick="changeCardImage(this)" type="button" title="更换图片">📷 换图</button>
-    <button class="card-tool-btn del" onclick="deleteCard(this)" type="button" title="删除此图">🗑 删除</button>
-  </div>
-    <div class="card-img"><img src="images/水工/给水_错误_01.png" alt="错误范例1"></div>
-    <div class="card-desc-err">× 管道接头埋在墙体内</div>
-  </div>
-  <div class="card">
-  <div class="card-tools" style="display:none;">
-    <button class="card-tool-btn" onclick="changeCardImage(this)" type="button" title="更换图片">📷 换图</button>
-    <button class="card-tool-btn del" onclick="deleteCard(this)" type="button" title="删除此图">🗑 删除</button>
-  </div>
-    <div class="card-img"><img src="images/水工/给水_错误_02.png" alt="错误范例2"></div>
-    <div class="card-desc-err">× 管道未做保温或保温不到位</div>
-  </div>
-  <div class="card">
-  <div class="card-tools" style="display:none;">
-    <button class="card-tool-btn" onclick="changeCardImage(this)" type="button" title="更换图片">📷 换图</button>
-    <button class="card-tool-btn del" onclick="deleteCard(this)" type="button" title="删除此图">🗑 删除</button>
-  </div>
-    <div class="card-img"><img src="images/水工/给水_错误_03.png" alt="错误范例3"></div>
-    <div class="card-desc-err">× 给水管走地敷设</div>
-  </div>
+    <div class="sub-title">✅ 正确范例</div>
+    <div class="cards" data-section="WATER-防水-正确">
+      <div class="card">
+        <div class="card-tools">
+          <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>
+          <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button>
+        </div>
+        <div class="card-img" onclick="changeImage(this)"><img src="images/水工/P075_防水_ok_01.jpg" alt="图例"></div>
+        <div class="card-desc ok" contenteditable="true" style="pointer-events: auto; user-select: text;">淋浴房区域二遍防水</div>
+      </div>
+      <div class="card">
+        <div class="card-tools">
+          <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>
+          <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button>
+        </div>
+        <div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_v5_图片_01.png" alt="图片"></div>
+        <div class="card-desc ok" contenteditable="true" style="pointer-events: auto; user-select: text;"><div align="center">丙纶及JS</div></div>
+      </div>
+      <div class="card">
+        <div class="card-tools">
+          <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>
+          <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button>
+        </div>
+        <div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_v5_图片_02.png" alt="图片"></div>
+        <div class="card-desc ok" contenteditable="true" style="pointer-events: auto; user-select: text;"><div align="center">暗藏防水反梁</div></div>
+      </div>
+    <div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_v5_图片_03.png" alt="图片"></div><div class="card-desc ok" contenteditable="true"><div align="center">JS分区域涂刷</div></div></div><div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_v5_图片_04.png" alt="图片"></div><div class="card-desc ok" contenteditable="true">防水施工完成后 ， 闭水试验不得低于48小</div></div><div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_v5_图片_05.png" alt="图片"></div><div class="card-desc ok" contenteditable="true"><div align="center">玻璃隔断过门石先铺贴</div></div></div><div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_v5_图片_06.png" alt="图片"></div><div class="card-desc ok" contenteditable="true">闭水试验完成后 ， 进行水泥砂浆找坪保护</div></div><div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_v5_图片_07.png" alt="图片"></div><div class="card-desc ok" contenteditable="true">闭水试验完成后 ， 进行水泥砂浆找坪保护</div></div><div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_v5_图片_08.png" alt="图片"></div><div class="card-desc ok" contenteditable="true"><div align="center">挡水石端头必须封堵严实</div></div></div></div>
+    <div class="add-card-bar"><button class="add-card-btn" onclick="addCard(this,'WATER-防水-正确')">＋ 添加图例</button></div>
 
-  <div class="cards-add-bar">
-    <button class="cards-add-btn" onclick="addNewCard(this)" type="button">
-      ＋ 在此处添加一张图例
-    </button>
-  </div>
-</div>
-
-</div>
-
-<!-- ============================================================ -->
-<!-- ====== 第二章：排水 ====== -->
-<!-- ============================================================ -->
-<div class="chapter">
-
-<h2 class="chapter-title">二、排水施工标准</h2>
-
-<h3 class="sub-title table-title">排水管道支吊架间距</h3>
-<table class="data-table">
-  <tr><th>管径（mm）</th><td>50</td><td>75</td><td>110</td><td>160</td></tr>
-  <tr><th>立管（m）</th><td>1.2</td><td>1.5</td><td>2.0</td><td>2.0</td></tr>
-  <tr><th>横管（m）</th><td>0.5</td><td>0.75</td><td>1.10</td><td>1.60</td></tr>
-</table>
-
-<h3 class="sub-title table-title">排水管道坡度控制</h3>
-<table class="data-table" style="max-width:400px;">
-  <tr><th>项次</th><th>管径</th><th>标准坡度</th><th>最小坡度</th></tr>
-  <tr><td>1</td><td>50</td><td>0.025</td><td>0.012</td></tr>
-  <tr><td>2</td><td>75</td><td>0.015</td><td>0.008</td></tr>
-  <tr><td>3</td><td>110</td><td>0.012</td><td>0.006</td></tr>
-  <tr><td>4</td><td>160</td><td>0.007</td><td>0.004</td></tr>
-</table>
-
-<div class="paragraph-block" contenteditable="false" data-section="二、排水施工标准">
-  <p class="standard-line">卫生间排水管必须使用同层排水技术</p><p class="standard-line">排水管必须做通水试验和通球试验，<strong>禁止排水管穿楼板</strong>（非同层排水）</p><p class="standard-line">排污主立管需使用中空螺旋消音管，经客房区域及卫生间排水做隔音处理</p><p class="standard-line">淋浴房地漏下水管需用75mmPVC管，存水弯需两两合用</p>
-  <button class="add-text-btn" onclick="addNewTextLine(this)" type="button" title="加一行">＋ 加一行</button>
-</div>
-
-<h3 class="sub-title ok">正确范例</h3>
-<div class="cards">
-  <div class="card">
-  <div class="card-tools" style="display:none;">
-    <button class="card-tool-btn" onclick="changeCardImage(this)" type="button" title="更换图片">📷 换图</button>
-    <button class="card-tool-btn del" onclick="deleteCard(this)" type="button" title="删除此图">🗑 删除</button>
-  </div>
-    <div class="card-img"><img src="images/水工/排水_正确_01.jpg" alt="排水正确1"></div>
-    <div class="card-desc-ok">√ 排水点位开孔模具</div>
-  </div>
-  <div class="card">
-  <div class="card-tools" style="display:none;">
-    <button class="card-tool-btn" onclick="changeCardImage(this)" type="button" title="更换图片">📷 换图</button>
-    <button class="card-tool-btn del" onclick="deleteCard(this)" type="button" title="删除此图">🗑 删除</button>
-  </div>
-    <div class="card-img"><img src="images/水工/排水_正确_02.jpg" alt="排水正确2"></div>
-    <div class="card-desc-ok">√ 排水管道规范施工</div>
-  </div>
-  <div class="card">
-  <div class="card-tools" style="display:none;">
-    <button class="card-tool-btn" onclick="changeCardImage(this)" type="button" title="更换图片">📷 换图</button>
-    <button class="card-tool-btn del" onclick="deleteCard(this)" type="button" title="删除此图">🗑 删除</button>
-  </div>
-    <div class="card-img"><img src="images/水工/排水_正确_05.jpg" alt="排水正确3"></div>
-    <div class="card-desc-ok">√ 马桶管弯头须带清扫口</div>
-  </div>
-
-  <div class="cards-add-bar">
-    <button class="cards-add-btn" onclick="addNewCard(this)" type="button">
-      ＋ 在此处添加一张图例
-    </button>
-  </div>
-</div>
-
-<h3 class="sub-title err">错误范例</h3>
-<div class="cards">
-  <div class="card">
-  <div class="card-tools" style="display:none;">
-    <button class="card-tool-btn" onclick="changeCardImage(this)" type="button" title="更换图片">📷 换图</button>
-    <button class="card-tool-btn del" onclick="deleteCard(this)" type="button" title="删除此图">🗑 删除</button>
-  </div>
-    <div class="card-img"><img src="images/水工/排水_错误_01.jpg" alt="排水错误1"></div>
-    <div class="card-desc-err">× 排水施工不规范</div>
-  </div>
-  <div class="card">
-  <div class="card-tools" style="display:none;">
-    <button class="card-tool-btn" onclick="changeCardImage(this)" type="button" title="更换图片">📷 换图</button>
-    <button class="card-tool-btn del" onclick="deleteCard(this)" type="button" title="删除此图">🗑 删除</button>
-  </div>
-    <div class="card-img"><img src="images/水工/排水_错误_02.jpg" alt="排水错误2"></div>
-    <div class="card-desc-err">× 排水管道安装不符合要求</div>
-  </div>
-  <div class="card">
-  <div class="card-tools" style="display:none;">
-    <button class="card-tool-btn" onclick="changeCardImage(this)" type="button" title="更换图片">📷 换图</button>
-    <button class="card-tool-btn del" onclick="deleteCard(this)" type="button" title="删除此图">🗑 删除</button>
-  </div>
-    <div class="card-img"><img src="images/水工/排水_错误_03.jpg" alt="排水错误3"></div>
-    <div class="card-desc-err">× 排水管固定不到位</div>
-  </div>
-
-  <div class="cards-add-bar">
-    <button class="cards-add-btn" onclick="addNewCard(this)" type="button">
-      ＋ 在此处添加一张图例
-    </button>
-  </div>
-</div>
-
-</div>
-
-<!-- ============================================================ -->
-<!-- ====== 第三章：防水 ====== -->
-<!-- ============================================================ -->
-<div class="chapter">
-
-<h2 class="chapter-title">三、卫生间防水施工标准</h2>
-
-<div class="paragraph-block" contenteditable="false" data-section="三、卫生间防水施工标准">
-  <p class="standard-line">基层处理：平整、干燥、无浮灰</p><p class="standard-line">防水涂刷：横竖交叉涂刷<strong>至少两遍</strong></p><p class="standard-line">墙面防水高度：淋浴区<strong>≥1800mm</strong>，其余区域≥300mm</p><p class="standard-line">墙面与地面防水按工序完成，不可墙面完成后再做地面</p><p class="standard-line">门口挡水坎必须做，高度≥50mm，端头必须封堵严实</p><p class="standard-line">防水完成后须做闭水试验且<strong>不低于48小时</strong>，前往楼下检查无渗漏</p><p class="standard-line">闭水试验完成后，用水泥砂浆找平硬化后贴砖</p>
-  <button class="add-text-btn" onclick="addNewTextLine(this)" type="button" title="加一行">＋ 加一行</button>
-</div>
-
-<h3 class="sub-title ok">正确范例</h3>
-<div class="cards">
-  <div class="card">
-  <div class="card-tools" style="display:none;">
-    <button class="card-tool-btn" onclick="changeCardImage(this)" type="button" title="更换图片">📷 换图</button>
-    <button class="card-tool-btn del" onclick="deleteCard(this)" type="button" title="删除此图">🗑 删除</button>
-  </div>
-    <div class="card-img"><img src="images/水工/防水_正确_01.jpg" alt="防水正确1"></div>
-    <div class="card-desc-ok">√ 闭水试验不低于48小时</div>
-  </div>
-  <div class="card">
-  <div class="card-tools" style="display:none;">
-    <button class="card-tool-btn" onclick="changeCardImage(this)" type="button" title="更换图片">📷 换图</button>
-    <button class="card-tool-btn del" onclick="deleteCard(this)" type="button" title="删除此图">🗑 删除</button>
-  </div>
-    <div class="card-img"><img src="images/水工/防水_正确_02.jpg" alt="防水正确2"></div>
-    <div class="card-desc-ok">√ 防水涂刷均匀、阴角处理到位</div>
-  </div>
-  <div class="card">
-  <div class="card-tools" style="display:none;">
-    <button class="card-tool-btn" onclick="changeCardImage(this)" type="button" title="更换图片">📷 换图</button>
-    <button class="card-tool-btn del" onclick="deleteCard(this)" type="button" title="删除此图">🗑 删除</button>
-  </div>
-    <div class="card-img"><img src="images/水工/防水_正确_03.jpg" alt="防水正确3"></div>
-    <div class="card-desc-ok">√ 淋浴房区域止水坎施工规范</div>
-  </div>
-
-  <div class="cards-add-bar">
-    <button class="cards-add-btn" onclick="addNewCard(this)" type="button">
-      ＋ 在此处添加一张图例
-    </button>
-  </div>
-</div>
-<div class="cards">
-  <div class="card">
-  <div class="card-tools" style="display:none;">
-    <button class="card-tool-btn" onclick="changeCardImage(this)" type="button" title="更换图片">📷 换图</button>
-    <button class="card-tool-btn del" onclick="deleteCard(this)" type="button" title="删除此图">🗑 删除</button>
-  </div>
-    <div class="card-img"><img src="images/水工/防水_正确_05.png" alt="防水正确4"></div>
-    <div class="card-desc-ok">√ 闭水试验后水泥砂浆找平保护</div>
-  </div>
-  <div class="card">
-  <div class="card-tools" style="display:none;">
-    <button class="card-tool-btn" onclick="changeCardImage(this)" type="button" title="更换图片">📷 换图</button>
-    <button class="card-tool-btn del" onclick="deleteCard(this)" type="button" title="删除此图">🗑 删除</button>
-  </div>
-    <div class="card-img"><img src="images/水工/防水_正确_06.jpg" alt="防水正确5"></div>
-    <div class="card-desc-ok">√ 防水保护层工艺到位</div>
-  </div>
-  <div class="card">
-  <div class="card-tools" style="display:none;">
-    <button class="card-tool-btn" onclick="changeCardImage(this)" type="button" title="更换图片">📷 换图</button>
-    <button class="card-tool-btn del" onclick="deleteCard(this)" type="button" title="删除此图">🗑 删除</button>
-  </div>
-    <div class="card-img"><img src="images/水工/防水_正确_08.png" alt="防水正确6"></div>
-    <div class="card-desc-ok">√ 防水完成后禁止踩踏破坏</div>
-  </div>
-
-  <div class="cards-add-bar">
-    <button class="cards-add-btn" onclick="addNewCard(this)" type="button">
-      ＋ 在此处添加一张图例
-    </button>
+    <div class="sub-title err">❌ 错误范例</div>
+    <div class="cards" data-section="WATER-防水-错误">
+      <div class="card">
+        <div class="card-tools">
+          <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>
+          <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button>
+        </div>
+        <div class="card-img" onclick="changeImage(this)"><img src="images/水工/P073_防水_err_01.jpg" alt="图例"></div>
+        <div class="card-desc err" contenteditable="true" style="pointer-events: auto; user-select: text;">如墙面铺贴瓷砖，禁止丙纶布上墙高度超过400mm</div>
+      </div>
+      <div class="card">
+        <div class="card-tools">
+          <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>
+          <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button>
+        </div>
+        <div class="card-img" onclick="changeImage(this)"><img src="images/水工/P078_防水_err_01.png" alt="图例"></div>
+        <div class="card-desc err" contenteditable="true" style="pointer-events: auto; user-select: text;"><div align="center">防水基层处理不到位</div></div>
+      </div>
+    <div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_v5_图片_09.png" alt="图片"></div><div class="card-desc err" contenteditable="true"><div align="center">防水基层处理不到位</div></div></div><div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_v5_图片_10.png" alt="图片"></div><div class="card-desc err" contenteditable="true">防水完成禁止踩踏及尖锐物质进入 ， 对防水层破坏</div></div><div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_v5_图片_11.png" alt="图片"></div><div class="card-desc err" contenteditable="true"><div align="center">挡水石端头未封堵严实</div></div></div><div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img" onclick="changeImage(this)"><img src="images/水工/uploaded_v5_图片_12.png" alt="图片"></div><div class="card-desc err" contenteditable="true"><div align="center">首层无地下室需做防潮处理</div></div></div></div>
+    <div class="add-card-bar"><button class="add-card-btn" onclick="addCard(this,'WATER-防水-错误')">＋ 添加图例</button></div>
   </div>
 </div>
 
-<h3 class="sub-title err">错误范例</h3>
-<div class="cards">
-  <div class="card">
-  <div class="card-tools" style="display:none;">
-    <button class="card-tool-btn" onclick="changeCardImage(this)" type="button" title="更换图片">📷 换图</button>
-    <button class="card-tool-btn del" onclick="deleteCard(this)" type="button" title="删除此图">🗑 删除</button>
-  </div>
-    <div class="card-img"><img src="images/水工/防水_错误_01.jpg" alt="防水错误1"></div>
-    <div class="card-desc-err">× 丙纶布上墙高度超过400mm（禁止）</div>
-  </div>
-  <div class="card">
-  <div class="card-tools" style="display:none;">
-    <button class="card-tool-btn" onclick="changeCardImage(this)" type="button" title="更换图片">📷 换图</button>
-    <button class="card-tool-btn del" onclick="deleteCard(this)" type="button" title="删除此图">🗑 删除</button>
-  </div>
-    <div class="card-img"><img src="images/水工/防水_错误_02.png" alt="防水错误2"></div>
-    <div class="card-desc-err">× 防水基层处理不到位</div>
-  </div>
-  <div class="card">
-  <div class="card-tools" style="display:none;">
-    <button class="card-tool-btn" onclick="changeCardImage(this)" type="button" title="更换图片">📷 换图</button>
-    <button class="card-tool-btn del" onclick="deleteCard(this)" type="button" title="删除此图">🗑 删除</button>
-  </div>
-    <div class="card-img"><img src="images/水工/防水_错误_03.png" alt="防水错误3"></div>
-    <div class="card-desc-err">× 防水层破损、未做保护</div>
-  </div>
-
-  <div class="cards-add-bar">
-    <button class="cards-add-btn" onclick="addNewCard(this)" type="button">
-      ＋ 在此处添加一张图例
-    </button>
-  </div>
+<div class="fmt-toolbar" id="fmtToolbar" onmousedown="event.preventDefault()">
+  <button onmousedown="event.preventDefault()" onclick="fmt('bold')" title="加粗"><b>B</b></button>
+  <select onmousedown="event.preventDefault()" onchange="fmt('fontSize', this.value)" title="字号">
+    <option value="2">小</option>
+    <option value="3" selected>正常</option>
+    <option value="5">大</option>
+    <option value="7">特大</option>
+  </select>
+  <input type="color" onmousedown="event.preventDefault()" onchange="fmt('foreColor', this.value)" value="#c62828" title="字体颜色">
+  <button onmousedown="event.preventDefault()" onclick="fmt('hiliteColor','#fff59d')" title="背景色">🖍</button>
+  <button onmousedown="event.preventDefault()" onclick="fmt('justifyLeft')" title="左对齐">⇤</button>
+  <button onmousedown="event.preventDefault()" onclick="fmt('justifyCenter')" title="居中">⇔</button>
+  <button onmousedown="event.preventDefault()" onclick="fmt('removeFormat')" title="清除格式">⌫</button>
 </div>
 
+<div class="toast" id="toast"></div>
+
+<!-- 大图预览 -->
+<div class="img-viewer" id="imgViewer">
+  <div class="img-viewer-mask" onclick="closeViewer()"></div>
+  <img class="img-viewer-img" id="imgViewerImg" src="" alt="">
+  <div class="img-viewer-close" onclick="closeViewer()">×</div>
 </div>
 
-<!-- ============================================================ -->
-<!-- ====== 验收关键点 ====== -->
-<!-- ============================================================ -->
-<div class="chapter">
-
-<h2 class="chapter-title">⚠️ 验收关键点</h2>
-<ul class="checklist">
-  <li>给水管道打压试验（0.8MPa保持30分钟不掉压）</li>
-  <li>排水管道通水试验（所有排水口通畅）</li>
-  <li>排水管道通球试验（球径≥管径2/3）</li>
-  <li>卫生间闭水试验（48小时无渗漏）</li>
-  <li>地漏排水坡度（地漏为最低点）</li>
-  <li>淋浴区防水高度≥1800mm</li>
-  <li>防水保护层完好无破坏</li>
-</ul>
-
-</div>
-
-<!-- ====== 使用说明 ====== -->
-<div class="help-box">
-  <h3>📌 如何替换图片</h3>
-  <ol>
-    <li>打开文件夹：<code>华住筹建规范资料库/images/水工/</code></li>
-    <li>找到对应文件（如 <code>给水_正确_01.jpg</code>、<code>防水_错误_02.png</code>）</li>
-    <li>把你想要的图片<strong>改成同样的文件名</strong>，覆盖进去即可</li>
-    <li>图片建议尺寸：<strong>189×189 像素</strong>（约5×5厘米），等比缩放不裁剪</li>
-    <li>刷新网页即可看到新图片</li>
-  </ol>
-</div>
-
-<button class="save-btn" id="saveBtn" onclick="saveChanges()">💾 保存修改</button>
-
-<div class="back-link">
-  <a href="index.html">← 返回资料库首页</a>
-</div>
-
-</div>
-
-<div class="saved-toast" id="savedToast">✅ 修改已保存</div>
+<input type="file" id="fileInput" accept="image/*" style="display:none">
+<input type="file" id="jsonInput" accept=".json" style="display:none">
 
 <script>
 var isEditing = false;
+var pendingCardImg = null;
+
+function bindCardDescs() {
+  document.querySelectorAll('.card-desc').forEach(function(el) {
+    el.addEventListener('mousedown', function(e) {
+      e.stopPropagation();
+    });
+    el.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (document.body.classList.contains('editing')) {
+        this.focus();
+        var range = document.createRange();
+        range.selectNodeContents(this);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+    });
+  });
+}
+
+
+/* === 登录态守卫已关闭（待开启时去掉此注释）===
+// ====== 登录态守卫 ======
+(function(){
+  try {
+    var s = JSON.parse(localStorage.getItem('huazhu_session_v2'));
+    if (!s) {
+      alert('⚠️ 请先登录\n\n即将跳转到登录页面');
+
+      window.location.href = 'index.html';
+      return;
+    }
+    window.__USER = s;
+    if (s.role !== 'admin') {
+      // 普通用户: 隐藏编辑相关工具按钮
+      ['editBtn','saveBtn'].forEach(function(id){
+        var b = document.getElementById(id);
+        if (b) b.style.display = 'none';
+      });
+      // 隐藏导入/导出(暂时保留导出给员工做参考,需要时可调)
+      document.querySelectorAll('.tool-btn').forEach(function(btn){
+        if (btn.textContent.indexOf('导入') >= 0) btn.style.display = 'none';
+        if (btn.textContent.indexOf('导出') >= 0) btn.style.display = 'none';
+      });
+      // 强制所有 text-block 和 card-desc 不可编辑
+      document.addEventListener('DOMContentLoaded', function(){
+        document.querySelectorAll('.text-block, .card-desc').forEach(function(el){
+          el.setAttribute('contenteditable', 'false');
+        });
+      });
+      // 修改 header 副标题
+      var sub = document.querySelector('.header .subtitle');
+      if (sub) sub.textContent = sub.textContent + ' · 员工模式（仅查看）';
+    } else {
+      var sub = document.querySelector('.header .subtitle');
+      if (sub) sub.textContent = sub.textContent + ' · 管理员模式';
+    }
+  } catch(e) { console.error('session guard', e); }
+})();
+=== 登录态守卫结束 === */
 
 function toggleEdit() {
   isEditing = !isEditing;
-  var container = document.querySelector('.container');
-  var btn = document.getElementById('editToggleBtn');
+  var container = document.getElementById('container');
+  var editBtn = document.getElementById('editBtn');
   var saveBtn = document.getElementById('saveBtn');
 
   if (isEditing) {
     container.classList.add('editing');
-    btn.textContent = '🔒 退出编辑';
-    btn.classList.add('active');
-    saveBtn.style.display = 'block';
-    document.querySelectorAll('.editable-text, .standard-text, .card-desc-ok, .card-desc-err, ' +
-      '.chapter-title, .sub-title, .checklist li, .data-table td, .data-table th, ' +
-      '.help-box li, .help-box h3, .help-box code').forEach(function(el) {
-      el.contentEditable = true;
+    document.body.classList.add('editing');
+    editBtn.textContent = '🔒 退出编辑';
+    editBtn.classList.add('active');
+    saveBtn.classList.add('active');
+    document.querySelectorAll('.text-block').forEach(function(el) {
+      el.setAttribute('contenteditable', 'true');
     });
-    // add replace btn for each image
-    document.querySelectorAll('.card-img').forEach(function(wrapper) {
-      var existing = wrapper.querySelector('.img-replace-btn');
-      if (!existing) {
-        var btn2 = document.createElement('button');
-        btn2.className = 'img-replace-btn';
-        btn2.textContent = '📷 更换图片';
-        btn2.onclick = function(e) {
-          e.stopPropagation();
-          var input = document.createElement('input');
-          input.type = 'file';
-          input.accept = 'image/*';
-          input.onchange = function(ev) {
-            var file = ev.target.files[0];
-            if (file) {
-              var reader = new FileReader();
-              reader.onload = function(re) {
-                var img = wrapper.querySelector('img');
-                if (img) img.src = re.target.result;
-              };
-              reader.readAsDataURL(file);
-            }
-          };
-          input.click();
-        };
-        wrapper.appendChild(btn2);
-      }
+    document.querySelectorAll('.card-desc').forEach(function(el) {
+      el.setAttribute('contenteditable', 'true');
+      el.style.pointerEvents = 'auto';
+      el.style.userSelect = 'text';
+      el.style.webkitUserSelect = 'text';
     });
+    showToast('✏️ 已进入编辑模式');
   } else {
     container.classList.remove('editing');
-    btn.textContent = '🖊 编辑';
-    btn.classList.remove('active');
-    saveBtn.style.display = 'none';
-    document.querySelectorAll('[contenteditable]').forEach(function(el) {
-      el.contentEditable = false;
+    document.body.classList.remove('editing');
+    editBtn.textContent = '🖊 编辑';
+    editBtn.classList.remove('active');
+    saveBtn.classList.remove('active');
+    document.querySelectorAll('.text-block, .card-desc').forEach(function(el) {
+      el.setAttribute('contenteditable', 'false');
     });
+    document.getElementById('fmtToolbar').classList.remove('show');
+    showToast('👁 已退出编辑模式');
   }
 }
 
-function saveChanges() {
-  var pageName = location.pathname.split('/').pop().replace('.html', '');
-  var html = document.querySelector('.container').innerHTML;
-  var toast = document.getElementById('savedToast');
-
-  // 先退出编辑模式
-  if (isEditing) toggleEdit();
-
-  // 1. 保存到 localStorage（本地备份）
+function saveData() {
+  var pageName = '水工技术交底卡';
+  var html = document.getElementById('container').innerHTML;
+  // 剥离 base64 大图,避免撑爆 localStorage (5MB 限制)
+  var cleanedHtml = html;
+  var base64Imgs = [];
+  cleanedHtml = cleanedHtml.replace(/<img[^>]+src="data:image\/[^"]+"[^>]*>/g, function(m) {
+    base64Imgs.push(m);
+    return '<img src="images/水工/_pending_upload.png" data-pending="1" alt="待上传">';
+  });
+  var totalSize = cleanedHtml.length;
+  var base64Size = html.length - cleanedHtml.length;
   try {
     localStorage.setItem(pageName, JSON.stringify({
-      html: html,
-      savedAt: new Date().toLocaleString()
+      html: cleanedHtml, savedAt: new Date().toLocaleString(),
+      pendingCount: base64Imgs.length,
+      base64Size: base64Size
     }));
-  } catch (e) {
-    console.error('localStorage保存失败', e);
-  }
-
-  // 2. 异步保存到云端
-  toast.textContent = '⏳ 保存中...';
-  toast.classList.remove('show');
-  void toast.offsetWidth;
-  toast.classList.add('show');
-
-  tcbSave(pageName, html).then(function(ok) {
-    if (ok) {
-      toast.textContent = '✅ 已同步到云端（' + new Date().toLocaleTimeString() + '）';
+    if (base64Imgs.length > 0) {
+      showToast('⚠️ 已保存，但有 ' + base64Imgs.length + ' 张新图未存到服务器（' + (base64Size/1024/1024).toFixed(1) + 'MB）');
+      console.log('待上传图片数据:');
+      base64Imgs.forEach(function(img, i) { console.log('图' + (i+1) + ':', img); });
     } else {
-      toast.textContent = '⚠️ 云端保存失败，已存到本地';
+      showToast('✅ 已保存到本地（' + new Date().toLocaleTimeString() + '）');
     }
-    clearTimeout(window._toastTimer);
-    window._toastTimer = setTimeout(function() {
-      toast.classList.remove('show');
-    }, 3000);
-  });
+  } catch(e) {
+    if (e.name === 'QuotaExceededError') {
+      showToast('❌ 仍超出 localStorage 配额，请联系管理员清理');
+    } else {
+      showToast('❌ 保存失败：' + e.message);
+    }
+  }
 }
 
-// load saved on page load
+function exportData() {
+  var pageName = '水工技术交底卡';
+  var html = document.getElementById('container').innerHTML;
+  var data = { pageName: pageName, html: html, exportAt: new Date().toISOString() };
+  var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '水工技术交底卡_备份.json';
+  a.click();
+  showToast('📤 已导出JSON文件');
+}
 
-// 优先从服务器拉取最新内容
-window.addEventListener('load', function() {
-  setTimeout(function() {
-    var pageName = location.pathname.split('/').pop().replace('.html', '');
-
-    // 1. 先从云端拉取
-    tcbLoad(pageName).then(function(cloudHtml) {
-      if (cloudHtml && cloudHtml.length > 200) {
-        // 云端有内容
-        var saved = localStorage.getItem(pageName);
-        var localHtml = null;
-        try { localHtml = saved ? JSON.parse(saved).html : null; } catch(e) {}
-
-        if (localHtml && localHtml !== cloudHtml) {
-          // 本地和云端不一致，询问用户
-          var useCloud = confirm('🔄 检测到云端和本地内容不一致：\n\n选"确定"使用云端最新版本\n选"取消"使用本地版本');
-          if (useCloud) {
-            document.querySelector('.container').innerHTML = cloudHtml;
-            rebuildEditBar();
-          } else {
-            // 同步到云端
-            tcbSave(pageName, localHtml);
-          }
-        } else {
-          // 只有云端有内容
-          if (!localHtml) {
-            if (confirm('☁️ 检测到云端有保存的版本（其他设备可能编辑过），是否加载？')) {
-              document.querySelector('.container').innerHTML = cloudHtml;
-              rebuildEditBar();
-            }
-          }
-        }
-        return;
+function importData() {
+  document.getElementById('jsonInput').click();
+}
+document.getElementById('jsonInput').addEventListener('change', function(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      var data = JSON.parse(ev.target.result);
+      if (data.html) {
+        document.getElementById('container').innerHTML = data.html;
+        showToast('📥 已导入备份内容');
       }
-
-      // 2. 云端没数据，用 localStorage
-      var saved = localStorage.getItem(pageName);
-      if (saved) {
-        try {
-          var data = JSON.parse(saved);
-          if (data.html && data.html.length > 200) {
-            if (confirm('📂 本地有缓存版本（' + data.savedAt + '），是否加载？')) {
-              document.querySelector('.container').innerHTML = data.html;
-              rebuildEditBar();
-            }
-          }
-        } catch(e) {}
-      }
-    });
-  }, 500);
+    } catch(err) {
+      showToast('❌ 导入失败：文件格式错误');
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
 });
 
-function rebuildEditBar() {
-  var header = document.querySelector('.doc-header');
-  if (header && !header.querySelector('.edit-bar')) {
-    var eb = document.createElement('div');
-    eb.className = 'edit-bar';
-    eb.innerHTML = '<button class="edit-btn" onclick="importLocalData()">📥 导入</button><button class="edit-btn" onclick="exportLocalData()">📤 导出</button><button class="edit-btn" id="editToggleBtn2" onclick="toggleEdit()">🖊 编辑</button><button class="edit-btn" onclick="saveChanges()" style="background:#ff8f00;border-color:#ff8f00;">💾 保存</button>';
-    header.insertBefore(eb, header.firstChild);
+// 保存选区(用工具栏按钮会清掉当前选区,得在按下时存住)
+var savedRange = null;
+function saveSelection() {
+  var sel = window.getSelection();
+  if (sel && sel.rangeCount > 0 && !sel.isCollapsed) {
+    savedRange = sel.getRangeAt(0).cloneRange();
   }
-  if (typeof enhanceCards === 'function') enhanceCards();
-  if (typeof enhanceText === 'function') enhanceText();
+}
+function restoreSelection() {
+  if (savedRange) {
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(savedRange);
+  }
 }
 
+// 选中文本时记下选区(防 mousedown 弄丢)
+document.addEventListener('selectionchange', function() {
+  var sel = window.getSelection();
+  if (sel && sel.rangeCount > 0 && !sel.isCollapsed) {
+    savedRange = sel.getRangeAt(0).cloneRange();
+  }
+});
 
-</script>
-
-
-<script>
-
-// ====== 新增：图卡操作 ======
-function changeCardImage(btn) {
-  var card = btn.closest('.card');
-  if (!card) return;
-  var img = card.querySelector('.card-img img');
-  if (!img) {
-    // 占位图，点击触发文件选择
-    var placeholder = card.querySelector('.card-img');
-    if (placeholder) {
-      placeholder.click();
-      return;
+function fmt(cmd, value) {
+  // execCommand('foreColor') 有个老 bug: 只接受 6 位 #rrggbb 字符串
+  if (cmd === 'foreColor' && value) {
+    if (value.startsWith('rgb')) {
+      var m = value.match(/\d+/g);
+      if (m && m.length >= 3) {
+        value = '#' + [m[0], m[1], m[2]].map(function(n) {
+          return parseInt(n).toString(16).padStart(2, '0');
+        }).join('');
+      }
+    } else if (!value.startsWith('#')) {
+      value = '#' + value;
     }
   }
-  // 创建隐藏文件输入
-  var input = document.createElement('input');
-  input.type = 'file';
-  input.accept = 'image/*';
-  input.onchange = function(e) {
-    var file = e.target.files[0];
-    if (!file) return;
-    var reader = new FileReader();
-    reader.onload = function(ev) {
-      if (img) {
-        img.src = ev.target.result;
-      } else if (placeholder) {
-        placeholder.innerHTML = '<img src="' + ev.target.result + '" alt="">';
-      }
-      showToast('✅ 图片已更换');
-    };
-    reader.readAsDataURL(file);
-  };
-  input.click();
+  // 恢复之前保存的选区(工具栏按钮会清掉选区)
+  restoreSelection();
+  // 兜底:如果没选区,提示用户
+  var sel = window.getSelection();
+  if (!sel || sel.rangeCount === 0 || sel.isCollapsed) {
+    showToast('⚠️ 请先用鼠标选中要标红的文字，再点颜色');
+    return;
+  }
+  try {
+    document.execCommand(cmd, false, value || null);
+  } catch (e) {
+    console.warn('execCommand failed:', cmd, value, e);
+  }
 }
+
+document.addEventListener('mouseup', function() {
+  if (!isEditing) return;
+  var sel = window.getSelection();
+  var toolbar = document.getElementById('fmtToolbar');
+  if (sel && !sel.isCollapsed && sel.rangeCount > 0) {
+    var range = sel.getRangeAt(0);
+    var rect = range.getBoundingClientRect();
+    if (rect.width > 0) {
+      toolbar.style.top = (window.scrollY + rect.top - 45) + 'px';
+      toolbar.style.left = (window.scrollX + rect.left + rect.width/2 - 100) + 'px';
+      toolbar.classList.add('show');
+    }
+  } else {
+    toolbar.classList.remove('show');
+  }
+});
+
+
+function changeImage(btn) {
+  var card = btn.closest('.card');
+  if (!card) card = btn;
+  pendingCardImg = card;
+  document.getElementById('fileInput').click();
+}
+
+document.getElementById('fileInput').addEventListener('change', function(e) {
+  var file = e.target.files[0];
+  if (!file) {
+    pendingCardImg = null;
+    e.target.value = '';
+    return;
+  }
+  var target = pendingCardImg;
+  pendingCardImg = null;
+  if (!target) {
+    var placeholders = document.querySelectorAll('.card-img.placeholder');
+    if (placeholders.length > 0) {
+      target = placeholders[placeholders.length - 1].closest('.card');
+    }
+  }
+  if (!target) {
+    showToast('❌ 找不到目标卡片');
+    e.target.value = '';
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    var imgDiv = target.querySelector('.card-img');
+    if (imgDiv) {
+      imgDiv.innerHTML = '<img src="' + ev.target.result + '" alt="图片">';
+      imgDiv.classList.remove('placeholder');
+      target.classList.remove('card-placeholder');
+      showToast('✅ 图片已上传');
+    } else {
+      showToast('❌ 上传失败：找不到图片位置');
+    }
+  };
+  reader.onerror = function() { showToast('❌ 文件读取失败'); };
+  reader.readAsDataURL(file);
+  e.target.value = '';
+});
 
 function deleteCard(btn) {
   if (!confirm('确认删除这张图？')) return;
   var card = btn.closest('.card');
-  if (card) {
-    card.remove();
-    showToast('🗑 已删除');
+  if (card) { card.remove(); showToast('🗑 已删除'); }
+}
+
+document.addEventListener('mousedown', function(e) {
+  if (e.target.closest('.card-desc')) {
+    if (document.body.classList.contains('editing')) return;
   }
-}
-
-function addNewCard(btn) {
-  var bar = btn.closest('.cards-add-bar');
-  if (!bar) return;
-  var cards = bar.parentElement;  // <div class="cards">
-  var newCard = document.createElement('div');
-  newCard.className = 'card';
-  newCard.innerHTML = `
-    <div class="card-tools" style="display:none;">
-      <button class="card-tool-btn" onclick="changeCardImage(this)" type="button" title="更换图片">📷 换图</button>
-      <button class="card-tool-btn del" onclick="deleteCard(this)" type="button" title="删除此图">🗑 删除</button>
-    </div>
-    <div class="card-img" onclick="changeCardImage(this)" style="cursor:pointer;padding:30px;text-align:center;color:#999;background:#fafafa;border:2px dashed #ddd;">
-      📷 点击上传图片
-    </div>
-    <div class="card-desc-ok" contenteditable="false">√ 请编辑说明文字</div>
-  `;
-  bar.parentNode.insertBefore(newCard, bar);
-  showToast('✅ 新图例已添加，请上传图片');
-  // 进入编辑模式以确保按钮可见
-  if (!document.body.classList.contains('editing')) {
-    toggleEdit();
+  if (e.target.closest('.card-tools') || e.target.closest('.toolbar') || e.target.closest('.add-card-btn')) {
+    e.preventDefault();
   }
-}
+}, true);
 
-function addNewTextLine(btn) {
-  var block = btn.closest('.paragraph-block');
-  if (!block) {
-    // 兼容旧结构：找到最近的 chapter
-    var chapter = btn.closest('.chapter') || btn.closest('div');
-    if (chapter) {
-      var newLine = document.createElement('p');
-      newLine.className = 'standard-line';
-      newLine.contentEditable = 'true';
-      newLine.textContent = '新加条款，请编辑内容';
-      chapter.insertBefore(newLine, btn);
-    }
-    return;
-  }
-  var newLine = document.createElement('p');
-  newLine.className = 'standard-line';
-  newLine.contentEditable = 'true';
-  newLine.textContent = '新加条款，请编辑内容';
-  block.insertBefore(newLine, btn);
-  // 自动聚焦
-  setTimeout(function() {
-    newLine.focus();
-    // 光标移到末尾
-    var range = document.createRange();
-    range.selectNodeContents(newLine);
-    range.collapse(false);
-    var sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(range);
-  }, 50);
-  showToast('✏️ 新行已添加，可直接编辑');
-}
-
-
-// 编辑模式：让段落可编辑
-function enableParagraphEdit() {
-  document.querySelectorAll('.paragraph-block').forEach(function(block) {
-    block.contentEditable = 'true';
-  });
-  document.querySelectorAll('.standard-line').forEach(function(line) {
-    line.contentEditable = 'true';
-  });
-  // 显示所有工具按钮
-  document.querySelectorAll('.card-tools').forEach(function(t) { t.style.display = 'flex'; });
-  document.querySelectorAll('.add-text-btn').forEach(function(b) { b.style.display = 'inline-block'; });
-  document.querySelectorAll('.cards-add-bar').forEach(function(b) { b.style.display = 'block'; });
-  document.querySelectorAll('.cards-add-btn').forEach(function(b) { b.style.display = 'block'; });
-}
-function disableParagraphEdit() {
-  document.querySelectorAll('.paragraph-block').forEach(function(block) {
-    block.contentEditable = 'false';
-  });
-}
-
-// ====== 图片替换通用函数 ======
-function replaceCardImage(imgEl, file) {
-  if (!file || !file.type.startsWith('image/')) return;
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    imgEl.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
-}
-
-// ====== 拖拽支持 ======
-document.addEventListener('dragenter', function(e) { e.preventDefault(); });
-document.addEventListener('dragover', function(e) { e.preventDefault(); });
-document.addEventListener('drop', function(e) { e.preventDefault(); });
-
-// ====== 粘贴支持（全局） ======
-document.addEventListener('paste', function(e) {
-  var container = document.querySelector('.container');
-  if (!container || !container.classList.contains('editing')) return;
-  var items = e.clipboardData.items;
-  for (var i = 0; i < items.length; i++) {
-    if (items[i].type.startsWith('image/')) {
-      var file = items[i].getAsFile();
-      // 找到当前焦点所在的卡片图片
-      var active = document.activeElement;
-      if (active && active.tagName === 'IMG' && active.closest('.card-img')) {
-        replaceCardImage(active, file);
-        e.preventDefault();
-        return;
-      }
-      // 否则替换第一个卡片图片
-      var firstImg = document.querySelector('.card-img img');
-      if (firstImg) {
-        replaceCardImage(firstImg, file);
-        e.preventDefault();
-        return;
-      }
-    }
-  }
-});
-
-// ====== 为每个卡片图片绑定拖拽 ======
-function setupDragDrop() {
-  document.querySelectorAll('.card-img').forEach(function(wrapper) {
-    // 移除已有监听避免重复
-    wrapper._dragSetup = wrapper._dragSetup || false;
-    if (wrapper._dragSetup) return;
-    wrapper._dragSetup = true;
-    
-    wrapper.addEventListener('dragover', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      this.style.outline = '3px dashed #fdd835';
-    });
-    wrapper.addEventListener('dragleave', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      this.style.outline = 'none';
-    });
-    wrapper.addEventListener('drop', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      this.style.outline = 'none';
-      var files = e.dataTransfer.files;
-      if (files.length > 0) {
-        var img = this.querySelector('img');
-        if (img) replaceCardImage(img, files[0]);
-      }
-    });
-    
-    // 点击图片也能触焦（方便粘贴）
-    var img = wrapper.querySelector('img');
-    if (img) {
-      img.setAttribute('tabindex', '0');
-      img.addEventListener('click', function() { this.focus(); });
-    }
-  });
-}
-
-// 页面加载后执行
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', setupDragDrop);
-} else {
-  setupDragDrop();
-}
-
-// 编辑模式切换时重新绑定（新增的btn不会影响已绑定的）
-var origToggle = window.toggleEdit;
-if (origToggle) {
-  window.toggleEdit = function() {
-    origToggle();
-    setTimeout(function() {
-      // 新版卡片加载后重新绑定
-      setupDragDrop();
-      // 新生成的img-replace-btn也要绑drag
-      document.querySelectorAll('.card-img').forEach(function(w) {
-        if (!w._dragSetup) {
-          w._dragSetup = true;
-          w.addEventListener('dragover', function(e) { e.preventDefault(); this.style.outline = '3px dashed #fdd835'; });
-          w.addEventListener('dragleave', function(e) { e.preventDefault(); this.style.outline = 'none'; });
-          w.addEventListener('drop', function(e) { e.preventDefault(); this.style.outline = 'none'; var f = e.dataTransfer.files[0]; if(f) { var img = this.querySelector('img'); if(img) replaceCardImage(img, f); } });
-        }
-      });
-    }, 100);
-  };
-}
-
-
-// ====== 图片计数器（生成唯一文件名）======
-var _imgCounter = 0;
-function nextImgId() { return 'new_' + Date.now() + '_' + (++_imgCounter); }
-
-// ====== 创建一张新卡片（带图）======
-function createNewCard(type) {
-  var typeClass = type === 'ok' ? 'card-desc-ok' : 'card-desc-err';
-  var prefix = type === 'ok' ? '√' : '×';
+function addCard(btn, section) {
+  var cardsContainer = btn.closest('.add-card-bar').previousElementSibling;
+  var isErr = section.indexOf('错误') !== -1;
   var card = document.createElement('div');
   card.className = 'card';
-  card.innerHTML = '<div class="card-tools">'
-    + '<button class="card-tool-btn" data-act="replace">📷 换图</button>'
-    + '<button class="card-tool-btn del" data-act="del">🗑 删除</button>'
-    + '</div>'
-    + '<div class="card-img" data-empty="1" style="position:relative;">'
-    + '<div style="padding:30px;color:#999;font-size:13px;background:#fafafa;border:2px dashed #ddd;cursor:pointer;">点击"换图"或拖拽图片到此处</div>'
-    + '</div>'
-    + '<div class="' + typeClass + '" contenteditable="true">' + prefix + ' 请编辑说明文字</div>';
-  // 绑定拖拽事件到占位符
-  setTimeout(function() {
-    var imgWrap = card.querySelector('.card-img');
-    if (imgWrap) {
-      imgWrap.addEventListener('dragover', function(e) { e.preventDefault(); this.style.outline = '3px dashed #fdd835'; });
-      imgWrap.addEventListener('dragleave', function(e) { e.preventDefault(); this.style.outline = 'none'; });
-      imgWrap.addEventListener('drop', function(e) {
-        e.preventDefault();
-        this.style.outline = 'none';
-        var files = e.dataTransfer.files;
-        if (files.length > 0) {
-          var f = files[0];
-          var reader = new FileReader();
-          reader.onload = function(re) {
-            var img = document.createElement('img');
-            img.src = re.target.result;
-            img.alt = '';
-            img.style.width = '100%';
-            img.style.maxWidth = '189px';
-            img.style.height = '189px';
-            img.style.objectFit = 'contain';
-            img.style.display = 'block';
-            img.style.margin = '0 auto';
-            imgWrap.removeAttribute('data-empty');
-            imgWrap.innerHTML = '';
-            imgWrap.appendChild(img);
-            // 重新绑定拖拽
-            imgWrap.addEventListener('dragover', function(e) { e.preventDefault(); this.style.outline = '3px dashed #fdd835'; });
-            imgWrap.addEventListener('dragleave', function(e) { e.preventDefault(); this.style.outline = 'none'; });
-            imgWrap.addEventListener('drop', function(e) { e.preventDefault(); this.style.outline = 'none'; var files = e.dataTransfer.files; if (files.length > 0) { var f2 = files[0]; var r2 = new FileReader(); r2.onload = function(re2) { var img2 = imgWrap.querySelector('img'); if (img2) img2.src = re2.target.result; }; r2.readAsDataURL(f2); } });
-          };
-          reader.readAsDataURL(f);
-        }
-      });
-      // 点击占位符也能换图
-      imgWrap.addEventListener('click', function(e) {
-        if (imgWrap.getAttribute('data-empty') === '1') {
-          var input = document.createElement('input');
-          input.type = 'file'; input.accept = 'image/*';
-          input.onchange = function(ev) {
-            var f = ev.target.files[0]; if (!f) return;
-            var reader = new FileReader();
-            reader.onload = function(re) {
-              var img = document.createElement('img');
-              img.src = re.target.result; img.alt = '';
-              img.style.width = '100%'; img.style.maxWidth = '189px'; img.style.height = '189px'; img.style.objectFit = 'contain'; img.style.display = 'block'; img.style.margin = '0 auto';
-              imgWrap.removeAttribute('data-empty'); imgWrap.innerHTML = ''; imgWrap.appendChild(img);
-              // 重新绑定拖拽
-              imgWrap.addEventListener('dragover', function(e) { e.preventDefault(); this.style.outline = '3px dashed #fdd835'; });
-              imgWrap.addEventListener('dragleave', function(e) { e.preventDefault(); this.style.outline = 'none'; });
-              imgWrap.addEventListener('drop', function(e) { e.preventDefault(); this.style.outline = 'none'; var files = e.dataTransfer.files; if (files.length > 0) { var f2 = files[0]; var r2 = new FileReader(); r2.onload = function(re2) { var img2 = imgWrap.querySelector('img'); if (img2) img2.src = re2.target.result; }; r2.readAsDataURL(f2); } });
-            };
-            reader.readAsDataURL(f);
-          };
-          input.click();
-        }
-      });
-    }
-  }, 10);
-  return card;
-}
-
-// ====== 给cards块绑定"添加新卡片"按钮 + 重绑删除/换图 ======
-function enhanceCards() {
-  document.querySelectorAll('.cards, .cards-2').forEach(function(cardsBox) {
-    // 判断是 ok 还是 err 区
-    var isOk = cardsBox.previousElementSibling;
-    var isErr = false;
-    if (isOk && isOk.classList.contains('sub-title')) {
-      if (isOk.classList.contains('err')) isErr = true;
-    }
-    var type = isErr ? 'err' : 'ok';
-
-    // 加"添加新卡片"按钮
-    if (!cardsBox.nextElementSibling || !cardsBox.nextElementSibling.classList.contains('cards-add-bar')) {
-      var bar = document.createElement('div');
-      bar.className = 'cards-add-bar';
-      bar.innerHTML = '<button class="cards-add-btn" data-type="' + type + '">➕ 在此处添加一张' + (type==='ok'?'正确':'错误')+'范例</button>';
-      cardsBox.parentNode.insertBefore(bar, cardsBox.nextSibling);
-      bar.querySelector('.cards-add-btn').onclick = function() {
-        var card = createNewCard(type);
-        cardsBox.appendChild(card);
-        bindCardTools(card);
-        // 滚到新卡片
-        card.scrollIntoView({behavior:'smooth', block:'center'});
-      };
-    }
-
-    // 给现有卡片绑定工具按钮
-    cardsBox.querySelectorAll('.card').forEach(bindCardTools);
-  });
-}
-
-// ====== 给单张卡片绑定工具按钮（换图/删除）======
-function bindCardTools(card) {
-  if (card._bound) return;
-  card._bound = true;
-
-  // 如果没有 tools div 则添加
-  var tools = card.querySelector('.card-tools');
-  if (!tools) {
-    tools = document.createElement('div');
-    tools.className = 'card-tools';
-    tools.innerHTML = '<button class="card-tool-btn" data-act="replace">📷 换图</button>'
-      + '<button class="card-tool-btn del" data-act="del">🗑 删除</button>';
-    card.insertBefore(tools, card.firstChild);
-  }
-
-  tools.querySelectorAll('.card-tool-btn').forEach(function(btn) {
-    btn.onclick = function(e) {
+  card.innerHTML =
+    '<div class="card-tools">' +
+    '  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>' +
+    '  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button>' +
+    '</div>' +
+    '<div class="card-img placeholder" onclick="changeImage(this)">📋 点此上传 / Ctrl+V 粘贴图片</div>' +
+    '<div class="card-desc ' + (isErr ? 'err' : 'ok') + '">点击编辑说明文字</div>';
+  cardsContainer.appendChild(card);
+  var newDesc = card.querySelector('.card-desc');
+  if (newDesc) {
+    newDesc.addEventListener('mousedown', function(e) {
       e.stopPropagation();
-      var act = btn.getAttribute('data-act');
-      if (act === 'del') {
-        if (confirm('确定删除这张卡片？')) {
-          card.remove();
-        }
-      } else if (act === 'replace') {
-        var input = document.createElement('input');
-        input.type = 'file';
-        input.accept = 'image/*';
-        input.onchange = function(ev) {
-          var f = ev.target.files[0];
-          if (!f) return;
-          var reader = new FileReader();
-          reader.onload = function(re) {
-            var img = card.querySelector('.card-img img');
-            if (!img) {
-              // 占位符替换为img
-              var imgWrap = card.querySelector('.card-img');
-              imgWrap.removeAttribute('data-empty');
-              imgWrap.innerHTML = '<button class="img-replace-btn">📷 更换图片</button><img src="' + re.target.result + '" alt="">';
-            } else {
-              img.src = re.target.result;
-            }
-          };
-          reader.readAsDataURL(f);
-        };
-        input.click();
-      }
-    };
-  });
-}
-
-// ====== 给每个 standard-text / chapter-title 等 加"+"按钮（在末尾加新段）======
-function enhanceText() {
-  document.querySelectorAll('.standard-text, .chapter-title, .sub-title, .checklist li, .card-desc-ok, .card-desc-err').forEach(function(el) {
-    if (el._textEnhanced) return;
-    el._textEnhanced = true;
-    el.addEventListener('mouseenter', function() {
-      if (!isEditing) return;
-      if (el.querySelector(':scope > .add-text-btn')) return;
-      var btn = document.createElement('button');
-      btn.className = 'add-text-btn';
-      btn.textContent = '＋ 加一行';
-      btn.contentEditable = false;
-      btn.onclick = function(e) {
-        e.stopPropagation();
-        var p = document.createElement('p');
-        p.className = el.className;
-        p.contentEditable = 'true';
-        p.textContent = '（新段落，请编辑）';
-        el.parentNode.insertBefore(p, el.nextSibling);
-        enhanceText();
-        p.focus();
-      };
-      el.appendChild(btn);
     });
-    el.addEventListener('mouseleave', function() {
-      var b = el.querySelector(':scope > .add-text-btn');
-      if (b) b.remove();
-    });
-  });
-}
-
-// ====== 文字格式工具栏（选中文字时弹出）======
-var fmtToolbar = null;
-function setupFormatToolbar() {
-  if (fmtToolbar) return;
-  fmtToolbar = document.createElement('div');
-  fmtToolbar.className = 'format-toolbar';
-  fmtToolbar.innerHTML =
-    '<button class="fmt-btn bold" data-cmd="bold" title="加粗">B</button>'
-    + '<select class="fmt-select" data-cmd="fontSize" title="字号">'
-    + '<option value="3">小</option><option value="4" selected>正常</option>'
-    + '<option value="5">中</option><option value="6">大</option><option value="7">特大</option>'
-    + '</select>'
-    + '<input type="color" class="fmt-color" data-cmd="foreColor" title="颜色" value="#c62828">'
-    + '<button class="fmt-btn" data-cmd="hiliteColor" title="背景色" style="background:#fff59d;">🖍</button>'
-    + '<button class="fmt-btn" data-cmd="justifyLeft" title="左对齐">⇤</button>'
-    + '<button class="fmt-btn" data-cmd="justifyCenter" title="居中">⇔</button>';
-  document.body.appendChild(fmtToolbar);
-
-  fmtToolbar.querySelectorAll('[data-cmd]').forEach(function(el) {
-    el.addEventListener('mousedown', function(e) {
-      e.preventDefault();
-      var cmd = el.getAttribute('data-cmd');
-      if (el.tagName === 'SELECT') {
-        document.execCommand('fontSize', false, el.value);
-      } else if (el.type === 'color') {
-        document.execCommand('foreColor', false, el.value);
-      } else if (cmd === 'hiliteColor') {
-        document.execCommand('hiliteColor', false, '#fff59d');
-      } else {
-        document.execCommand(cmd, false, null);
+    newDesc.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (document.body.classList.contains('editing')) {
+        this.focus();
+        var range = document.createRange();
+        range.selectNodeContents(this);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
       }
     });
-  });
+    // 编辑模式下让新 desc 立即可编辑
+    if (document.body.classList.contains('editing')) {
+      newDesc.setAttribute('contenteditable', 'true');
+      newDesc.focus();
+    }
+  }
+  card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  showToast('📋 新图例已添加');
+  card.style.outline = '3px solid #ff9800';
+  card.style.outlineOffset = '2px';
+  setTimeout(function() { card.style.outline = ''; card.style.outlineOffset = ''; }, 3000);
 }
 
-function showFormatToolbar() {
+document.addEventListener('dragover', function(e) { e.preventDefault(); });
+document.addEventListener('drop', function(e) {
+  e.preventDefault();
   if (!isEditing) return;
-  var sel = window.getSelection();
-  if (!sel || sel.isCollapsed) {
-    fmtToolbar.classList.remove('show');
-    return;
-  }
-  var range = sel.getRangeAt(0);
-  var rect = range.getBoundingClientRect();
-  if (!rect.width) return;
-  fmtToolbar.classList.add('show');
-  fmtToolbar.style.top = (rect.top - 40) + 'px';
-  fmtToolbar.style.left = rect.left + 'px';
-}
-document.addEventListener('selectionchange', showFormatToolbar);
-// 火狐兼容：mouseup也触发工具栏
-document.addEventListener('mouseup', function(e) {
-  setTimeout(showFormatToolbar, 10);
-});
-// 点击时如果选中了文字也触发
-document.addEventListener('click', function(e) {
-  setTimeout(showFormatToolbar, 10);
+  var file = e.dataTransfer.files[0];
+  if (!file || !file.type.startsWith('image/')) return;
+  var card = e.target.closest('.card');
+  if (!card) return;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    var imgDiv = card.querySelector('.card-img');
+    if (imgDiv) {
+      imgDiv.innerHTML = '<img src="' + ev.target.result + '" alt="图片">';
+      imgDiv.classList.remove('placeholder');
+    }
+    showToast('✅ 图片已上传');
+  };
+  reader.readAsDataURL(file);
 });
 
-// ====== 在 toggleEdit 里补强 ======
-var _origToggle = window.toggleEdit;
-window.toggleEdit = function() {
-  _origToggle();
-  if (isEditing) {
-    setTimeout(function() {
-      enhanceCards();
-      enhanceText();
-      setupFormatToolbar();
-    }, 50);
-  } else {
-    if (fmtToolbar) fmtToolbar.classList.remove('show');
-  }
-};
-
-// ====== 页面加载后预绑定（仅在非编辑模式下隐藏，但不阻止增强）======
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', function() {
-    enhanceCards();
-    enhanceText();
-    setupFormatToolbar();
-  });
-} else {
-  enhanceCards();
-  enhanceText();
-  setupFormatToolbar();
-}
-
-
-
-// ====== 增强文字行操作：加行 + 删除行 ======
-function enhanceText() {
-  document.querySelectorAll('.standard-text, .chapter-title, .sub-title, .checklist li, .card-desc-ok, .card-desc-err').forEach(function(el) {
-    if (el._textEnhanced) return;
-    el._textEnhanced = true;
-
-    // 清理空行（内容为空或只有空格/请编辑字样）
-    var txt = el.textContent.trim();
-    if (!txt || txt === '（新段落，请编辑）' || txt === '(新段落，请编辑)') {
-      el.remove();
+document.addEventListener('paste', function(e) {
+  if (!isEditing) return;
+  var items = e.clipboardData.items;
+  for (var i = 0; i < items.length; i++) {
+    if (items[i].type.indexOf('image') !== -1) {
+      var file = items[i].getAsFile();
+      var card = e.target.closest('.card');
+      if (!card) continue;
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        var imgDiv = card.querySelector('.card-img');
+        if (imgDiv) {
+          imgDiv.innerHTML = '<img src="' + ev.target.result + '" alt="图片">';
+          imgDiv.classList.remove('placeholder');
+        }
+        showToast('✅ 图片已粘贴');
+      };
+      reader.readAsDataURL(file);
+      e.preventDefault();
       return;
     }
-
-    el.addEventListener('mouseenter', function() {
-      if (!isEditing) return;
-      if (el.querySelector(':scope > .add-text-btn')) return;
-      var addBtn = document.createElement('button');
-      addBtn.className = 'add-text-btn';
-      addBtn.textContent = '＋ 加一行';
-      addBtn.contentEditable = false;
-      addBtn.onclick = function(e) {
-        e.stopPropagation();
-        var p = document.createElement('p');
-        p.className = el.className;
-        p.contentEditable = 'true';
-        p.textContent = '（新段落，请编辑）';
-        el.parentNode.insertBefore(p, el.nextSibling);
-        enhanceText();
-        p.focus();
-      };
-      el.appendChild(addBtn);
-
-      var delBtn = document.createElement('button');
-      delBtn.className = 'del-text-btn';
-      delBtn.textContent = '× 删除';
-      delBtn.contentEditable = false;
-      delBtn.onclick = function(e) {
-        e.stopPropagation();
-        if (confirm('确定删除这行？')) {
-          el.remove();
-        }
-      };
-      el.appendChild(delBtn);
-    });
-    el.addEventListener('mouseleave', function() {
-      var b = el.querySelector(':scope > .add-text-btn');
-      if (b) b.remove();
-      var d = el.querySelector(':scope > .del-text-btn');
-      if (d) d.remove();
-    });
-  });
-}
-
-// ====== 页面加载时清理localStorage里的空行 ======
-window.addEventListener('load', function() {
-  setTimeout(function() {
-    document.querySelectorAll('.standard-text, .checklist li').forEach(function(el) {
-      var txt = el.textContent.trim();
-      if (!txt || txt === '（新段落，请编辑）' || txt === '(新段落，请编辑)') {
-        el.remove();
-      }
-    });
-  }, 200);
+  }
 });
 
-
-
-// ====== 本地持久化：localStorage + JSON文件导入导出 ======
-function exportLocalData() {
-  var pageName = location.pathname.split('/').pop().replace('.html', '');
-  var html = document.querySelector('.container').innerHTML;
-  var data = {
-    page: pageName,
-    html: html,
-    savedAt: new Date().toLocaleString(),
-    version: '1.0'
-  };
-  var blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
-  var url = URL.createObjectURL(blob);
-  var a = document.createElement('a');
-  a.href = url;
-  a.download = pageName + '_' + Date.now() + '.json';
-  a.click();
-  URL.revokeObjectURL(url);
-  alert('✅ 已导出到下载文件夹：' + a.download);
+function showToast(msg) {
+  var toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(function() { toast.classList.remove('show'); }, 2500);
 }
 
-function importLocalData() {
-  var input = document.createElement('input');
-  input.type = 'file';
-  input.accept = '.json,application/json';
-  input.onchange = function(e) {
-    var file = e.target.files[0];
-    if (!file) return;
-    var reader = new FileReader();
-    reader.onload = function(re) {
-      try {
-        var data = JSON.parse(re.target.result);
-        if (data.html) {
-          if (confirm('确定用这个文件覆盖当前页面内容？\n\n文件名：' + file.name + '\n保存时间：' + (data.savedAt || '未知'))) {
-            document.querySelector('.container').innerHTML = data.html;
-            // 同时写入 localStorage
-            var pageName = location.pathname.split('/').pop().replace('.html', '');
-            localStorage.setItem(pageName, JSON.stringify({html: data.html, savedAt: data.savedAt || '导入'}));
-            alert('✅ 导入成功！\n记得点底部"💾 保存修改"按钮确认');
-            rebuildEditBar();
-          }
-        } else {
-          alert('⚠️ 文件格式不对，没有html字段');
-        }
-      } catch (err) {
-        alert('❌ 解析失败：' + err.message);
-      }
-    };
-    reader.readAsText(file);
-  };
-  input.click();
+// ====== 大图预览 ======
+function openViewer(src) {
+  var v = document.getElementById('imgViewer');
+  var img = document.getElementById('imgViewerImg');
+  img.src = src;
+  v.classList.add('show');
 }
-
-window.exportLocalData = exportLocalData;
-window.importLocalData = importLocalData;
-
-
-// 重复的load监听已删除（保留第一个）
-
-
-<script>
-// ====== CloudBase 数据库模块 ======
-const TCB_ENV_ID = 'huazhu-standards-d8e5rk0f490105a';
-const TCB_COLLECTION = 'cards';
-
-let tcbApp = null;
-let tcbDb = null;
-
-async function tcbInit() {
-  if (tcbApp) return tcbApp;
-  // 等SDK加载（最多等5秒）
-  var waitCount = 0;
-  while (typeof cloudbase === 'undefined' && waitCount < 50) {
-    await new Promise(function(r) { setTimeout(r, 100); });
-    waitCount++;
-  }
-  if (typeof cloudbase === 'undefined') {
-    console.warn('[CloudBase] SDK加载超时，使用本地模式');
-    return null;
-  }
-  try {
-    tcbApp = await cloudbase.init({ env: TCB_ENV_ID });
-    tcbDb = tcbApp.database();
-    console.log('[CloudBase] 初始化成功', TCB_ENV_ID);
-    return tcbApp;
-  } catch (e) {
-    console.error('[CloudBase] 初始化失败', e);
-    return null;
-  }
+function closeViewer() {
+  var v = document.getElementById('imgViewer');
+  v.classList.remove('show');
 }
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeViewer();
+});
 
-// 从云端拉取内容
-async function tcbLoad(key) {
-  try {
-    await tcbInit();
-    if (!tcbDb) return null;
-    const res = await tcbDb.collection(TCB_COLLECTION).where({ key: key }).limit(1).get();
-    if (res.data && res.data.length > 0) {
-      console.log('[CloudBase] 加载成功', key, '长度', res.data[0].html.length);
-      return res.data[0].html;
-    }
-    return null;
-  } catch (e) {
-    console.error('[CloudBase] 加载失败', e);
-    return null;
+document.addEventListener('click', function(e) {
+  var img = e.target.closest('.card-img img');
+  if (!img) return;
+  if (document.body.classList.contains('editing')) {
+    pendingCardImg = img.closest('.card');
+    document.getElementById('fileInput').click();
+  } else {
+    e.preventDefault();
+    e.stopPropagation();
+    openViewer(img.src);
   }
-}
+}, true);
 
-// 保存到云端
-async function tcbSave(key, html) {
-  try {
-    await tcbInit();
-    if (!tcbDb) return false;
-    // 查询是否已存在
-    const exist = await tcbDb.collection(TCB_COLLECTION).where({ key: key }).limit(1).get();
-    const data = {
-      key: key,
-      html: html,
-      updatedAt: new Date().toISOString()
-    };
-    if (exist.data && exist.data.length > 0) {
-      // 更新
-      await tcbDb.collection(TCB_COLLECTION).doc(exist.data[0]._id).set(data);
-    } else {
-      // 新增
-      await tcbDb.collection(TCB_COLLECTION).add(data);
-    }
-    console.log('[CloudBase] 保存成功', key, '长度', html.length);
-    return true;
-  } catch (e) {
-    console.error('[CloudBase] 保存失败', e);
-    return false;
-  }
-}
+window.addEventListener('load', function() {
+  bindCardDescs();
+});
 
-window.tcbLoad = tcbLoad;
-window.tcbSave = tcbSave;
+new MutationObserver(function() {
+  bindCardDescs();
+}).observe(document.getElementById('container'), { childList: true, subtree: true });
 </script>
-
-</script>
-
 </body>
 </html>

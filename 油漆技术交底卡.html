@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>油漆技术交底卡</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, "Microsoft YaHei", sans-serif; background: #f5f5f5; color: #333; line-height: 2; }
+.header { background: #1565c0; color: #fff; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; position: sticky; top: 0; z-index: 100; }
+.header h1 { font-size: 18px; font-weight: 600; }
+.header .subtitle { font-size: 12px; opacity: 0.85; }
+.toolbar { display: flex; gap: 6px; flex-wrap: wrap; }
+.tool-btn { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3); padding: 6px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; white-space: nowrap; transition: all 0.15s; }
+.tool-btn:hover { background: rgba(255,255,255,0.3); }
+.tool-btn.active { background: #ff9800; border-color: #ff9800; }
+.tool-btn.save { background: #43a047; border-color: #43a047; display: none; }
+.tool-btn.save.active { display: block; }
+.container { max-width: 900px; margin: 0 auto; padding: 16px; }
+.chapter { background: #fff; border-radius: 10px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.chapter-title { background: #e3f2fd; color: #1565c0; padding: 12px 16px; font-size: 16px; font-weight: 600; border-left: 4px solid #1565c0; }
+.text-block { padding: 16px; font-size: 14px; line-height: 2; color: #444; outline: none; min-height: 60px; }
+.text-block:focus { background: #fffde7; }
+.editing .text-block { background: #fffde7; border: 2px dashed #ffc107; border-radius: 6px; margin: 8px; padding: 12px; }
+.editing .card-desc { background: #fffde7 !important; border: 2px dashed #ffc107 !important; border-radius: 4px !important; outline: none !important; cursor: text !important; pointer-events: auto !important; user-select: text !important; -webkit-user-select: text !important; }
+.editing .card-desc:focus { background: #ffffff !important; border-color: #ff9800 !important; }
+.text-block p { margin: 0; }
+.text-block strong { color: #c62828; }
+.sub-title { padding: 8px 16px; font-size: 14px; font-weight: 600; color: #2e7d32; }
+.sub-title.err { color: #c62828; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; padding: 8px 16px 16px; }
+.card { background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; position: relative; transition: box-shadow 0.2s; }
+.card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.1); }
+.card-img { width: 100%; aspect-ratio: 4/3; overflow: hidden; background: #f0f0f0; cursor: pointer; }
+.card-img img { width: 100%; height: 100%; object-fit: contain; }
+.card-desc { padding: 8px; font-size: 12px; line-height: 1.4; }
+.card-desc.ok { color: #2e7d32; }
+.card-desc.err { color: #c62828; }
+.card-tools { display: none; position: absolute; top: 4px; right: 4px; z-index: 5; gap: 4px; }
+.editing .card-tools { display: flex; }
+.card-tool-btn { background: rgba(0,0,0,0.65); color: #fff; border: none; border-radius: 4px; padding: 3px 8px; font-size: 11px; cursor: pointer; white-space: nowrap; }
+.card-tool-btn:hover { background: rgba(0,0,0,0.85); }
+.card-tool-btn.del:hover { background: #c62828; }
+.add-card-bar { display: none; padding: 0 16px 16px; }
+.editing .add-card-bar { display: block; }
+.add-card-btn { width: 100%; padding: 16px; border: 2px dashed #ff9800; background: #fff8e1; color: #e65100; font-size: 13px; font-weight: 600; border-radius: 8px; cursor: pointer; }
+.add-card-btn:hover { background: #ffe0b2; }
+.fmt-toolbar { position: absolute; display: none; background: #fff; border: 1px solid #ccc; border-radius: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.15); padding: 4px; z-index: 9999; gap: 2px; align-items: center; }
+.fmt-toolbar.show { display: flex; }
+.fmt-toolbar button, .fmt-toolbar select, .fmt-toolbar input { border: 1px solid #ddd; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 13px; min-width: 28px; background: #fff; }
+.fmt-toolbar button:hover { background: #f0f0f0; }
+.fmt-toolbar input[type=color] { height: 28px; width: 32px; padding: 2px; }
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 10px 20px; border-radius: 8px; font-size: 14px; z-index: 99999; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+.toast.show { opacity: 1; }
+.img-viewer { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999999; align-items: center; justify-content: center; }
+.img-viewer.show { display: flex; }
+.img-viewer-mask { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); }
+.img-viewer-img { position: relative; max-width: 92vw; max-height: 92vh; object-fit: contain; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5); background: #fff; border-radius: 4px; }
+.img-viewer-close { position: absolute; top: 16px; right: 24px; color: #fff; font-size: 36px; line-height: 1; cursor: pointer; user-select: none; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(0, 0, 0, 0.5); border-radius: 50%; }
+.img-viewer-close:hover { background: rgba(0, 0, 0, 0.8); }
+@media (max-width: 600px) {
+  .header { padding: 8px 12px; }
+  .header h1 { font-size: 15px; }
+  .tool-btn { padding: 5px 8px; font-size: 12px; }
+  .container { padding: 8px; }
+  .cards { grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 8px; }
+  .card-desc { font-size: 11px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>🔧 油漆技术交底卡</h1>
+    <div class="subtitle">来源：华住集团《营建技术手册-通用版》v1.2（2025年第一版）· 墙面 / 基层 / 涂料 / 自攻钉防锈</div>
+  </div>
+  <div class="toolbar">
+    <button class="tool-btn" onclick="importData()">📥 导入</button>
+    <button class="tool-btn" onclick="exportData()">📤 导出</button>
+    <button class="tool-btn" id="editBtn" onclick="toggleEdit()">🖊 编辑</button>
+    <button class="tool-btn save" id="saveBtn" onclick="saveData()">💾 保存</button>
+  </div>
+</div>
+
+<div class="container" id="container">
+  <div class="chapter">
+    <div class="chapter-title">一、油漆施工标准</div>
+    <div class="text-block" contenteditable="false" style="line-height:2">
+      <p>1、 墙面基层：清洁、平整、无浮灰、无油污；</p>
+      <p>2、 墙体开槽修补：<strong style="color:#c62828">严禁</strong>出现空鼓、开裂；</p>
+      <p>3、 涂料施工：底漆一遍、面漆两遍，<strong style="color:#c62828">严禁</strong>漏刷、流坠；</p>
+      <p>4、 自攻钉防锈处理：点涂防锈漆+腻子找平；</p>
+      <p>5、 阴阳角方正、垂直，误差<strong style="color:#c62828">≤3mm</strong>；</p>
+      <p>6、 涂料表面：<strong style="color:#c62828">无起皮、无掉粉、无漏刷</strong>，颜色均匀一致；</p>
+      <p>7、 涂料与门窗框、灯具、开关插座等交接处顺直、清晰；</p>
+      <p>8、 涂料施工前须对已完成成品（地面、家具、灯具）做好保护。</p>
+    </div>
+
+    <div class="sub-title">✅ 正确范例</div>
+    <div class="cards" data-section="油漆-正确">
+      <div class="card">
+        <div class="card-tools">
+          <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>
+          <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button>
+        </div>
+        <div class="card-img" onclick="changeImage(this)"><img src="images/油漆/P116_油漆_01.jpg" alt="图例"></div>
+        <div class="card-desc ok">（编辑此说明）</div>
+      </div>
+      <div class="card">
+        <div class="card-tools">
+          <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>
+          <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button>
+        </div>
+        <div class="card-img" onclick="changeImage(this)"><img src="images/油漆/P116_油漆_03.jpg" alt="图例"></div>
+        <div class="card-desc ok">（编辑此说明）</div>
+      </div>
+      <div class="card">
+        <div class="card-tools">
+          <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>
+          <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button>
+        </div>
+        <div class="card-img" onclick="changeImage(this)"><img src="images/油漆/P117_油漆_01.jpg" alt="图例"></div>
+        <div class="card-desc ok">（编辑此说明）</div>
+      </div>
+      <div class="card">
+        <div class="card-tools">
+          <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>
+          <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button>
+        </div>
+        <div class="card-img" onclick="changeImage(this)"><img src="images/油漆/P117_油漆_03.jpg" alt="图例"></div>
+        <div class="card-desc ok">（编辑此说明）</div>
+      </div>
+      <div class="card">
+        <div class="card-tools">
+          <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>
+          <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button>
+        </div>
+        <div class="card-img" onclick="changeImage(this)"><img src="images/油漆/P118_油漆_01.png" alt="图例"></div>
+        <div class="card-desc ok">（编辑此说明）</div>
+      </div>
+      <div class="card">
+        <div class="card-tools">
+          <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>
+          <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button>
+        </div>
+        <div class="card-img" onclick="changeImage(this)"><img src="images/油漆/P120_油漆_01.png" alt="图例"></div>
+        <div class="card-desc ok">（编辑此说明）</div>
+      </div>
+      <div class="card">
+        <div class="card-tools">
+          <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>
+          <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button>
+        </div>
+        <div class="card-img" onclick="changeImage(this)"><img src="images/油漆/P120_油漆_03.png" alt="图例"></div>
+        <div class="card-desc ok">（编辑此说明）</div>
+      </div>
+      <div class="card">
+        <div class="card-tools">
+          <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>
+          <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button>
+        </div>
+        <div class="card-img" onclick="changeImage(this)"><img src="images/油漆/P121_油漆_01.jpg" alt="图例"></div>
+        <div class="card-desc ok">（编辑此说明）</div>
+      </div>
+      <div class="card">
+        <div class="card-tools">
+          <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>
+          <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button>
+        </div>
+        <div class="card-img" onclick="changeImage(this)"><img src="images/油漆/P121_油漆_03.png" alt="图例"></div>
+        <div class="card-desc ok">（编辑此说明）</div>
+      </div>
+    </div>
+    <div class="add-card-bar"><button class="add-card-btn" onclick="addCard(this,'油漆-正确')">＋ 添加图例</button></div>
+
+    <div class="sub-title err">❌ 错误范例</div>
+    <div class="cards" data-section="油漆-错误">
+      <div class="card">
+        <div class="card-tools">
+          <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>
+          <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button>
+        </div>
+        <div class="card-img" onclick="changeImage(this)"><img src="images/油漆/P116_油漆_02.jpg" alt="图例"></div>
+        <div class="card-desc err">（编辑此说明）</div>
+      </div>
+      <div class="card">
+        <div class="card-tools">
+          <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>
+          <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button>
+        </div>
+        <div class="card-img" onclick="changeImage(this)"><img src="images/油漆/P117_油漆_02.jpg" alt="图例"></div>
+        <div class="card-desc err">（编辑此说明）</div>
+      </div>
+      <div class="card">
+        <div class="card-tools">
+          <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>
+          <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button>
+        </div>
+        <div class="card-img" onclick="changeImage(this)"><img src="images/油漆/P120_油漆_02.png" alt="图例"></div>
+        <div class="card-desc err">（编辑此说明）</div>
+      </div>
+      <div class="card">
+        <div class="card-tools">
+          <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>
+          <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button>
+        </div>
+        <div class="card-img" onclick="changeImage(this)"><img src="images/油漆/P121_油漆_02.png" alt="图例"></div>
+        <div class="card-desc err">（编辑此说明）</div>
+      </div>
+    </div>
+    <div class="add-card-bar"><button class="add-card-btn" onclick="addCard(this,'油漆-错误')">＋ 添加图例</button></div>
+  </div>
+
+</div>
+
+<div class="fmt-toolbar" id="fmtToolbar" onmousedown="event.preventDefault()">
+  <button onmousedown="event.preventDefault()" onclick="fmt('bold')" title="加粗"><b>B</b></button>
+  <select onmousedown="event.preventDefault()" onchange="fmt('fontSize', this.value)" title="字号">
+    <option value="2">小</option>
+    <option value="3" selected>正常</option>
+    <option value="5">大</option>
+    <option value="7">特大</option>
+  </select>
+  <input type="color" onmousedown="event.preventDefault()" onchange="fmt('foreColor', this.value)" value="#c62828" title="字体颜色">
+  <button onmousedown="event.preventDefault()" onclick="fmt('hiliteColor','#fff59d')" title="背景色">🖍</button>
+  <button onmousedown="event.preventDefault()" onclick="fmt('justifyLeft')" title="左对齐">⇤</button>
+  <button onmousedown="event.preventDefault()" onclick="fmt('justifyCenter')" title="居中">⇔</button>
+  <button onmousedown="event.preventDefault()" onclick="fmt('removeFormat')" title="清除格式">⌫</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="img-viewer" id="imgViewer">
+  <div class="img-viewer-mask" onclick="closeViewer()"></div>
+  <img class="img-viewer-img" id="imgViewerImg" src="" alt="">
+  <div class="img-viewer-close" onclick="closeViewer()">×</div>
+</div>
+
+<input type="file" id="fileInput" accept="image/*" style="display:none">
+<input type="file" id="jsonInput" accept=".json" style="display:none">
+
+<script>
+var isEditing = false;
+var pendingCardImg = null;
+
+function bindCardDescs() {
+  document.querySelectorAll('.card-desc').forEach(function(el) {
+    el.addEventListener('mousedown', function(e) { e.stopPropagation(); });
+    el.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (document.body.classList.contains('editing')) {
+        this.focus();
+        var range = document.createRange();
+        range.selectNodeContents(this);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+    });
+  });
+}
+
+
+/* === 登录态守卫已关闭（待开启时去掉此注释）===
+// ====== 登录态守卫 ======
+(function(){
+  try {
+    var s = JSON.parse(localStorage.getItem('huazhu_session_v2'));
+    if (!s) {
+      
+
+      window.location.href = 'index.html';
+      return;
+    }
+    window.__USER = s;
+    if (s.role !== 'admin') {
+      // 普通用户: 隐藏编辑相关工具按钮
+      ['editBtn','saveBtn'].forEach(function(id){
+        var b = document.getElementById(id);
+        if (b) b.style.display = 'none';
+      });
+      // 隐藏导入/导出(暂时保留导出给员工做参考,需要时可调)
+      document.querySelectorAll('.tool-btn').forEach(function(btn){
+        if (btn.textContent.indexOf('导入') >= 0) btn.style.display = 'none';
+        if (btn.textContent.indexOf('导出') >= 0) btn.style.display = 'none';
+      });
+      // 强制所有 text-block 和 card-desc 不可编辑
+      document.addEventListener('DOMContentLoaded', function(){
+        document.querySelectorAll('.text-block, .card-desc').forEach(function(el){
+          el.setAttribute('contenteditable', 'false');
+        });
+      });
+      // 修改 header 副标题
+      var sub = document.querySelector('.header .subtitle');
+      if (sub) sub.textContent = sub.textContent + ' · 员工模式（仅查看）';
+    } else {
+      var sub = document.querySelector('.header .subtitle');
+      if (sub) sub.textContent = sub.textContent + ' · 管理员模式';
+    }
+  } catch(e) { console.error('session guard', e); }
+})();
+=== 登录态守卫结束 === */
+
+function toggleEdit() {
+  isEditing = !isEditing;
+  var container = document.getElementById('container');
+  var editBtn = document.getElementById('editBtn');
+  var saveBtn = document.getElementById('saveBtn');
+  if (isEditing) {
+    container.classList.add('editing');
+    document.body.classList.add('editing');
+    editBtn.textContent = '🔒 退出编辑';
+    editBtn.classList.add('active');
+    saveBtn.classList.add('active');
+    document.querySelectorAll('.text-block').forEach(function(el) { el.setAttribute('contenteditable', 'true'); });
+    document.querySelectorAll('.card-desc').forEach(function(el) {
+      el.setAttribute('contenteditable', 'true');
+      el.style.pointerEvents = 'auto';
+      el.style.userSelect = 'text';
+      el.style.webkitUserSelect = 'text';
+    });
+    showToast('✏️ 已进入编辑模式');
+  } else {
+    container.classList.remove('editing');
+    document.body.classList.remove('editing');
+    editBtn.textContent = '🖊 编辑';
+    editBtn.classList.remove('active');
+    saveBtn.classList.remove('active');
+    document.querySelectorAll('.text-block, .card-desc').forEach(function(el) { el.setAttribute('contenteditable', 'false'); });
+    document.getElementById('fmtToolbar').classList.remove('show');
+    showToast('👁 已退出编辑模式');
+  }
+}
+
+function saveData() {
+  var pageName = '油漆技术交底卡';
+  var html = document.getElementById('container').innerHTML;
+  try {
+    localStorage.setItem(pageName, JSON.stringify({ html: html, savedAt: new Date().toLocaleString() }));
+    showToast('✅ 已保存到本地（' + new Date().toLocaleTimeString() + '）');
+  } catch(e) { showToast('❌ 保存失败：' + e.message); }
+}
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(function() { t.classList.remove('show'); }, 2500);
+}
+
+function exportData() {
+  var pageName = '油漆技术交底卡';
+  var html = document.getElementById('container').innerHTML;
+  var data = JSON.stringify({ pageName: pageName, html: html, savedAt: new Date().toLocaleString() }, null, 2);
+  var blob = new Blob([data], { type: 'application/json' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = pageName + '_备份.json';
+  a.click();
+  showToast('📤 已导出JSON文件');
+}
+
+function importData() { document.getElementById('jsonInput').click(); }
+document.getElementById('jsonInput').addEventListener('change', function(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      var data = JSON.parse(ev.target.result);
+      if (data.html) {
+        document.getElementById('container').innerHTML = data.html;
+        showToast('📥 已导入备份内容');
+      }
+    } catch(err) { showToast('❌ 导入失败：文件格式错误'); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+});
+
+// 保存选区(工具栏按钮会清掉当前选区,得在按下时存住)
+var savedRange = null;
+function restoreSelection() {
+  if (savedRange) {
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(savedRange);
+  }
+}
+document.addEventListener('selectionchange', function() {
+  var sel = window.getSelection();
+  if (sel && sel.rangeCount > 0 && !sel.isCollapsed) {
+    savedRange = sel.getRangeAt(0).cloneRange();
+  }
+});
+
+function fmt(cmd, value) {
+  // execCommand('foreColor') 有个老 bug: 只接受 6 位 #rrggbb 字符串
+  if (cmd === 'foreColor' && value) {
+    if (value.startsWith('rgb')) {
+      var m = value.match(/[0-9]+/g);
+      if (m && m.length >= 3) {
+        value = '#' + [m[0], m[1], m[2]].map(function(n) {
+          return parseInt(n).toString(16).padStart(2, '0');
+        }).join('');
+      }
+    } else if (!value.startsWith('#')) {
+      value = '#' + value;
+    }
+  }
+  restoreSelection();
+  var sel = window.getSelection();
+  if (!sel || sel.rangeCount === 0 || sel.isCollapsed) {
+    showToast('⚠️ 请先用鼠标选中要标红的文字，再点颜色');
+    return;
+  }
+  try {
+    document.execCommand(cmd, false, value || null);
+  } catch (e) {
+    console.warn('execCommand failed:', cmd, value, e);
+  }
+}
+
+document.addEventListener('mouseup', function() {
+  if (!isEditing) return;
+  var sel = window.getSelection();
+  var toolbar = document.getElementById('fmtToolbar');
+  if (sel && !sel.isCollapsed && sel.rangeCount > 0) {
+    var range = sel.getRangeAt(0);
+    var rect = range.getBoundingClientRect();
+    if (rect.width > 0) {
+      toolbar.style.top = (window.scrollY + rect.top - 45) + 'px';
+      toolbar.style.left = (window.scrollX + rect.left + rect.width/2 - 100) + 'px';
+      toolbar.classList.add('show');
+    }
+  } else { toolbar.classList.remove('show'); }
+});
+
+function changeImage(btn) {
+  var card = btn.closest('.card');
+  if (!card) card = btn;
+  pendingCardImg = card;
+  document.getElementById('fileInput').click();
+}
+document.getElementById('fileInput').addEventListener('change', function(e) {
+  var file = e.target.files[0];
+  if (!file) { pendingCardImg = null; e.target.value = ''; return; }
+  var target = pendingCardImg;
+  pendingCardImg = null;
+  if (!target) {
+    var placeholders = document.querySelectorAll('.card-img.placeholder');
+    if (placeholders.length > 0) target = placeholders[placeholders.length - 1].closest('.card');
+  }
+  if (!target) { showToast('❌ 找不到目标卡片'); e.target.value = ''; return; }
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    var imgDiv = target.querySelector('.card-img');
+    if (imgDiv) {
+      imgDiv.innerHTML = '<img src="' + ev.target.result + '" alt="图片">';
+      imgDiv.classList.remove('placeholder');
+      showToast('✅ 图片已上传');
+    } else { showToast('❌ 上传失败：找不到图片位置'); }
+  };
+  reader.onerror = function() { showToast('❌ 文件读取失败'); };
+  reader.readAsDataURL(file);
+  e.target.value = '';
+});
+
+function deleteCard(btn) {
+  if (!confirm('确认删除这张图？')) return;
+  var card = btn.closest('.card');
+  if (card) { card.remove(); showToast('🗑 已删除'); }
+}
+
+document.addEventListener('mousedown', function(e) {
+  if (e.target.closest('.card-desc')) {
+    if (document.body.classList.contains('editing')) return;
+  }
+  if (e.target.closest('.card-tools') || e.target.closest('.toolbar') || e.target.closest('.add-card-btn')) {
+    e.preventDefault();
+  }
+}, true);
+
+function addCard(btn, section) {
+  var cardsContainer = btn.closest('.add-card-bar').previousElementSibling;
+  var isErr = section.indexOf('错误') !== -1;
+  var card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML =
+    '<div class="card-tools">' +
+    '  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>' +
+    '  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button>' +
+    '</div>' +
+    '<div class="card-img placeholder" onclick="changeImage(this)">📋 点此上传 / Ctrl+V 粘贴图片</div>' +
+    '<div class="card-desc ' + (isErr ? 'err' : 'ok') + '">点击编辑说明文字</div>';
+  cardsContainer.appendChild(card);
+  var newDesc = card.querySelector('.card-desc');
+  if (newDesc) {
+    newDesc.addEventListener('mousedown', function(e) { e.stopPropagation(); });
+    newDesc.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (document.body.classList.contains('editing')) {
+        this.focus();
+        var range = document.createRange();
+        range.selectNodeContents(this);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+    });
+  }
+  card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  showToast('📋 新图例已添加');
+  card.style.outline = '3px solid #ff9800';
+  card.style.outlineOffset = '2px';
+  setTimeout(function() { card.style.outline = ''; card.style.outlineOffset = ''; }, 3000);
+}
+
+// 大图预览
+document.addEventListener('click', function(e) {
+  if (isEditing) return;
+  var img = e.target.closest('.card-img img');
+  if (img) {
+    document.getElementById('imgViewerImg').src = img.src;
+    document.getElementById('imgViewer').classList.add('show');
+  }
+});
+function closeViewer() { document.getElementById('imgViewer').classList.remove('show'); }
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeViewer();
+});
+
+window.addEventListener('load', bindCardDescs);
+</script>
+</body>
+</html>
