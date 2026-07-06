@@ -1,0 +1,18 @@
+{
+  "envId": "huazhu-standards-d8e5rk0f490105a",
+  "hosting": {
+    "ignore": [
+      ".git/",
+      ".git/**",
+      "_archive_旧版本/",
+      "_hidden_cards/",
+      "_gh_commits.json",
+      "_gitee_pages_check.html",
+      "_zip_*.zip",
+      "_push_v2.py",
+      "_force_push_v2.py",
+      "_patch_cloudbase_db.py",
+      ".cloudbaserc.json"
+    ]
+  }
+}

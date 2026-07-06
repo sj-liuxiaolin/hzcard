@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>易宸圣景装饰筹建规范资料库 V2.0</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --primary: #1565c0;
+  --primary-dark: #0d47a1;
+  --accent: #ff9800;
+  --success: #43a047;
+  --danger: #c62828;
+  --bg: #f5f5f7;
+  --card-bg: #fff;
+  --text: #1d1d1f;
+  --text-2: #666;
+  --border: #e0e0e0;
+  --sidebar-bg: #0d2b4e;
+  --sidebar-width: 190px;
+}
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ====== 头部 ====== */
+.app-header {
+  background: linear-gradient(135deg, #1565c0, #0d47a1);
+  color: #fff;
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+}
+.app-header .brand { display: flex; align-items: center; gap: 12px; }
+.app-header .logo { height: 36px; flex-shrink: 0; }
+.app-header h1 { font-size: 18px; font-weight: 700; }
+.app-header .sub { font-size: 12px; opacity: 0.85; margin-top: 2px; }
+.app-header .user-bar { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.user-bar .avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.user-bar .role-tag {
+  background: rgba(255,255,255,0.15);
+  padding: 2px 8px; border-radius: 4px;
+  font-size: 11px;
+}
+.user-bar button {
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.3);
+  padding: 4px 12px; border-radius: 4px;
+  font-size: 12px; cursor: pointer;
+}
+.user-bar button:hover { background: rgba(255,255,255,0.3); }
+
+/* ====== 主体布局 ====== */
+.main-wrap {
+  display: flex;
+  flex: 1;
+  min-height: calc(100vh - 60px);
+}
+
+/* ====== 左侧导航 ====== */
+.sidebar {
+  width: var(--sidebar-width);
+  background: var(--sidebar-bg);
+  padding: 16px 0;
+  flex-shrink: 0;
+  position: sticky;
+  top: 60px;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+}
+.sidebar .nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  color: rgba(255,255,255,0.7);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-left: 3px solid transparent;
+  text-decoration: none;
+}
+.sidebar .nav-item:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.08);
+}
+.sidebar .nav-item.active {
+  color: #fff;
+  background: rgba(255,255,255,0.12);
+  border-left-color: var(--accent);
+  font-weight: 600;
+}
+.sidebar .nav-item .nav-icon { font-size: 20px; width: 24px; text-align: center; }
+.sidebar .nav-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.1);
+  margin: 12px 20px;
+}
+
+/* ====== 内容区 ====== */
+.content-area {
+  flex: 1;
+  padding: 24px 28px;
+  min-width: 0;
+  overflow-y: auto;
+}
+
+/* ====== 页面切换 ====== */
+.page-section { display: none; }
+.page-section.active { display: block; }
+
+/* ====== 管理员控制台 ====== */
+.admin-panel {
+  background: #fff3e0;
+  border: 1px solid #ffb74d;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  display: none;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.admin-panel.show { display: flex; }
+.admin-panel .icon { font-size: 24px; }
+.admin-panel .text { flex: 1; }
+.admin-panel .text strong { color: var(--danger); }
+.admin-panel .text div { font-size: 12px; color: var(--text-2); margin-top: 4px; }
+.admin-panel button {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.admin-panel button:hover { background: #f57c00; }
+
+/* ====== 工种卡网格 ====== */
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title .count {
+  background: var(--primary);
+  color: #fff;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.worker-card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  transition: all 0.25s;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.worker-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(21, 101, 192, 0.2);
+}
+.worker-card .cover {
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 56px;
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+}
+.worker-card .body { padding: 16px; flex: 1; }
+.worker-card .name { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.worker-card .desc { font-size: 12px; color: var(--text-2); line-height: 1.5; }
+.worker-card .footer {
+  padding: 10px 16px;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: var(--text-2);
+}
+.worker-card .badge {
+  background: var(--primary);
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+/* 颜色主题 */
+.worker-card.shuigong .cover { background: linear-gradient(135deg, #e1f5fe, #b3e5fc); }
+.worker-card.wagong .cover { background: linear-gradient(135deg, #fff3e0, #ffe0b2); }
+.worker-card.qiangdi .cover { background: linear-gradient(135deg, #fce4ec, #f8bbd0); }
+.worker-card.mugong .cover { background: linear-gradient(135deg, #e8f5e9, #c8e6c9); }
+.worker-card.diangong .cover { background: linear-gradient(135deg, #fff9c4, #fff59d); }
+.worker-card.youqi .cover { background: linear-gradient(135deg, #f3e5f5, #e1bee7); }
+.worker-card.nuantong .cover { background: linear-gradient(135deg, #ffebee, #ffcdd2); }
+
+/* ====== 华住验收专区页 ====== */
+.acceptance-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+.acc-card {
+  background: var(--card-bg);
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+}
+.acc-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(21, 101, 192, 0.15);
+}
+.acc-card .acc-icon { font-size: 48px; }
+.acc-card .acc-name { font-size: 16px; font-weight: 700; }
+.acc-card .acc-desc { font-size: 12px; color: var(--text-2); }
+.acc-card .acc-badge {
+  background: var(--danger);
+  color: #fff;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* ====== 公司自检资料页 ====== */
+.selfcheck-intro {
+  background: #e8f5e9;
+  border: 1px solid #a5d6a7;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.selfcheck-intro h3 { color: #2e7d32; margin-bottom: 8px; font-size: 16px; }
+.selfcheck-intro p { font-size: 13px; color: #555; line-height: 1.8; }
+.selfcheck-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+.sc-card {
+  background: var(--card-bg);
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s;
+  border-left: 4px solid #1565c0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.sc-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(21, 101, 192, 0.15);
+}
+.sc-card .sc-name { font-size: 15px; font-weight: 700; }
+.sc-card .sc-desc { font-size: 12px; color: var(--text-2); }
+.sc-card .sc-count { font-size: 12px; color: var(--primary); font-weight: 600; }
+
+/* ====== 底部 ====== */
+.footer {
+  text-align: center;
+  color: #999;
+  font-size: 12px;
+  padding: 20px 0;
+  margin-top: 20px;
+  border-top: 1px solid #eee;
+}
+.footer .version {
+  display: inline-block;
+  background: var(--primary);
+  color: #fff;
+  padding: 2px 10px;
+  border-radius: 10px;
+  font-weight: 600;
+  margin: 0 6px;
+}
+.footer-company { font-size: 12px; color: #999; margin-top: 4px; }
+
+/* ====== 登录弹窗 ====== */
+.modal-mask {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+.modal-mask.show { display: flex; }
+.login-box {
+  background: #fff;
+  border-radius: 16px;
+  padding: 32px;
+  width: 92%;
+  max-width: 420px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  animation: popIn 0.3s;
+}
+@keyframes popIn {
+  from { transform: scale(0.85); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.login-box h2 { text-align: center; font-size: 22px; margin-bottom: 8px; color: var(--text); }
+.login-box .sub { text-align: center; color: var(--text-2); font-size: 13px; margin-bottom: 24px; }
+.login-tabs {
+  display: flex;
+  border-bottom: 2px solid #f0f0f0;
+  margin-bottom: 20px;
+}
+.login-tab {
+  flex: 1; text-align: center; padding: 10px 0;
+  font-size: 14px; color: var(--text-2); cursor: pointer;
+  border-bottom: 2px solid transparent; margin-bottom: -2px;
+  transition: all 0.2s;
+}
+.login-tab.active { color: var(--primary); border-color: var(--primary); font-weight: 600; }
+.login-form { display: none; }
+.login-form.active { display: block; }
+.form-row { margin-bottom: 16px; }
+.form-row label { display: block; font-size: 13px; color: var(--text-2); margin-bottom: 6px; }
+.form-row input {
+  width: 100%; padding: 10px 14px;
+  border: 1px solid var(--border); border-radius: 8px;
+  font-size: 14px; outline: none; transition: border-color 0.2s;
+}
+.form-row input:focus { border-color: var(--primary); }
+.form-row .hint { font-size: 11px; color: var(--text-2); margin-top: 4px; }
+.form-actions { display: flex; gap: 8px; margin-top: 20px; }
+.btn {
+  flex: 1; padding: 12px; border: none; border-radius: 8px;
+  font-size: 14px; cursor: pointer; font-weight: 600; transition: all 0.2s;
+}
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-default { background: #f5f5f5; color: var(--text); }
+.btn-default:hover { background: #e0e0e0; }
+.err-msg {
+  background: #ffebee; color: var(--danger);
+  padding: 8px 12px; border-radius: 6px;
+  font-size: 13px; margin-bottom: 12px; display: none;
+}
+.err-msg.show { display: block; }
+
+/* ====== 管理员-用户管理 ====== */
+.admin-section {
+  background: #fff; border-radius: 12px; padding: 20px;
+  margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  display: none;
+}
+.admin-section.show { display: block; }
+.admin-section h3 {
+  font-size: 16px; color: var(--primary); margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+.admin-section .row {
+  display: flex; gap: 8px; align-items: center;
+  padding: 8px 0; border-bottom: 1px solid #f0f0f0;
+  font-size: 13px;
+}
+.admin-section .row:last-child { border-bottom: none; }
+.admin-section .row .name { flex: 1; font-weight: 500; }
+.admin-section .row .role { padding: 2px 8px; border-radius: 4px; font-size: 11px; }
+.role-admin { background: #ffebee; color: var(--danger); }
+.role-user { background: #e3f2fd; color: var(--primary); }
+.role-blocked { background: #f5f5f5; color: #999; }
+.admin-section .row button {
+  background: #fff; border: 1px solid var(--border);
+  border-radius: 4px; padding: 4px 10px;
+  font-size: 12px; cursor: pointer; color: var(--text-2);
+}
+.admin-section .row button:hover { background: #f5f5f5; }
+.admin-section .row button.del { color: var(--danger); border-color: #ffcdd2; }
+.admin-section .add-row { display: flex; gap: 8px; margin-top: 12px; }
+.admin-section .add-row input {
+  flex: 1; padding: 8px 10px; border: 1px solid var(--border);
+  border-radius: 6px; font-size: 13px; outline: none;
+}
+.admin-section .add-row button { background: var(--success); color: #fff; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; }
+
+/* ====== 响应式 ====== */
+@media (max-width: 768px) {
+  .sidebar { width: 160px; }
+  .sidebar .nav-item { padding: 12px 14px; font-size: 13px; }
+  .content-area { padding: 16px 14px; }
+  .cards-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+}
+
+@media (max-width: 600px) {
+  .app-header { padding: 10px 12px; }
+  .app-header h1 { font-size: 15px; }
+  .app-header .sub { display: none; }
+  .sidebar { width: 140px; }
+  .sidebar .nav-item { padding: 10px 10px; font-size: 12px; gap: 6px; }
+  .content-area { padding: 12px 10px; }
+  .cards-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .worker-card .cover { height: 70px; font-size: 40px; }
+  .worker-card .body { padding: 10px; }
+  .worker-card .name { font-size: 14px; }
+}
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="brand">
+    <img src="images/公司/logo_compact.png" alt="易宸圣景" class="logo">
+    <div>
+      <h1>易宸圣景装饰筹建规范资料库</h1>
+      <div class="sub">技术交底卡 · 班组长扫码查看 · 管理员在线编辑</div>
+    </div>
+  </div>
+  <div class="user-bar" id="userBar">
+    <!-- 动态显示 -->
+  </div>
+</div>
+
+<div class="main-wrap">
+  <!-- 左侧导航 -->
+  <div class="sidebar">
+    <div class="nav-item active" data-page="tech" onclick="switchPage('tech')">
+      <span class="nav-icon">📋</span> 技术交底卡
+    </div>
+    <div class="nav-item" data-page="acceptance" onclick="switchPage('acceptance')">
+      <span class="nav-icon">🔴</span> 华住验收专区
+    </div>
+    <div class="nav-item" data-page="selfcheck" onclick="switchPage('selfcheck')">
+      <span class="nav-icon">🔵</span> 公司自检资料
+    </div>
+  </div>
+
+  <!-- 内容区 -->
+  <div class="content-area">
+
+    <!-- ====== 页面1：技术交底卡 ====== -->
+    <div class="page-section active" id="page-tech">
+      <!-- 管理员控制台 -->
+      <div class="admin-panel" id="adminPanel">
+        <div class="icon">⚙️</div>
+        <div class="text">
+          <strong>管理员模式</strong>
+          <div>当前拥有全部工种卡的编辑、用户管理权限</div>
+        </div>
+        <button onclick="toggleUserMgmt()">👥 用户管理</button>
+        <button onclick="logout()">🚪 退出登录</button>
+      </div>
+
+      <!-- 管理员-用户管理面板 -->
+      <div class="admin-section" id="userMgmt">
+        <h3>👥 用户管理（白名单）</h3>
+        <div id="userList"></div>
+        <div class="add-row">
+          <input type="text" id="newName" placeholder="姓名">
+          <input type="text" id="newPhone" placeholder="手机号">
+          <button onclick="addUser()">➕ 添加</button>
+        </div>
+      </div>
+
+      <div class="section-title">
+        📋 技术交底卡 <span class="count" id="totalCount">8</span>
+      </div>
+      <div class="cards-grid" id="cardsGrid"></div>
+    </div>
+
+    <!-- ====== 页面2：华住验收专区 ====== -->
+    <div class="page-section" id="page-acceptance">
+      <div class="section-title" style="color:#c62828;">
+        🔴 华住验收专区
+      </div>
+      <p style="color:#666;font-size:13px;margin-bottom:16px;line-height:1.8;">
+        按工种查看验收标准，包括红线条款、隐蔽工程、竣工验收、扣分重灾区四大类。
+        公司自检合格后再报华住验收，把问题消灭在施工阶段。
+      </p>
+      <div class="acceptance-grid" id="acceptanceGrid"></div>
+    </div>
+
+    <!-- ====== 页面3：公司自检资料 ====== -->
+    <div class="page-section" id="page-selfcheck">
+      <div class="section-title" style="color:#1565c0;">
+        🔵 公司自检资料
+      </div>
+
+      <div class="selfcheck-intro">
+        <h3>三级检查体系</h3>
+        <p>
+          <strong>第一级</strong>：施工标准 — 按华住营建手册施工<br>
+          <strong>第二级</strong>：公司自检 — 每道工序完工后，公司项目经理按12个节点、350条检查项逐条检查，合格后再报华住<br>
+          <strong>第三级</strong>：华住验收 — 华住集团验收团队进行最终验收
+        </p>
+      </div>
+
+      <p style="color:#666;font-size:13px;margin-bottom:16px;line-height:1.8;">
+        所有工种的公司自检表格均可在对应工种卡中查看和编辑。点击下方工种入口直接进入。
+      </p>
+
+      <div class="selfcheck-grid" id="selfcheckGrid"></div>
+    </div>
+
+    <div class="footer">
+      青岛易宸圣景装饰工程有限公司 · 华住集团池内认证总包
+      <br>华住集团 · 筹建规范资料库 <span class="version">V2.0</span>
+      <br>来源：华住集团《营建技术手册-通用版》v1.2（2025年第一版）
+      <div class="footer-company">青岛易宸圣景装饰工程有限公司 © 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- 登录弹窗 -->
+<div class="modal-mask" id="loginModal">
+  <div class="login-box">
+    <h2>🔐 登录验证</h2>
+    <p class="sub">易宸圣景装饰筹建规范资料库</p>
+    <div id="errMsg" class="err-msg"></div>
+    <div class="login-tabs">
+      <div class="login-tab active" data-tab="password" onclick="switchTab('password')">用户名+密码</div>
+      <div class="login-tab" data-tab="sms" onclick="switchTab('sms')">手机号验证</div>
+    </div>
+    <form class="login-form active" id="formPwd" onsubmit="return loginPwd(event)">
+      <div class="form-row">
+        <label>用户名</label>
+        <input type="text" id="loginName" placeholder="请输入用户名" autocomplete="username">
+      </div>
+      <div class="form-row">
+        <label>密码</label>
+        <input type="password" id="loginPwd" placeholder="请输入密码" autocomplete="current-password">
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-default" onclick="closeLogin()">取消</button>
+        <button type="submit" class="btn btn-primary">登 录</button>
+      </div>
+    </form>
+    <form class="login-form" id="formSms" onsubmit="return loginSms(event)">
+      <div class="form-row">
+        <label>手机号</label>
+        <input type="tel" id="loginPhone" placeholder="11位手机号" maxlength="11">
+      </div>
+      <div class="form-row">
+        <label>验证码</label>
+        <div style="display:flex;gap:8px">
+          <input type="text" id="smsCode" placeholder="6位验证码" maxlength="6" style="flex:1">
+          <button type="button" class="btn btn-default" id="sendSmsBtn" onclick="sendSms()" style="flex:0 0 100px">获取验证码</button>
+        </div>
+        <div class="hint">本机演示模式：验证码固定为 <b>888888</b></div>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-default" onclick="closeLogin()">取消</button>
+        <button type="submit" class="btn btn-primary">登 录</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+// ========== 页面切换 ==========
+function switchPage(pageId) {
+  // 隐藏所有页面
+  document.querySelectorAll('.page-section').forEach(function(el) { el.classList.remove('active'); });
+  // 显示目标页面
+  document.getElementById('page-' + pageId).classList.add('active');
+  // 更新导航高亮
+  document.querySelectorAll('.nav-item').forEach(function(el) { el.classList.remove('active'); });
+  document.querySelector('.nav-item[data-page="' + pageId + '"]').classList.add('active');
+  // 滚动到顶部
+  document.querySelector('.content-area').scrollTop = 0;
+}
+
+// ========== 工种卡数据 ==========
+var CARDS = [
+  { id: 'shuigong', name: '水工技术交底卡', desc: '给水·排水·防水', emoji: '💧', color: 'shuigong', href: '水工技术交底卡.html', count: 3 },
+  { id: 'tongceng', name: '同层排水交底卡', desc: '同层排水抬高·管沟防水', emoji: '🪠', color: 'shuigong', href: '同层排水技术交底卡.html', count: 1 },
+  { id: 'wagong', name: '瓦工技术交底卡', desc: '地梁·墙体·轻钢龙骨', emoji: '🧱', color: 'wagong', href: '瓦工技术交底卡.html', count: 73 },
+  { id: 'qiangdi', name: '墙地砖交底卡', desc: '卫生间墙地砖·SPC板·美缝', emoji: '🟫', color: 'qiangdi', href: '墙地砖技术交底卡.html', count: 29 },
+  { id: 'mugong', name: '木工技术交底卡', desc: '吊顶·龙骨·检修口', emoji: '🪚', color: 'mugong', href: '木工技术交底卡.html', count: 46 },
+  { id: 'diangong', name: '电工技术交底卡', desc: '强弱电·桥架·消防', emoji: '⚡', color: 'diangong', href: '电工技术交底卡.html', count: 41 },
+  { id: 'youqi', name: '油漆技术交底卡', desc: '墙面·基层·涂料', emoji: '🎨', color: 'youqi', href: '油漆技术交底卡.html', count: 13 },
+  { id: 'nuantong', name: '暖通技术交底卡', desc: '空调·新风·地暖', emoji: '❄️', color: 'nuantong', href: '暖通技术交底卡.html', count: 18 },
+];
+
+// ========== 用户白名单 ==========
+var USERS_KEY = 'huazhu_users_v2';
+var SESSION_KEY = 'huazhu_session_v2';
+
+function getDefaultUsers() {
+  return [
+    { name: '林总', phone: '13800000000', pwd: 'admin123', role: 'admin' },
+    { name: '张工', phone: '13900000001', pwd: 'user123', role: 'user' },
+    { name: '王工', phone: '13900000002', pwd: 'user123', role: 'user' },
+    { name: '李工', phone: '13900000003', pwd: 'user123', role: 'user' },
+  ];
+}
+function getUsers() {
+  try {
+    var u = JSON.parse(localStorage.getItem(USERS_KEY));
+    if (Array.isArray(u) && u.length > 0) return u;
+  } catch(e) {}
+  var d = getDefaultUsers();
+  localStorage.setItem(USERS_KEY, JSON.stringify(d));
+  return d;
+}
+function saveUsers(u) { localStorage.setItem(USERS_KEY, JSON.stringify(u)); }
+
+// ========== 会话 ==========
+function getSession() {
+  try { return JSON.parse(localStorage.getItem(SESSION_KEY)) || null; } catch(e) { return null; }
+}
+function setSession(s) { localStorage.setItem(SESSION_KEY, JSON.stringify(s)); }
+function clearSession() { localStorage.removeItem(SESSION_KEY); }
+
+// ========== 渲染技术交底卡 ==========
+function renderCards() {
+  var session = getSession();
+  var isAdmin = session && session.role === 'admin';
+  var html = '';
+  for (var i = 0; i < CARDS.length; i++) {
+    var c = CARDS[i];
+    html += '<a class="worker-card ' + c.color + '" href="' + c.href + '">' +
+            '  <div class="cover">' + c.emoji + '</div>' +
+            '  <div class="body">' +
+            '    <div class="name">' + c.name + '</div>' +
+            '    <div class="desc">' + c.desc + '</div>' +
+            '  </div>' +
+            '  <div class="footer">' +
+            '    <span>📷 ' + c.count + ' 张图例</span>' +
+            (isAdmin ? '    <span class="badge">可编辑</span>' : '    <span>查看 →</span>') +
+            '  </div>' +
+            '</a>';
+  }
+  document.getElementById('cardsGrid').innerHTML = html;
+  document.getElementById('totalCount').textContent = CARDS.length;
+}
+
+// ========== 渲染华住验收专区入口 ==========
+function renderAcceptance() {
+  var trades = [
+    { name: '水工', emoji: '💧', desc: '给水·排水·防水', link: '水工技术交底卡.html#tab-huazhu' },
+    { name: '同层排水', emoji: '🪠', desc: '抬高·管沟·防水', link: '同层排水技术交底卡.html#tab-huazhu' },
+    { name: '瓦工', emoji: '🧱', desc: '地梁·墙体·龙骨', link: '瓦工技术交底卡.html#tab-huazhu' },
+    { name: '墙地砖', emoji: '🟫', desc: '墙地砖·SPC·美缝', link: '墙地砖技术交底卡.html#tab-huazhu' },
+    { name: '木工', emoji: '🪚', desc: '吊顶·龙骨·检修口', link: '木工技术交底卡.html#tab-huazhu' },
+    { name: '电工', emoji: '⚡', desc: '强弱电·桥架·消防', link: '电工技术交底卡.html#tab-huazhu' },
+    { name: '油漆', emoji: '🎨', desc: '墙面·基层·涂料', link: '油漆技术交底卡.html#tab-huazhu' },
+    { name: '暖通', emoji: '❄️', desc: '空调·新风·地暖', link: '暖通技术交底卡.html#tab-huazhu' },
+  ];
+  var html = '';
+  for (var i = 0; i < trades.length; i++) {
+    var t = trades[i];
+    html += '<a class="acc-card" href="' + t.link + '">' +
+            '  <div class="acc-icon">' + t.emoji + '</div>' +
+            '  <div class="acc-name">' + t.name + '</div>' +
+            '  <div class="acc-desc">' + t.desc + '</div>' +
+            '  <div class="acc-badge">华住验收</div>' +
+            '</a>';
+  }
+  document.getElementById('acceptanceGrid').innerHTML = html;
+}
+
+// ========== 渲染公司自检资料入口 ==========
+function renderSelfcheck() {
+  var trades = [
+    { name: '水工', emoji: '💧', desc: '给水·排水·防水', link: '水工技术交底卡.html#tab-selfcheck' },
+    { name: '同层排水', emoji: '🪠', desc: '抬高·管沟·防水', link: '同层排水技术交底卡.html#tab-selfcheck' },
+    { name: '瓦工', emoji: '🧱', desc: '地梁·墙体·龙骨', link: '瓦工技术交底卡.html#tab-selfcheck' },
+    { name: '墙地砖', emoji: '🟫', desc: '墙地砖·SPC·美缝', link: '墙地砖技术交底卡.html#tab-selfcheck' },
+    { name: '木工', emoji: '🪚', desc: '吊顶·龙骨·检修口', link: '木工技术交底卡.html#tab-selfcheck' },
+    { name: '电工', emoji: '⚡', desc: '强弱电·桥架·消防', link: '电工技术交底卡.html#tab-selfcheck' },
+    { name: '油漆', emoji: '🎨', desc: '墙面·基层·涂料', link: '油漆技术交底卡.html#tab-selfcheck' },
+    { name: '暖通', emoji: '❄️', desc: '空调·新风·地暖', link: '暖通技术交底卡.html#tab-selfcheck' },
+  ];
+  var html = '';
+  for (var i = 0; i < trades.length; i++) {
+    var t = trades[i];
+    html += '<a class="sc-card" href="' + t.link + '">' +
+            '  <div class="sc-name">' + t.emoji + ' ' + t.name + '</div>' +
+            '  <div class="sc-desc">' + t.desc + '</div>' +
+            '  <div class="sc-count">🔵 公司自检 →</div>' +
+            '</a>';
+  }
+  document.getElementById('selfcheckGrid').innerHTML = html;
+}
+
+// ========== 头部用户栏 ==========
+function renderUserBar() {
+  var session = getSession();
+  var bar = document.getElementById('userBar');
+  if (session) {
+    var roleLabel = session.role === 'admin' ? '管理员' : '员工';
+    bar.innerHTML = '<div class="avatar">👤</div>' +
+                    '<div><div>' + escapeHtml(session.name) + '</div>' +
+                    '<div class="role-tag">' + roleLabel + '</div></div>' +
+                    '<button onclick="logout()">退出</button>';
+  } else {
+    bar.innerHTML = '<button onclick="openLogin()">🔐 登录</button>';
+  }
+  // 管理员面板
+  document.getElementById('adminPanel').className = 'admin-panel' + ((session && session.role === 'admin') ? ' show' : '');
+}
+
+// ========== 登录弹窗 ==========
+function openLogin() {
+  document.getElementById('loginModal').classList.add('show');
+  hideErr();
+  switchTab('password');
+}
+function closeLogin() {
+  document.getElementById('loginModal').classList.remove('show');
+}
+function switchTab(tab) {
+  document.querySelectorAll('.login-tab').forEach(function(el) {
+    el.classList.toggle('active', el.dataset.tab === tab);
+  });
+  document.querySelectorAll('.login-form').forEach(function(el) {
+    el.classList.remove('active');
+  });
+  document.getElementById(tab === 'password' ? 'formPwd' : 'formSms').classList.add('active');
+  hideErr();
+}
+function showErr(msg) {
+  var el = document.getElementById('errMsg');
+  el.textContent = msg; el.classList.add('show');
+}
+function hideErr() { document.getElementById('errMsg').classList.remove('show'); }
+
+function loginPwd(e) {
+  e.preventDefault();
+  var name = document.getElementById('loginName').value.trim();
+  var pwd = document.getElementById('loginPwd').value;
+  if (!name || !pwd) { showErr('请输入用户名和密码'); return false; }
+  var users = getUsers();
+  var u = users.find(function(x) { return x.name === name && x.pwd === pwd; });
+  if (!u) { showErr('用户名或密码错误（可联系管理员添加）'); return false; }
+  setSession({ name: u.name, role: u.role, loginAt: Date.now() });
+  closeLogin();
+  renderUserBar();
+  renderCards();
+  alert('✅ 登录成功！欢迎 ' + u.name + (u.role === 'admin' ? '（管理员）' : '（员工）'));
+  return false;
+}
+
+function sendSms() {
+  var phone = document.getElementById('loginPhone').value.trim();
+  if (!/^1\d{10}$/.test(phone)) { showErr('请输入正确的11位手机号'); return; }
+  showErr('');
+  var btn = document.getElementById('sendSmsBtn');
+  btn.disabled = true; btn.textContent = '已发送 (60)';
+  var n = 60;
+  var t = setInterval(function() {
+    n--; btn.textContent = '已发送 (' + n + ')';
+    if (n <= 0) { clearInterval(t); btn.disabled = false; btn.textContent = '获取验证码'; }
+  }, 1000);
+  setTimeout(function() { alert('📱 验证码已发送（演示模式: 固定 888888）'); }, 100);
+}
+function loginSms(e) {
+  e.preventDefault();
+  var phone = document.getElementById('loginPhone').value.trim();
+  var code = document.getElementById('smsCode').value.trim();
+  if (!/^1\d{10}$/.test(phone)) { showErr('请输入正确的11位手机号'); return false; }
+  if (code !== '888888') { showErr('验证码错误（演示模式请填 888888）'); return false; }
+  var users = getUsers();
+  var u = users.find(function(x) { return x.phone === phone; });
+  if (!u) { showErr('该手机号不在白名单内，请联系管理员添加'); return false; }
+  setSession({ name: u.name, role: u.role, loginAt: Date.now() });
+  closeLogin();
+  renderUserBar();
+  renderCards();
+  alert('✅ 登录成功！欢迎 ' + u.name + (u.role === 'admin' ? '（管理员）' : '（员工）'));
+  return false;
+}
+
+function logout() {
+  if (!confirm('确认退出登录？')) return;
+  clearSession();
+  document.getElementById('userMgmt').classList.remove('show');
+  renderUserBar();
+  renderCards();
+}
+
+// ========== 用户管理 ==========
+function toggleUserMgmt() {
+  var panel = document.getElementById('userMgmt');
+  if (panel.classList.contains('show')) { panel.classList.remove('show'); return; }
+  renderUserList();
+  panel.classList.add('show');
+}
+function renderUserList() {
+  var users = getUsers();
+  var session = getSession();
+  var html = '';
+  for (var i = 0; i < users.length; i++) {
+    var u = users[i];
+    var isSelf = session && session.name === u.name;
+    html += '<div class="row">' +
+            '  <div class="name">' + escapeHtml(u.name) + (isSelf ? ' <span style="color:#999;font-size:11px">(我自己)</span>' : '') + '</div>' +
+            '  <div style="color:#999;font-size:12px">' + escapeHtml(u.phone) + '</div>' +
+            '  <div class="role role-' + u.role + '">' + (u.role === 'admin' ? '管理员' : '员工') + '</div>' +
+            '  <button onclick="changeRole(' + i + ')">改角色</button>' +
+            (isSelf ? '' : '  <button class="del" onclick="removeUser(' + i + ')">删除</button>') +
+            '</div>';
+  }
+  document.getElementById('userList').innerHTML = html;
+}
+function addUser() {
+  var name = document.getElementById('newName').value.trim();
+  var phone = document.getElementById('newPhone').value.trim();
+  if (!name || !phone) { alert('请输入姓名和手机号'); return; }
+  if (!/^1\d{10}$/.test(phone)) { alert('手机号格式错误'); return; }
+  var users = getUsers();
+  if (users.find(function(u) { return u.phone === phone; })) { alert('该手机号已存在'); return; }
+  users.push({ name: name, phone: phone, pwd: 'user123', role: 'user' });
+  saveUsers(users);
+  document.getElementById('newName').value = '';
+  document.getElementById('newPhone').value = '';
+  renderUserList();
+  alert('✅ 已添加员工：' + name);
+}
+function removeUser(idx) {
+  var users = getUsers();
+  if (!confirm('确认删除员工「' + users[idx].name + '」？')) return;
+  users.splice(idx, 1);
+  saveUsers(users);
+  renderUserList();
+}
+function changeRole(idx) {
+  var users = getUsers();
+  var u = users[idx];
+  var newRole = u.role === 'admin' ? 'user' : 'admin';
+  if (!confirm('将「' + u.name + '」角色从「' + (u.role === 'admin' ? '管理员' : '员工') + '」改为「' + (newRole === 'admin' ? '管理员' : '员工') + '」？')) return;
+  users[idx].role = newRole;
+  saveUsers(users);
+  renderUserList();
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, function(c) {
+    return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
+  });
+}
+
+// ========== 初始化 ==========
+renderCards();
+renderAcceptance();
+renderSelfcheck();
+renderUserBar();
+
+// 点击遮罩关闭登录框
+document.getElementById('loginModal').addEventListener('click', function(e) {
+  if (e.target.id === 'loginModal') closeLogin();
+});
+</script>
+
+</body>
+</html>

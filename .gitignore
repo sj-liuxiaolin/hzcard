@@ -1,0 +1,34 @@
+__pycache__/
+*.pyc
+*.db
+*.log
+*.py
+!requirements.txt
+node_modules/
+.DS_Store
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+images_meta.json
+tmp/
+.temp/
+
+# 大文件：营建手册原始PPTX（在线版已包含全部内容）
+【标准类】营建技术手册-通用版（2025年第一版）-v1.2.pptx
+
+# 暂不发布的6张卡片和脚本
+_hidden_cards/
+hide_other_cards.py
+make_simple_index.py
+
+# 不上传历史归档
+_archive_旧版本/
+_hidden_cards/
+
+# 不上传 ZIP 包
+_zip_*.zip
+
+# 不上传旧的 V1 卡片（重命名为 V1 后缀）

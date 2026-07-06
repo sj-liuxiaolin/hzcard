@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>华住验收专区</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, "Microsoft YaHei", sans-serif; background: #f5f5f5; color: #333; line-height: 1.6; }
+.header { background: linear-gradient(135deg, #c62828, #e53935); color: #fff; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; position: sticky; top: 0; z-index: 100; }
+.header h1 { font-size: 18px; font-weight: 600; }
+.header .subtitle { font-size: 12px; opacity: 0.85; }
+.nav-bar { position: sticky; top: 55px; z-index: 99; background: #fff; border-bottom: 1px solid #e0e0e0; display: flex; align-items: center; padding: 0 12px; height: 38px; }
+.nav-back { color: #c62828; text-decoration: none; font-size: 13px; white-space: nowrap; margin-right: 12px; padding: 4px 8px; border-radius: 4px; font-weight: 500; }
+.nav-back:hover { background: #ffebee; }
+.nav-tabs-wrap { display: flex; gap: 4px; overflow-x: auto; flex: 1; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.nav-tabs-wrap::-webkit-scrollbar { display: none; }
+.nav-tabs-wrap a { padding: 4px 10px; font-size: 12px; white-space: nowrap; border-radius: 4px; text-decoration: none; color: #666; transition: all 0.15s; }
+.nav-tabs-wrap a:hover { background: #f0f0f0; }
+.nav-tabs-wrap a.active { background: #c62828; color: #fff; }
+.work-tabs { position: sticky; top: 93px; z-index: 98; display: flex; background: #f5f5f5; border-bottom: 1px solid #e0e0e0; overflow-x: auto; scrollbar-width: none; }
+.work-tabs::-webkit-scrollbar { display: none; }
+.work-tab { flex-shrink: 0; padding: 10px 16px; text-align: center; font-size: 13px; border: none; background: none; cursor: pointer; color: #666; border-bottom: 3px solid transparent; transition: all 0.15s; font-family: inherit; white-space: nowrap; }
+.work-tab:hover { background: #eee; }
+.work-tab.active { color: #c62828; border-bottom-color: #c62828; font-weight: 600; background: #fff; }
+.container { max-width: 960px; margin: 0 auto; padding: 16px; }
+.work-content { display: none; }
+.work-content.active { display: block; }
+.section { background: #fff; border-radius: 10px; margin-bottom: 16px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.section-title { padding: 12px 16px; font-size: 15px; font-weight: 600; border-left: 4px solid; display: flex; align-items: center; gap: 8px; }
+.section-title .count-badge { font-size: 11px; padding: 1px 7px; border-radius: 10px; background: rgba(255,255,255,0.25); font-weight: 400; }
+.title-red { border-color: #c62828; background: #ffebee; color: #c62828; }
+.title-blue { border-color: #1565c0; background: #e3f2fd; color: #1565c0; }
+.title-orange { border-color: #ef6c00; background: #fff3e0; color: #ef6c00; }
+.title-amber { border-color: #f9a825; background: #fff8e1; color: #f9a825; }
+.check-grid { padding: 4px 16px 12px; }
+.check-row { display: flex; align-items: flex-start; padding: 7px 0; border-bottom: 1px solid #f0f0f0; font-size: 13px; gap: 8px; }
+.check-row:last-child { border-bottom: none; }
+.check-num { width: 28px; flex-shrink: 0; text-align: center; color: #999; font-weight: 500; }
+.check-text { flex: 1; line-height: 1.6; }
+.check-source { font-size: 11px; color: #999; display: block; margin-top: 2px; }
+.tag-red { display: inline-block; background: #c62828; color: #fff; padding: 1px 7px; border-radius: 3px; font-size: 11px; font-weight: 600; }
+.tag-orange { display: inline-block; background: #ef6c00; color: #fff; padding: 1px 7px; border-radius: 3px; font-size: 11px; font-weight: 500; }
+.tag-blue { display: inline-block; background: #1565c0; color: #fff; padding: 1px 7px; border-radius: 3px; font-size: 11px; }
+.tag-gray { display: inline-block; background: #999; color: #fff; padding: 1px 7px; border-radius: 3px; font-size: 11px; }
+.text-block { padding: 12px 16px; font-size: 13px; color: #666; border-top: 1px solid #f0f0f0; }
+.search-wrap { max-width: 960px; margin: 12px auto 0; padding: 0 16px; }
+.search-box { position: relative; width: 100%; }
+.search-box input { width: 100%; padding: 10px 16px 10px 38px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 14px; outline: none; background: #fff; }
+.search-box input:focus { border-color: #c62828; }
+.search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #999; font-size: 16px; }
+.search-clear { display: none; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #999; cursor: pointer; font-size: 16px; padding: 4px; }
+.search-clear.show { display: block; }
+@media (max-width: 600px) {
+  .header { padding: 10px 14px; }
+  .header h1 { font-size: 15px; }
+  .nav-bar { padding: 0 8px; height: 36px; }
+  .work-tab { padding: 8px 12px; font-size: 12px; }
+  .container { padding: 10px; }
+  .check-row { font-size: 12px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div style="display:flex;align-items:center;gap:10px;">
+    <img src="images/公司/logo_compact.png" alt="易宸圣景" style="height:40px;flex-shrink:0;">
+    <div>
+    <h1>📋 华住验收专区</h1>
+    <div class="subtitle">按工种查 · 红线/隐蔽/竣工/扣分 · 公司自检合格后再报华住</div>
+    </div>
+  </div>
+</div>
+
+<div class="nav-bar">
+  <a href="index.html" class="nav-back">←返回首页</a>
+  <div class="nav-tabs-wrap">
+    <a href="水工技术交底卡.html">水工</a>
+    <a href="瓦工技术交底卡.html">瓦工</a>
+    <a href="墙地砖技术交底卡.html">墙地砖</a>
+    <a href="木工技术交底卡.html">木工</a>
+    <a href="电工技术交底卡.html">电工</a>
+    <a href="油漆技术交底卡.html">油漆</a>
+    <a href="暖通技术交底卡.html">暖通</a>
+  </div>
+</div>
+
+<div class="work-tabs">
+  <button class="work-tab" data-work="wagong">🧱 瓦工</button>
+  <button class="work-tab active" data-work="shuidian">⚡ 水电工</button>
+  <button class="work-tab" data-work="mugong">🪚 木工</button>
+  <button class="work-tab" data-work="yougong">🎨 油工</button>
+  <button class="work-tab" data-work="nuantong">❄️ 暖通消防</button>
+  <button class="work-tab" data-work="anzhuang">🔩 安装工</button>
+  <button class="work-tab" data-work="chaiyu">🧱 拆除土建</button>
+</div>
+
+<div class="search-wrap">
+  <div class="search-box">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="搜索检查项（如：漏水、空鼓、噪音...）" oninput="doSearch(this.value)">
+    <span class="search-clear" id="searchClear" onclick="clearSearch()">✕</span>
+  </div>
+</div>
+
+<div class="container">
+
+<!--========== 瓦工（现有） ==========-->
+<div class="work-content" id="work-wagong">
+  <div class="section">
+    <div class="section-title title-red">🚫 红线项 <span class="count-badge">5条</span></div>
+    <div class="check-grid">
+      <div class="check-row"><div class="check-num" style="color:#c62828">1</div><div class="check-text"><strong style="color:#c62828">闭水48小时无渗漏</strong><span class="check-source">来源：隐蔽验收必备项第7条</span></div></div>
+      <div class="check-row"><div class="check-num" style="color:#c62828">2</div><div class="check-text"><strong style="color:#c62828">卫生间地面必须湿铺</strong> — 干铺直接验收不过<span class="check-source">来源：隐蔽验收必备项第15条</span></div></div>
+      <div class="check-row"><div class="check-num" style="color:#c62828">3</div><div class="check-text"><strong style="color:#c62828">防水上翻高度达标</strong> — 花洒≥1800mm，台盆≥1400mm，其他≥400mm</div></div>
+      <div class="check-row"><div class="check-num" style="color:#c62828">4</div><div class="check-text"><strong style="color:#c62828">2处以上渗漏水=不合格</strong><span class="check-source">来源：竣工验收必备项第14条</span></div></div>
+      <div class="check-row"><div class="check-num" style="color:#c62828">5</div><div class="check-text"><strong style="color:#c62828">墙砖压地砖</strong> — 不得出现朝天缝</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title title-blue">🔍 隐蔽检查 <span class="count-badge">8条</span></div>
+    <div class="check-grid">
+      <div class="check-row"><div class="check-num">1</div><div class="check-text">防水材料符合国标，有出厂报告<span class="check-source">来源：隐蔽验收必备项第2条</span></div></div>
+      <div class="check-row"><div class="check-num">2</div><div class="check-text">地面2遍丙纶防水，墙面上翻400mm，JS涂刷均匀</div></div>
+      <div class="check-row"><div class="check-num">3</div><div class="check-text">止水带两端紧密无空隙</div></div>
+      <div class="check-row"><div class="check-num">4</div><div class="check-text">冷热混合龙头处管线槽封堵严密</div></div>
+      <div class="check-row"><div class="check-num">5</div><div class="check-text">花洒防水≥1800mm，台盆≥1400mm</div></div>
+      <div class="check-row"><div class="check-num">6</div><div class="check-text"><strong style="color:#c62828">闭水48小时无渗漏</strong></div></div>
+      <div class="check-row"><div class="check-num">7</div><div class="check-text">瓷砖背面脱模剂清理+刷背胶</div></div>
+      <div class="check-row"><div class="check-num">8</div><div class="check-text">卫生间下水管及地漏口临时封堵</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title title-orange">📊 竣工检查 <span class="count-badge">12条</span></div>
+    <div class="check-grid">
+      <div class="check-row"><div class="check-num">1</div><div class="check-text"><span class="tag-red">红线</span> 卫生间无渗漏</div></div>
+      <div class="check-row"><div class="check-num">2</div><div class="check-text"><span class="tag-red">重点</span> 瓷砖空鼓：单块≤5%，单间≤3块</div></div>
+      <div class="check-row"><div class="check-num">3</div><div class="check-text"><span class="tag-orange">重点</span> 墙地砖平整度、垂直度<3mm</div></div>
+      <div class="check-row"><div class="check-num">4</div><div class="check-text"><span class="tag-orange">重点</span> 地漏找坡到位无积水</div></div>
+      <div class="check-row"><div class="check-num">5</div><div class="check-text"><span class="tag-red">重点</span> 墙砖压地砖无朝天缝</div></div>
+      <div class="check-row"><div class="check-num">6</div><div class="check-text"><span class="tag-orange">重点</span> 瓷砖无破损、崩瓷、缺角</div></div>
+      <div class="check-row"><div class="check-num">7</div><div class="check-text"><span class="tag-gray">一般</span> 阳角45度倒角对缝</div></div>
+      <div class="check-row"><div class="check-num">8</div><div class="check-text"><span class="tag-gray">一般</span> 美缝饱满无遗漏</div></div>
+      <div class="check-row"><div class="check-num">9</div><div class="check-text"><span class="tag-orange">重点</span> 门槛石安装到位无开裂</div></div>
+      <div class="check-row"><div class="check-num">10</div><div class="check-text"><span class="tag-orange">重点</span> 淋浴房挡水条端头封堵严实</div></div>
+      <div class="check-row"><div class="check-num">11</div><div class="check-text"><span class="tag-gray">一般</span> 瓷砖排版合理小条不明显</div></div>
+      <div class="check-row"><div class="check-num">12</div><div class="check-text"><span class="tag-gray">一般</span> 成品保护到位</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title title-amber">⚠️ 扣分重灾区 <span class="count-badge">5条</span></div>
+    <div class="check-grid">
+      <div class="check-row"><div class="check-num" style="color:#c62828">1</div><div class="check-text"><strong style="color:#c62828">卫生间渗漏水</strong> — 可能直接不过</div></div>
+      <div class="check-row"><div class="check-num" style="color:#ef6c00">2</div><div class="check-text"><strong>瓷砖大面积空鼓</strong> — 扣分高</div></div>
+      <div class="check-row"><div class="check-num" style="color:#ef6c00">3</div><div class="check-text"><strong>防水上翻高度不达标</strong></div></div>
+      <div class="check-row"><div class="check-num" style="color:#ef6c00">4</div><div class="check-text"><strong>地漏找坡不到位积水</strong></div></div>
+      <div class="check-row"><div class="check-num" style="color:#ef6c00">5</div><div class="check-text"><strong>墙地砖收口粗糙</strong></div></div>
+    </div>
+  </div>
+</div>
+
+<!--========== 水电工 ==========-->
+<div class="work-content active" id="work-shuidian">
+  <div class="section">
+    <div class="section-title title-red">🚫 红线项 <span class="count-badge">4条</span></div>
+    <div class="check-grid">
+      <div class="check-row"><div class="check-num" style="color:#c62828">1</div><div class="check-text"><strong style="color:#c62828">强弱电严禁共管共盒</strong> — 强弱电线管必须分开单独设置，不得穿越同一暗盒<span class="check-source">来源：总包节点6电气</span></div></div>
+      <div class="check-row"><div class="check-num" style="color:#c62828">2</div><div class="check-text"><strong style="color:#c62828">给水管打压试验合格</strong> — 给水管施工完成后必须打压试验+管道清洗<span class="check-source">来源：隐蔽验收必备项</span></div></div>
+      <div class="check-row"><div class="check-num" style="color:#c62828">3</div><div class="check-text"><strong style="color:#c62828">排水管通水通球试验合格</strong><span class="check-source">来源：隐蔽验收必备项</span></div></div>
+      <div class="check-row"><div class="check-num" style="color:#c62828">4</div><div class="check-text"><strong style="color:#c62828">排水管要求污废分流</strong> — 污废透气和排风管道分别出屋面<span class="check-source">来源：总包节点6给排水</span></div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title title-blue">🔍 隐蔽检查 <span class="count-badge">10条</span></div>
+    <div class="check-grid">
+      <div class="check-row"><div class="check-num">1</div><div class="check-text">给排水材料符合国标，有出厂报告<span class="check-source">来源：总包节点6给排水</span></div></div>
+      <div class="check-row"><div class="check-num">2</div><div class="check-text">排水立管双壁中空螺旋消音管，污废分流</div></div>
+      <div class="check-row"><div class="check-num">3</div><div class="check-text">干湿区地漏共用存水弯，淋浴区地漏75管</div></div>
+      <div class="check-row"><div class="check-num">4</div><div class="check-text">管材固定用PVC/镀锌管卡或吊杆，支架间距达标</div></div>
+      <div class="check-row"><div class="check-num">5</div><div class="check-text">吊顶内下水支管做隔音包扎处理</div></div>
+      <div class="check-row"><div class="check-num">6</div><div class="check-text">强弱电线管辅材符合国标，有检测报告<span class="check-source">来源：总包节点6电气</span></div></div>
+      <div class="check-row"><div class="check-num">7</div><div class="check-text">线管内穿线不超过截面40%，强弱电分开</div></div>
+      <div class="check-row"><div class="check-num">8</div><div class="check-text">管线排布：电管在上、水管在下，不得共用吊架</div></div>
+      <div class="check-row"><div class="check-num">9</div><div class="check-text">走廊强弱电桥架水平间距>300mm，上下>150mm</div></div>
+      <div class="check-row"><div class="check-num">10</div><div class="check-text">穿墙管道封堵到位，不得采用发泡</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title title-orange">📊 竣工检查 <span class="count-badge">10条</span></div>
+    <div class="check-grid">
+      <div class="check-row"><div class="check-num">1</div><div class="check-text"><span class="tag-red">红线</span> 给排水系统运行正常，无渗漏</div></div>
+      <div class="check-row"><div class="check-num">2</div><div class="check-text"><span class="tag-red">红线</span> 供电正常，配电间运行正常、电压稳定</div></div>
+      <div class="check-row"><div class="check-num">3</div><div class="check-text"><span class="tag-orange">重点</span> 花洒出水压力1.5-2.5公斤，15秒出热水</div></div>
+      <div class="check-row"><div class="check-num">4</div><div class="check-text"><span class="tag-orange">重点</span> 配电箱内粘贴系统图，空开定点标注到位</div></div>
+      <div class="check-row"><div class="check-num">5</div><div class="check-text"><span class="tag-orange">重点</span> 插座安装牢固端正，与墙面平齐紧贴</div></div>
+      <div class="check-row"><div class="check-num">6</div><div class="check-text"><span class="tag-gray">一般</span> 插座线不得串接，接线规范</div></div>
+      <div class="check-row"><div class="check-num">7</div><div class="check-text"><span class="tag-orange">重点</span> 洗衣机/烘衣机等重荷载设备专线电缆</div></div>
+      <div class="check-row"><div class="check-num">8</div><div class="check-text"><span class="tag-gray">一般</span> 分电开关标识清楚，布线放射状</div></div>
+      <div class="check-row"><div class="check-num">9</div><div class="check-text"><span class="tag-gray">一般</span> 卫生间水管内丝弯头处墙缝封堵密实</div></div>
+      <div class="check-row"><div class="check-num">10</div><div class="check-text"><span class="tag-orange">重点</span> 强弱电间无渗漏水，有绝缘胶垫</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title title-amber">⚠️ 扣分重灾区 <span class="count-badge">5条</span></div>
+    <div class="check-grid">
+      <div class="check-row"><div class="check-num" style="color:#c62828">1</div><div class="check-text"><strong>给排水渗漏</strong> — 扣分最高</div></div>
+      <div class="check-row"><div class="check-num" style="color:#ef6c00">2</div><div class="check-text"><strong>强弱电不分开布线</strong></div></div>
+      <div class="check-row"><div class="check-num" style="color:#ef6c00">3</div><div class="check-text"><strong>配电箱系统图缺失、标识不清</strong></div></div>
+      <div class="check-row"><div class="check-num" style="color:#ef6c00">4</div><div class="check-text"><strong>插座面板安装歪斜、与墙面不贴合</strong></div></div>
+      <div class="check-row"><div class="check-num" style="color:#ef6c00">5</div><div class="check-text"><strong>穿墙孔洞未封堵或发泡封堵</strong></div></div>
+    </div>
+  </div>
+</div>
+
+<!--========== 木工 ==========-->
+<div class="work-content" id="work-mugong">
+  <div class="section">
+    <div class="section-title title-red">🚫 红线项 <span class="count-badge">3条</span></div>
+    <div class="check-grid">
+      <div class="check-row"><div class="check-num" style="color:#c62828">1</div><div class="check-text"><strong style="color:#c62828">吊杆超过1200mm必须加反向支撑</strong> — 材质3#镀锌角铁<span class="check-source">来源：总包节点6木工</span></div></div>
+      <div class="check-row"><div class="check-num" style="color:#c62828">2</div><div class="check-text"><strong style="color:#c62828">吊顶内木制作须涂刷防火涂料</strong>（阻燃板除外）<span class="check-source">来源：总包节点6木工</span></div></div>
+      <div class="check-row"><div class="check-num" style="color:#c62828">3</div><div class="check-text"><strong style="color:#c62828">石膏板转角须L角处理</strong> — 不得直接拼接，用防裂网布覆盖</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title title-blue">🔍 隐蔽检查 <span class="count-badge">8条</span></div>
+    <div class="check-grid">
+      <div class="check-row"><div class="check-num">1</div><div class="check-text">主副龙骨国标50系列，8mm全丝吊杆<span class="check-source">来源：总包节点6木工</span></div></div>
+      <div class="check-row"><div class="check-num">2</div><div class="check-text">主龙骨间距1000mm，悬臂端≤300mm</div></div>
+      <div class="check-row"><div class="check-num">3</div><div class="check-text">次龙骨间距300mm，正反扣安装</div></div>
+      <div class="check-row"><div class="check-num">4</div><div class="check-text">洞口周围设附加龙骨</div></div>
+      <div class="check-row"><div class="check-num">5</div><div class="check-text">螺帽没入石膏板1-2mm并涂刷防锈漆</div></div>
+      <div class="check-row"><div class="check-num">6</div><div class="check-text">客房吊顶单层12mm，公区双层9.5mm石膏板</div></div>
+      <div class="check-row"><div class="check-num">7</div><div class="check-text">走廊吊顶>12M预留伸缩缝，主龙骨断开</div></div>
+      <div class="check-row"><div class="check-num">8</div><div class="check-text">门套木基层18mm细木工衬底，防腐涂料满刷</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title title-orange">📊 竣工检查 <span class="count-badge">8条</span></div>
+    <div class="check-grid">
+      <div class="check-row"><div class="check-num">1</div><div class="check-text"><span class="tag-red">重点</span> 吊顶表面平整，无开裂、起皮</div></div>
+      <div class="check-row"><div class="check-num">2</div><div class="check-text"><span class="tag-orange">重点</span> 石膏板接缝处防裂网布覆盖到位</div></div>
+      <div class="check-row"><div class="check-num">3</div><div class="check-text"><span class="tag-gray">一般</span> 检修口开洞尺寸合理，收口平整</div></div>
+      <div class="check-row"><div class="check-num">4</div><div class="check-text"><span class="tag-orange">重点</span> 吊杆固定牢固，反支撑设置到位</div></div>
+      <div class="check-row"><div class="check-num">5</div><div class="check-text"><span class="tag-gray">一般</span> 风口/检修口/水电等洞口周围附加龙骨</div></div>
+      <div class="check-row"><div class="check-num">6</div><div class="check-text"><span class="tag-orange">重点</span> 门套木基层牢固，防腐涂料满刷</div></div>
+      <div class="check-row"><div class="check-num">7</div><div class="check-text"><span class="tag-gray">一般</span> 转角L角处理到位</div></div>
+      <div class="check-row"><div class="check-num">8</div><div class="check-text"><span class="tag-orange">重点</span> 螺帽防锈漆涂刷到位</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title title-amber">⚠️ 扣分重灾区 <span class="count-badge">4条</span></div>
+    <div class="check-grid">
+      <div class="check-row"><div class="check-num" style="color:#c62828">1</div><div class="check-text"><strong>吊顶开裂</strong> — 转角未做L角处理或龙骨间距过大</div></div>
+      <div class="check-row"><div class="check-num" style="color:#ef6c00">2</div><div class="check-text"><strong>吊杆过长未加反向支撑</strong></div></div>
+      <div class="check-row"><div class="check-num" style="color:#ef6c00">3</div><div class="check-text"><strong>木制作未涂刷防火涂料</strong></div></div>
+      <div class="check-row"><div class="check-num" style="color:#ef6c00">4</div><div class="check-text"><strong>螺帽未做防锈处理</strong></div></div>
+    </div>
+  </div>
+</div>
+
+<!--========== 油工 ==========-->
+<div class="work-content" id="work-yougong">
+  <div class="section">
+    <div class="section-title title-red">🚫 红线项 <span class="count-badge">3条</span></div>
+    <div class="check-grid">
+      <div class="check-row"><div class="check-num" style="color:#c62828">1</div><div class="check-text"><strong style="color:#c62828">墙面基层含水率≤10%</strong> — 含水率超标不得施工，否则起皮脱落<span class="check-source">来源：总包节点8油漆木地板</span></div></div>
+      <div class="check-row"><div class="check-num" style="color:#c62828">2</div><div class="check-text"><strong style="color:#c62828">地面基层含水率<10%</strong> — 木地板铺设前必须测含水率</div></div>
+      <div class="check-row"><div class="check-num" style="color:#c62828">3</div><div class="check-text"><strong style="color:#c62828">墙顶面无霉变、渗漏</strong> — 发现2处霉变或渗漏为不合格<span class="check-source">来源：节点12竣工预验收</span></div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title title-blue">🔍 隐蔽检查 <span class="count-badge">6条</span></div>
+    <div class="check-grid">
+      <div class="check-row"><div class="check-num">1</div><div class="check-text">基层干净，无钢筋头、铁钉、木块、油污<span class="check-source">来源：总包节点8油漆木地板</span></div></div>
+      <div class="check-row"><div class="check-num">2</div><div class="check-text">二遍腻子打磨完毕，平整度垂直度<3mm</div></div>
+      <div class="check-row"><div class="check-num">3</div><div class="check-text">材质颜色型号符合设计要求</div></div>
+      <div class="check-row"><div class="check-num">4</div><div class="check-text">基层含水率达标</div></div>
+      <div class="check-row"><div class="check-num">5</div><div class="check-text">壁纸铺贴后无明显色差、阴阳面</div></div>
+      <div class="check-row"><div class="check-num">6</div><div class="check-text">木地板地面平整度0-3mm，伸缩缝8-10mm</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title title-orange">📊 竣工检查 <span class="count-badge">8条</span></div>
+    <div class="check-grid">
+      <div class="check-row"><div class="check-num">1</div><div class="check-text"><span class="tag-red">红线</span> 墙顶面无霉变、渗漏</div></div>
+      <div class="check-row"><div class="check-num">2</div><div class="check-text"><span class="tag-orange">重点</span> 油漆涂料无空鼓、裂缝、起皮、色差</div></div>
+      <div class="check-row"><div class="check-num">3</div><div class="check-text"><span class="tag-orange">重点</span> 壁纸1.5米无接缝、对花完整</div></div>
+      <div class="check-row"><div class="check-num">4</div><div class="check-text"><span class="tag-orange">重点</span> 木地板无大面缺陷（平整度>5mm、色差、起鼓）</div></div>
+      <div class="check-row"><div class="check-num">5</div><div class="check-text"><span class="tag-gray">一般</span> 踢脚线无扭曲变形，接头平整</div></div>
+      <div class="check-row"><div class="check-num">6</div><div class="check-text"><span class="tag-gray">一般</span> 墙顶面平整度<3mm，阴阳角方正</div></div>
+      <div class="check-row"><div class="check-num">7</div><div class="check-text"><span class="tag-orange">重点</span> 阳角折边、阴角对缝</div></div>
+      <div class="check-row"><div class="check-num">8</div><div class="check-text"><span class="tag-gray">一般</span> 成品保护到位</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title title-amber">⚠️ 扣分重灾区 <span class="count-badge">5条</span></div>
+    <div class="check-grid">
+      <div class="check-row"><div class="check-num" style="color:#c62828">1</div><div class="check-text"><strong>墙顶面发霉渗漏</strong> — 扣分高，可能直接不过</div></div>
+      <div class="check-row"><div class="check-num" style="color:#ef6c00">2</div><div class="check-text"><strong>墙面起皮、脱壳、色差</strong></div></div>
+      <div class="check-row"><div class="check-num" style="color:#ef6c00">3</div><div class="check-text"><strong>木地板起鼓、冒灰</strong></div></div>
+      <div class="check-row"><div class="check-num" style="color:#ef6c00">4</div><div class="check-text"><strong>壁纸接缝明显、起泡</strong></div></div>
+      <div class="check-row"><div class="check-num" style="color:#ef6c00">5</div><div class="check-text"><strong>踢脚线变形、松动、收口不严</strong></div></div>
+    </div>
+  </div>
+</div>
+
+<!--========== 暖通消防 ==========-->
+<div class="work-content" id="work-nuantong">
+  <div class="section">
+    <div class="section-title title-red">🚫 红线项 <span class="count-badge">4条</span></div>
+    <div class="check-grid">
+      <div class="check-row"><div class="check-num" style="color:#c62828">1</div><div class="check-text"><strong style="color:#c62828">所有独立空间必须有烟感及应急灯</strong> — 布草间、强弱电间、公卫等<span class="check-source">来源：总包节点6消防</span></div></div>
+      <div class="check-row"><div class="check-num" style="color:#c62828">2</div><div class="check-text"><strong style="color:#c62828">严禁使用易燃材料搭建</strong> — 泡沫夹芯彩钢板不得使用</div></div>
+      <div class="check-row"><div class="check-num" style="color:#c62828">3</div><div class="check-text"><strong style="color:#c62828">暗房必须有新风+排风</strong> — 不得用卫生间排气扇替代排风<span class="check-source">来源：竣工验收必备项第16条</span></div></div>
+      <div class="check-row"><div class="check-num" style="color:#c62828">4</div><div class="check-text"><strong style="color:#c62828">消防报警信号必须引至前台</strong><span class="check-source">来源：节点12竣工预验收消防</span></div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title title-blue">🔍 隐蔽检查 <span class="count-badge">8条</span></div>
+    <div class="check-grid">
+      <div class="check-row"><div class="check-num">1</div><div class="check-text">空调室内机吊装加防震橡胶垫<span class="check-source">来源：总包节点5暖通</span></div></div>
+      <div class="check-row"><div class="check-num">2</div><div class="check-text">冷凝水管保温到位，坡度≥8‰，单独排室外</div></div>
+      <div class="check-row"><div class="check-num">3</div><div class="check-text">新风系统按规范安装，送回风口对向布置</div></div>
+      <div class="check-row"><div class="check-num">4</div><div class="check-text">消防穿线管JDG管+防火涂料，单独布管</div></div>
+      <div class="check-row"><div class="check-num">5</div><div class="check-text">电气管线吊杆间距≤1500mm，不得共用</div></div>
+      <div class="check-row"><div class="check-num">6</div><div class="check-text">地暖管间距200mm，全过程带压</div></div>
+      <div class="check-row"><div class="check-num">7</div><div class="check-text">保温层≥20mm+反射膜</div></div>
+      <div class="check-row"><div class="check-num">8</div><div class="check-text">消防水管穿墙装套管</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title title-orange">📊 竣工检查 <span class="count-badge">10条</span></div>
+    <div class="check-grid">
+      <div class="check-row"><div class="check-num">1</div><div class="check-text"><span class="tag-red">红线</span> 消防设施正常运行：烟感、喷淋、消防栓、灭火器</div></div>
+      <div class="check-row"><div class="check-num">2</div><div class="check-text"><span class="tag-red">红线</span> 空调运行正常，15分钟达到制冷/制热要求</div></div>
+      <div class="check-row"><div class="check-num">3</div><div class="check-text"><span class="tag-orange">重点</span> 新风系统运行正常，换气次数2-3次/小时</div></div>
+      <div class="check-row"><div class="check-num">4</div><div class="check-text"><span class="tag-orange">重点</span> 消防报警主机无故障信息，可获知火警位置</div></div>
+      <div class="check-row"><div class="check-num">5</div><div class="check-text"><span class="tag-orange">重点</span> 喷淋走廊在一条直线，出板高度一致</div></div>
+      <div class="check-row"><div class="check-num">6</div><div class="check-text"><span class="tag-gray">一般</span> 消火栓栓口正向朝外或可旋转式</div></div>
+      <div class="check-row"><div class="check-num">7</div><div class="check-text"><span class="tag-gray">一般</span> 新风电源加时控开关，独立控制</div></div>
+      <div class="check-row"><div class="check-num">8</div><div class="check-text"><span class="tag-orange">重点</span> 疏散指示方向与逃生路线符合</div></div>
+      <div class="check-row"><div class="check-num">9</div><div class="check-text"><span class="tag-orange">重点</span> 排烟管道远离客房，有油烟净化装置</div></div>
+      <div class="check-row"><div class="check-num">10</div><div class="check-text"><span class="tag-gray">一般</span> 锅炉房消防报警为温感，有燃气报警装置</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title title-amber">⚠️ 扣分重灾区 <span class="count-badge">4条</span></div>
+    <div class="check-grid">
+      <div class="check-row"><div class="check-num" style="color:#c62828">1</div><div class="check-text"><strong>消防烟感被屏蔽或隔离</strong> — 直接判定不合格</div></div>
+      <div class="check-row"><div class="check-num" style="color:#ef6c00">2</div><div class="check-text"><strong>空调冷凝水排入卫生间</strong></div></div>
+      <div class="check-row"><div class="check-num" style="color:#ef6c00">3</div><div class="check-text"><strong>新风系统未安装或运行异常</strong></div></div>
+      <div class="check-row"><div class="check-num" style="color:#ef6c00">4</div><div class="check-text"><strong>消防通道堵塞或防火门无法正常开启</strong></div></div>
+    </div>
+  </div>
+</div>
+
+<!--========== 安装工 ==========-->
+<div class="work-content" id="work-anzhuang">
+  <div class="section">
+    <div class="section-title title-red">🚫 红线项 <span class="count-badge">3条</span></div>
+    <div class="check-grid">
+      <div class="check-row"><div class="check-num" style="color:#c62828">1</div><div class="check-text"><strong style="color:#c62828">门及家具样式材质尺寸须符合甲供材标准</strong><span class="check-source">来源：总包节点9家具</span></div></div>
+      <div class="check-row"><div class="check-num" style="color:#c62828">2</div><div class="check-text"><strong style="color:#c62828">洗衣机/烘衣机须有专线电缆</strong> — 重荷载设备专线配电<span class="check-source">来源：节点10开关面板</span></div></div>
+      <div class="check-row"><div class="check-num" style="color:#c62828">3</div><div class="check-text"><strong style="color:#c62828">淋浴房玻璃门安装牢固</strong> — 不得与墙体碰撞，四周止水条到位</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title title-blue">🔍 隐蔽检查 <span class="count-badge">6条</span></div>
+    <div class="check-grid">
+      <div class="check-row"><div class="check-num">1</div><div class="check-text">用电线套软管保护，不得外露<span class="check-source">来源：总包节点9家具</span></div></div>
+      <div class="check-row"><div class="check-num">2</div><div class="check-text">五金件安装牢固，玻璃镜子四角对称</div></div>
+      <div class="check-row"><div class="check-num">3</div><div class="check-text">插座型号符合标准，位置正确标高一致<span class="check-source">来源：节点10开关面板</span></div></div>
+      <div class="check-row"><div class="check-num">4</div><div class="check-text">灯具型号符合设计，色温照度达标</div></div>
+      <div class="check-row"><div class="check-num">5</div><div class="check-text">五金卫浴安装牢固，角阀进水正确</div></div>
+      <div class="check-row"><div class="check-num">6</div><div class="check-text">踢脚线色调材质符合标准，安装牢固</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title title-orange">📊 竣工检查 <span class="count-badge">10条</span></div>
+    <div class="check-grid">
+      <div class="check-row"><div class="check-num">1</div><div class="check-text"><span class="tag-orange">重点</span> 家具安装牢固，正视1.5M无明显划痕、封边平整</div></div>
+      <div class="check-row"><div class="check-num">2</div><div class="check-text"><span class="tag-orange">重点</span> 门扇尺寸准确、开启灵活、密封胶条完好</div></div>
+      <div class="check-row"><div class="check-num">3</div><div class="check-text"><span class="tag-gray">一般</span> 沙发软包饰面无污损、褶皱</div></div>
+      <div class="check-row"><div class="check-num">4</div><div class="check-text"><span class="tag-orange">重点</span> 插座安装牢固端正、标高一致、标示正确</div></div>
+      <div class="check-row"><div class="check-num">5</div><div class="check-text"><span class="tag-gray">一般</span> 灯具安装牢固、灯罩内无杂物、可正常使用</div></div>
+      <div class="check-row"><div class="check-num">6</div><div class="check-text"><span class="tag-orange">重点</span> 马桶安装牢固、排水畅通、防水硅胶美观</div></div>
+      <div class="check-row"><div class="check-num">7</div><div class="check-text"><span class="tag-gray">一般</span> 花洒底座高度符合设计，排水金属管件+存水弯</div></div>
+      <div class="check-row"><div class="check-num">8</div><div class="check-text"><span class="tag-orange">重点</span> 淋浴房玻璃门防水胶条磁吸到位、洗浴时无水外溅</div></div>
+      <div class="check-row"><div class="check-num">9</div><div class="check-text"><span class="tag-gray">一般</span> 踢脚线安装牢固、无破损、不得硅胶收口</div></div>
+      <div class="check-row"><div class="check-num">10</div><div class="check-text"><span class="tag-gray">一般</span> 毛巾架/卷纸架/给皂器安装牢固、位置正确</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title title-amber">⚠️ 扣分重灾区 <span class="count-badge">4条</span></div>
+    <div class="check-grid">
+      <div class="check-row"><div class="check-num" style="color:#c62828">1</div><div class="check-text"><strong>家具表面划痕、磕碰、封边脱落</strong></div></div>
+      <div class="check-row"><div class="check-num" style="color:#ef6c00">2</div><div class="check-text"><strong>门扇开启不灵活、密封不严</strong></div></div>
+      <div class="check-row"><div class="check-num" style="color:#ef6c00">3</div><div class="check-text"><strong>插座安装歪斜、面板破损</strong></div></div>
+      <div class="check-row"><div class="check-num" style="color:#ef6c00">4</div><div class="check-text"><strong>淋浴房止水条安装不到位、漏水</strong></div></div>
+    </div>
+  </div>
+</div>
+
+<!--========== 拆除土建 ==========-->
+<div class="work-content" id="work-chaiyu">
+  <div class="section">
+    <div class="section-title title-red">🚫 红线项 <span class="count-badge">3条</span></div>
+    <div class="check-grid">
+      <div class="check-row"><div class="check-num" style="color:#c62828">1</div><div class="check-text"><strong style="color:#c62828">结构问题须反馈业主+华住品牌方</strong> — 有沟通记录（邮件或微信）<span class="check-source">来源：节点2拆除检查</span></div></div>
+      <div class="check-row"><div class="check-num" style="color:#c62828">2</div><div class="check-text"><strong style="color:#c62828">轻钢龙骨M型龙骨须安装在地梁上</strong><span class="check-source">来源：节点4二次结构</span></div></div>
+      <div class="check-row"><div class="check-num" style="color:#c62828">3</div><div class="check-text"><strong style="color:#c62828">隔音墙石膏板6层（3层9.5mm+3层12mm）</strong> — 板缝错开，不得偷减</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title title-blue">🔍 隐蔽检查 <span class="count-badge">8条</span></div>
+    <div class="check-grid">
+      <div class="check-row"><div class="check-num">1</div><div class="check-text">原结构墙体采用静力切割<span class="check-source">来源：节点2拆除</span></div></div>
+      <div class="check-row"><div class="check-num">2</div><div class="check-text">地梁浇筑：竖向Φ8钢筋，横向Φ6，植筋胶固定</div></div>
+      <div class="check-row"><div class="check-num">3</div><div class="check-text">墙体水泥砂浆砌筑，灰缝8-12mm</div></div>
+      <div class="check-row"><div class="check-num">4</div><div class="check-text">新旧墙体加拉结筋，老墙皮剔除后砌筑</div></div>
+      <div class="check-row"><div class="check-num">5</div><div class="check-text">隔音墙减震垫70*10mm满贴</div></div>
+      <div class="check-row"><div class="check-num">6</div><div class="check-text">竖骨间距600mm，隔音墙内玻璃丝绵24kg/m³</div></div>
+      <div class="check-row"><div class="check-num">7</div><div class="check-text">抹灰前墙面拉毛处理，挂钢丝网搭接≥150mm</div></div>
+      <div class="check-row"><div class="check-num">8</div><div class="check-text">墙体砌到顶，顶部斜砖砌顶</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title title-orange">📊 竣工检查 <span class="count-badge">8条</span></div>
+    <div class="check-grid">
+      <div class="check-row"><div class="check-num">1</div><div class="check-text"><span class="tag-red">重点</span> 建筑物无倾斜、无明显结构性开裂</div></div>
+      <div class="check-row"><div class="check-num">2</div><div class="check-text"><span class="tag-orange">重点</span> 外墙屋面无渗漏水</div></div>
+      <div class="check-row"><div class="check-num">3</div><div class="check-text"><span class="tag-orange">重点</span> 墙体双面抹灰到顶，无空鼓</div></div>
+      <div class="check-row"><div class="check-num">4</div><div class="check-text"><span class="tag-gray">一般</span> 门洞口过梁安装到位，小灰砖固定门套</div></div>
+      <div class="check-row"><div class="check-num">5</div><div class="check-text"><span class="tag-orange">重点</span> 隔音墙板缝批腻子封堵</div></div>
+      <div class="check-row"><div class="check-num">6</div><div class="check-text"><span class="tag-gray">一般</span> 卫生间墙面硅酸钙板挂网抹灰</div></div>
+      <div class="check-row"><div class="check-num">7</div><div class="check-text"><span class="tag-gray">一般</span> 家具层板/电视/洗手盆预埋到位</div></div>
+      <div class="check-row"><div class="check-num">8</div><div class="check-text"><span class="tag-orange">重点</span> 现场放线完成，尺寸与图纸差异统计完成</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title title-amber">⚠️ 扣分重灾区 <span class="count-badge">4条</span></div>
+    <div class="check-grid">
+      <div class="check-row"><div class="check-num" style="color:#c62828">1</div><div class="check-text"><strong>墙体抹灰空鼓、开裂</strong></div></div>
+      <div class="check-row"><div class="check-num" style="color:#ef6c00">2</div><div class="check-text"><strong>隔音墙石膏板层数不够、板缝未错开</strong></div></div>
+      <div class="check-row"><div class="check-num" style="color:#ef6c00">3</div><div class="check-text"><strong>卫生间墙体未做止水地梁</strong></div></div>
+      <div class="check-row"><div class="check-num" style="color:#ef6c00">4</div><div class="check-text"><strong>新旧墙体交接处未加拉结筋</strong></div></div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+document.querySelectorAll('.work-tab').forEach(function(tab) {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.work-tab').forEach(function(t) { t.classList.remove('active'); });
+    document.querySelectorAll('.work-content').forEach(function(c) { c.classList.remove('active'); });
+    tab.classList.add('active');
+    document.getElementById('work-' + tab.dataset.work).classList.add('active');
+    clearSearch();
+  });
+});
+
+function doSearch(val) {
+  var q = val.trim().toLowerCase();
+  var clearBtn = document.getElementById('searchClear');
+  if (q.length > 0) {
+    clearBtn.classList.add('show');
+    var activeContent = document.querySelector('.work-content.active');
+    if (!activeContent) return;
+    activeContent.querySelectorAll('.check-row').forEach(function(r) {
+      var text = r.textContent.toLowerCase();
+      r.style.display = text.indexOf(q) !== -1 ? '' : 'none';
+    });
+    activeContent.querySelectorAll('.section').forEach(function(s) {
+      var visibleRows = s.querySelectorAll('.check-row:not([style*="none"])');
+      var allRows = s.querySelectorAll('.check-row');
+      s.style.display = (allRows.length > 0 && visibleRows.length === 0) ? 'none' : '';
+    });
+  } else {
+    clearBtn.classList.remove('show');
+    document.querySelectorAll('.work-content .check-row').forEach(function(r) { r.style.display = ''; });
+    document.querySelectorAll('.work-content .section').forEach(function(s) { s.style.display = ''; });
+  }
+}
+
+function clearSearch() {
+  document.getElementById('searchInput').value = '';
+  doSearch('');
+}
+</script>
+</body>
+</html>

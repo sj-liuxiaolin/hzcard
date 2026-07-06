@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>水工技术交底卡</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, "Microsoft YaHei", sans-serif; background: #f5f5f5; color: #333; line-height: 2; }
+.header { background: #1565c0; color: #fff; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; position: sticky; top: 0; z-index: 100; }
+.header h1 { font-size: 18px; font-weight: 600; }
+.header .subtitle { font-size: 12px; opacity: 0.85; }
+.toolbar { display: flex; gap: 6px; flex-wrap: wrap; }
+.tool-btn { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3); padding: 6px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; white-space: nowrap; transition: all 0.15s; }
+.tool-btn:hover { background: rgba(255,255,255,0.3); }
+.tool-btn.active { background: #ff9800; border-color: #ff9800; }
+.tool-btn.save { background: #43a047; border-color: #43a047; display: none; }
+.tool-btn.save.active { display: block; }
+
+/* ===== 导航条 ===== */
+.nav-bar { position: sticky; top: 52px; z-index: 99; background: #fff; border-bottom: 1px solid #e0e0e0; display: flex; align-items: center; padding: 0 12px; height: 38px; }
+.nav-back { color: #1565c0; text-decoration: none; font-size: 13px; white-space: nowrap; margin-right: 12px; padding: 4px 8px; border-radius: 4px; font-weight: 500; }
+.nav-back:hover { background: #e3f2fd; }
+.nav-tabs-wrap { display: flex; gap: 4px; overflow-x: auto; flex: 1; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.nav-tabs-wrap::-webkit-scrollbar { display: none; }
+.nav-tabs-wrap a { padding: 4px 10px; font-size: 12px; white-space: nowrap; border-radius: 4px; text-decoration: none; color: #666; transition: all 0.15s; }
+.nav-tabs-wrap a:hover { background: #f0f0f0; }
+.nav-tabs-wrap a.active { background: #1565c0; color: #fff; }
+
+/* ===== Tab标签 ===== */
+.layer-tabs { position: sticky; top: 90px; z-index: 98; display: flex; background: #f5f5f5; border-bottom: 1px solid #e0e0e0; }
+.layer-tab { flex: 1; padding: 10px 0; text-align: center; font-size: 14px; border: none; background: none; cursor: pointer; color: #666; border-bottom: 3px solid transparent; transition: all 0.15s; font-family: inherit; }
+.layer-tab:hover { background: #eee; }
+.layer-tab.active { color: #1565c0; border-bottom-color: #1565c0; font-weight: 600; background: #fff; }
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+.container { max-width: 900px; margin: 0 auto; padding: 16px; }
+.chapter { background: #fff; border-radius: 10px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.chapter-title { padding: 12px 16px; font-size: 16px; font-weight: 600; border-left: 4px solid; }
+.text-block { padding: 16px; font-size: 14px; line-height: 2; color: #444; min-height: 60px; }
+.text-block p { margin: 0; }
+.text-block strong { color: #c62828; }
+
+.sub-title { padding: 8px 16px; font-size: 14px; font-weight: 600; }
+.sub-title.err { color: #c62828; }
+
+/* ===== 自查 & 验收 表格 ===== */
+.check-grid { padding: 8px 16px 16px; }
+.check-row { display: flex; align-items: flex-start; padding: 6px 0; border-bottom: 1px solid #f0f0f0; font-size: 13px; gap: 8px; }
+.check-row:last-child { border-bottom: none; }
+.check-num { width: 28px; flex-shrink: 0; text-align: center; color: #999; }
+.check-text { flex: 1; line-height: 1.6; }
+.check-level { width: 48px; flex-shrink: 0; text-align: center; font-size: 11px; }
+.check-box { width: 64px; flex-shrink: 0; text-align: center; }
+.check-box span { cursor: pointer; padding: 2px 4px; border-radius: 3px; }
+.check-box span:hover { background: #e3f2fd; }
+.check-box .checked { color: #1565c0; font-weight: 600; }
+
+.level-red { color: #c62828; font-weight: 600; }
+.level-orange { color: #ef6c00; font-weight: 500; }
+.level-blue { color: #1565c0; }
+.level-gray { color: #999; }
+
+/* ===== 卡片区（原有） ===== */
+.editing .text-block { background: #fffde7; border: 2px dashed #ffc107; border-radius: 6px; margin: 8px; padding: 12px; }
+.editing .card-desc { background: #fffde7 !important; border: 2px dashed #ffc107 !important; border-radius: 4px !important; outline: none !important; cursor: text !important; pointer-events: auto !important; user-select: text !important; }
+.editing .card-desc:focus { background: #ffffff !important; border-color: #ff9800 !important; }
+.text-block:focus { background: #fffde7; }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; padding: 8px 16px 16px; }
+.card { background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; position: relative; transition: box-shadow 0.2s; }
+.card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.1); }
+.card-img { width: 100%; aspect-ratio: 4/3; overflow: hidden; background: #f0f0f0; cursor: pointer; }
+.card-img.selected {
+  outline: 3px solid #ff9800 !important;
+  outline-offset: -3px;
+}
+.card-img.selected { outline: 3px solid #ff9800; outline-offset: 2px; border-radius: 4px; }
+.card-img img { width: 100%; height: 100%; object-fit: contain; }
+.card-desc { padding: 8px; font-size: 12px; line-height: 1.4; text-align: center; }
+.card-desc.ok { color: #2e7d32; }
+.card-desc.err { color: #c62828; }
+.card-tools { display: none; position: absolute; top: 4px; right: 4px; z-index: 5; gap: 4px; }
+.editing .card-tools { display: flex; }
+.card-tool-btn { background: rgba(0,0,0,0.65); color: #fff; border: none; border-radius: 4px; padding: 3px 8px; font-size: 11px; cursor: pointer; white-space: nowrap; }
+.card-tool-btn:hover { background: rgba(0,0,0,0.85); }
+.card-tool-btn.del:hover { background: #c62828; }
+.add-card-bar { display: none; padding: 0 16px 16px; }
+.editing .add-card-bar { display: block; }
+.add-card-btn { width: 100%; padding: 16px; border: 2px dashed #ff9800; background: #fff8e1; color: #e65100; font-size: 13px; font-weight: 600; border-radius: 8px; cursor: pointer; }
+.add-card-btn:hover { background: #ffe0b2; }
+
+.fmt-toolbar { position: absolute; display: none; background: #fff; border: 1px solid #ccc; border-radius: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.15); padding: 4px; z-index: 9999; gap: 2px; align-items: center; }
+.fmt-toolbar.show { display: flex; }
+.fmt-toolbar button, .fmt-toolbar select, .fmt-toolbar input { border: 1px solid #ddd; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 13px; min-width: 28px; background: #fff; }
+.fmt-toolbar button:hover { background: #f0f0f0; }
+.fmt-toolbar input[type=color] { height: 28px; width: 32px; padding: 2px; }
+
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 10px 20px; border-radius: 8px; font-size: 14px; z-index: 99999; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+.toast.show { opacity: 1; }
+.img-viewer { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999999; align-items: center; justify-content: center; }
+.img-viewer.show { display: flex; }
+.img-viewer-mask { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); }
+.img-viewer-img { position: relative; max-width: 92vw; max-height: 92vh; object-fit: contain; box-shadow: 0 8px 32px rgba(0,0,0,0.5); background: #fff; border-radius: 4px; }
+.img-viewer-close { position: absolute; top: 16px; right: 24px; color: #fff; font-size: 36px; line-height: 1; cursor: pointer; user-select: none; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); border-radius: 50%; }
+.img-viewer-close:hover { background: rgba(0,0,0,0.8); }
+
+/* ===== 章标题颜色 ===== */
+.chapter-green { border-left-color: #2e7d32; background: #e8f5e9; color: #2e7d32; }
+.chapter-blue { border-left-color: #1565c0; background: #e3f2fd; color: #1565c0; }
+.chapter-red { border-left-color: #c62828; background: #ffebee; color: #c62828; }
+.chapter-orange { border-left-color: #ef6c00; background: #fff3e0; color: #ef6c00; }
+
+.tag-red { display: inline-block; background: #c62828; color: #fff; padding: 1px 6px; border-radius: 3px; font-size: 11px; font-weight: 600; }
+.tag-orange { display: inline-block; background: #ef6c00; color: #fff; padding: 1px 6px; border-radius: 3px; font-size: 11px; font-weight: 500; }
+.tag-blue { display: inline-block; background: #1565c0; color: #fff; padding: 1px 6px; border-radius: 3px; font-size: 11px; font-weight: 500; }
+.tag-gray { display: inline-block; background: #999; color: #fff; padding: 1px 6px; border-radius: 3px; font-size: 11px; }
+
+@media (max-width: 600px) {
+  .header { padding: 8px 12px; }
+  .header h1 { font-size: 15px; }
+  .tool-btn { padding: 5px 8px; font-size: 12px; }
+  .nav-bar { padding: 0 8px; height: 36px; }
+  .nav-tabs-wrap a { padding: 3px 7px; font-size: 11px; }
+  .layer-tab { font-size: 13px; padding: 8px 0; }
+  .container { padding: 8px; }
+  .cards { grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 8px; }
+  .card-desc { font-size: 11px; }
+  .check-row { font-size: 12px; }
+  .check-level { width: 36px; }
+  .check-box { width: 50px; }
+}
+
+/* ===== 可编辑表格（仅水平线） ===== */
+.etable { border-collapse: collapse; width: 100%; margin: 8px 0; }
+.etable-row { display: grid; grid-template-columns: 44px 1fr 90px 56px; border-bottom: 1px solid #e0e0e0; }
+.etable-row:last-child { border-bottom: none; }
+.etable-row.etable-header { border-bottom: 2px solid #1565c0; background: #f5f7fa; font-weight: 600; font-size: 13px; color: #333; }
+.ecell { padding: 8px 10px; display: flex; align-items: center; min-height: 36px; font-size: 13px; line-height: 1.5; }
+.ecell-num { justify-content: center; color: #666; font-weight: 500; }
+.ecell-text { flex: 1; cursor: text; word-break: break-word; border-radius: 3px; }
+.ecell-text:focus { outline: none; background: #fffde7; }
+.ecell-level { justify-content: center; }
+.ecell-actions { justify-content: center; gap: 2px; padding: 4px 6px; }
+.eadd, .edel {
+  width: 22px; height: 22px; border: none; border-radius: 4px;
+  font-size: 14px; cursor: pointer; display: flex;
+  align-items: center; justify-content: center; line-height: 1;
+  transition: all 0.15s;
+}
+.eadd { background: #e3f2fd; color: #1565c0; }
+.eadd:hover { background: #1565c0; color: #fff; }
+.edel { background: #ffebee; color: #c62828; }
+.edel:hover { background: #c62828; color: #fff; }
+.editing .etable-row:not(.etable-header):hover { background: #f8f9ff; }
+.tag-red { background: #c62828; color: #fff; padding: 2px 8px; border-radius: 3px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+.tag-orange { background: #ef6c00; color: #fff; padding: 2px 8px; border-radius: 3px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+.tag-blue { background: #1565c0; color: #fff; padding: 2px 8px; border-radius: 3px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+.tag-gray { background: #9e9e9e; color: #fff; padding: 2px 8px; border-radius: 3px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+
+</style>
+
+<!-- CloudBase Web SDK（异步加载） -->
+<script>
+  (function() {
+    var s = document.createElement('script');
+    s.src = 'https://unpkg.com/@cloudbase/js-sdk@1.7.2/dist/cloudbase.full.js';
+    s.async = true;
+    s.defer = true;
+    s.onload = function() { window.__TCB_SDK_READY = true; };
+    s.onerror = function() { window.__TCB_SDK_FAIL = true; };
+    document.head.appendChild(s);
+  })();
+</script>
+</head>
+<body>
+
+<div class="header">
+  <div style="display:flex;align-items:center;gap:10px;">
+    <img src="images/公司/logo_compact.png" alt="易宸圣景" style="height:40px;flex-shrink:0;">
+    <div>
+    <h1>🔧 水工技术交底卡</h1>
+    <div class="subtitle">来源：华住集团《营建技术手册-通用版》v1.2（2025年第一版）· 来源：华住集团《营建技术手册-通用版》v1.2（2025年第一版）· 给水管道 / 排水管道 / 卫生间防水</div>
+    </div>
+  </div>
+  <div class="toolbar">
+    <button class="tool-btn" onclick="importData()">📥 导入</button>
+    <button class="tool-btn" onclick="exportData()">📤 导出</button>
+    <button class="tool-btn" id="editBtn" onclick="toggleEdit()">🖊 编辑</button>
+    <button class="tool-btn save" id="saveBtn" onclick="saveData()">💾 保存</button>
+  </div>
+</div>
+
+<div class="nav-bar">
+  <a href="index.html" class="nav-back">←首页</a>
+  <div class="nav-tabs-wrap">
+    <a href="水工技术交底卡.html" class="active">水工</a>
+    <a href="瓦工技术交底卡.html">瓦工</a>
+    <a href="同层排水技术交底卡.html">同层排水</a>
+    <a href="墙地砖技术交底卡.html">墙地砖</a>
+    <a href="木工技术交底卡.html">木工</a>
+    <a href="电工技术交底卡.html">电工</a>
+    <a href="油漆技术交底卡.html">油漆</a>
+    <a href="暖通技术交底卡.html">暖通</a>
+  </div>
+</div>
+
+<div class="layer-tabs">
+  <button class="layer-tab active" data-tab="standard">🟢 施工标准</button>
+  <button class="layer-tab" data-tab="selfcheck">🔵 公司自检</button>
+  <button class="layer-tab" data-tab="huazhu">🟠 华住验收</button>
+</div>
+
+<div class="container">
+
+<!--========== Tab1 施工标准 ==========-->
+<div class="tab-content active" id="tab-standard">
+  <div class="chapter">
+    <div class="chapter-title chapter-green">一、水工施工标准</div>
+    <div class="text-block" style="line-height:2">
+      <p>1、 铺贴前检查基层：空鼓、平整度、阴阳角方正度；</p>
+      <p>2、 墙地砖铺贴顺序：先墙后地，<strong>墙砖压地砖</strong>，避免朝天缝；</p>
+      <p>3、 瓷砖空鼓率：单块瓷砖边角空鼓率<strong>≤5%</strong>，单间房间空鼓率≤3块；</p>
+      <p>4、 淋浴房石材铺贴须做挡水条，挡水石端头必须封堵严实；</p>
+      <p>5、 马桶、淋浴房、洗手盆、地漏下水点位<strong>严格按照图纸点位施工</strong>；</p>
+      <p>6、 卫生间SPC板铺贴须注意防潮、收边处理；</p>
+      <p>7、 美缝施工：缝隙清理干净，填充饱满，表面光滑无遗漏；</p>
+      <p>8、 <strong>禁止瓷砖空鼓、错台、崩瓷、缺角</strong>等现象；</p>
+      <p>9、 地面排水坡度≥1%，地漏处为最低点；</p>
+      <p>10、 门槛石未安装到位<strong>严禁进入下一道工序</strong>。</p>
+    </div>
+
+    <div class="sub-title">✅ 正确范例</div>
+    <div class="cards" data-section="WATER-给水-正确">
+      <div class="card">
+        <div class="card-tools">
+          <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>
+          <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button>
+        </div>
+        <div class="card-img"><img src="images/水工/P047_给水_ok_01.jpg" alt="图例"></div>
+        <div class="card-desc ok" contenteditable="true" style="pointer-events: auto; user-select: text;">消防管道及给水主管道须安装支架，使用U型卡槽固定</div>
+      </div>
+      <div class="card">
+        <div class="card-tools">
+          <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>
+          <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button>
+        </div>
+        <div class="card-img"><img src="images/水工/uploaded_图片_01.png" alt="图例"></div>
+        <div class="card-desc ok" contenteditable="true" style="pointer-events: auto; user-select: text;">走廊天花管道合理分布：电在上、水在下；电管让水管、水管让风管、有压力管让无压力管</div></div><div class="card">
+        <div class="card-tools">
+          <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>
+          <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button>
+        </div>
+        <div class="card-img"><img src="images/水工/uploaded_图片_02.png" alt="图例"></div>
+        <div class="card-desc ok" contenteditable="true" style="pointer-events: auto; user-select: text;">屋面水箱管道须做保温，铝皮包扎覆裹，并标注水流方向</div></div><div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img"><img src="images/水工/uploaded_图片_03.png" alt="图例"></div>
+        <div class="card-desc ok" contenteditable="true" style="pointer-events: auto; user-select: text;">屋面水箱管道须做保温，铝皮包扎覆裹，并标注水流方向</div></div><div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img"><img src="images/水工/uploaded_图片_04.png" alt="图例"></div>
+        <div class="card-desc ok" contenteditable="true" style="pointer-events: auto; user-select: text;">客房水管（冷热水） 阀门须放置于马桶上方检修口内</div></div><div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img"><img src="images/水工/uploaded_图片_05.png" alt="图例"></div>
+        <div class="card-desc ok" contenteditable="true" style="pointer-events: auto; user-select: text;">马桶后侧水管与插座位置需隐藏在马桶背后</div></div><div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img"><img src="images/水工/uploaded_图片_06.png" alt="图例"></div>
+        <div class="card-desc ok" contenteditable="true" style="pointer-events: auto; user-select: text;">卫生间墙面出水口施工时需考虑墙砖的厚度并要求齐平</div></div></div><div class="add-card-bar"><button class="add-card-btn" onclick="addCard(this,'WATER-给水-正确')">＋ 添加图例</button></div>
+
+    <div class="sub-title err">❌ 错误范例</div>
+    <div class="cards" data-section="WATER-给水-错误">
+
+    <div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img"><img src="images/水工/uploaded_图片_07.png" alt="图例"></div>
+        <div class="card-desc err" contenteditable="true" style="pointer-events: auto; user-select: text;">客房水管（冷热水） 阀门须放置于马桶上方检修口内<br><br></div></div><div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img"><img src="images/水工/uploaded_图片_08.png" alt="图例"></div>
+        <div class="card-desc err" contenteditable="true" style="pointer-events: auto; user-select: text;">卫生间墙面出水口施工时需考虑墙砖的厚度并要求齐平<br><br></div></div><div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img"><img src="images/水工/uploaded_图片_09.png" alt="图例"></div>
+        <div class="card-desc err" contenteditable="true" style="pointer-events: auto; user-select: text;">孔洞未吊模</div></div><div class="card" style=""><div class="card-tools">  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button></div><div class="card-img"><img src="images/水工/uploaded_图片_10.png" alt="图例"></div>
+        <div class="card-desc err" contenteditable="true" style="pointer-events: auto; user-select: text;">孔洞未吊模</div></div></div><div class="add-card-bar"><button class="add-card-btn" onclick="addCard(this,'WATER-给水-错误')">＋ 添加图例</button></div>
+  </div>
+</div>
+
+<!--========== Tab2 公司自检 ==========-->
+<div class="tab-content" id="tab-selfcheck">
+
+  <div class="chapter">
+    <div class="chapter-title chapter-blue">🔵 节点7：防水、贴砖检查（22条）</div>
+    <div class="text-block" style="font-size:13px;line-height:1.8">
+      <p><strong>公司自检说明</strong>：防水贴砖施工完成后，公司项目经理按以下22条逐项检查，全部合格后再向华住申请隐蔽验收。</p>
+    </div>
+
+    <div class="sub-title" style="color:#1565c0;padding:8px 16px 4px">防水检查（8条）</div>
+    <div class="etable">
+<div class="etable-row etable-header">
+    <div class="ecell ecell-num">#</div>
+    <div class="ecell ecell-text">检查内容</div>
+    <div class="ecell ecell-level">等级</div>
+    <div class="ecell ecell-actions">操作</div>
+  </div>
+  <div class="etable-row"><div class="ecell ecell-num">1</div><div class="ecell ecell-text" contenteditable="false">材料符合国标，有检测报告及合格证</div><div class="ecell ecell-level"><span class="tag-blue">必查</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+        <div class="etable-row"><div class="ecell ecell-num">2</div><div class="ecell ecell-text" contenteditable="false">排水立管双壁中空螺旋消音管，污废分流</div><div class="ecell ecell-level"><span class="tag-gray">一般</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+        <div class="etable-row"><div class="ecell ecell-num">3</div><div class="ecell ecell-text" contenteditable="false">干湿区地漏共用存水弯，淋浴区地漏75管</div><div class="ecell ecell-level"><span class="tag-gray">一般</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+        <div class="etable-row"><div class="ecell ecell-num">4</div><div class="ecell ecell-text" contenteditable="false">管材固定用PVC/镀锌管卡或吊杆</div><div class="ecell ecell-level"><span class="tag-gray">一般</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+        <div class="etable-row"><div class="ecell ecell-num">5</div><div class="ecell ecell-text" contenteditable="false">吊顶内下水支管做隔音包扎</div><div class="ecell ecell-level"><span class="tag-gray">一般</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+        <div class="etable-row"><div class="ecell ecell-num">6</div><div class="ecell ecell-text" contenteditable="false">卫生间下水管及地漏口临时封堵</div><div class="ecell ecell-level"><span class="tag-gray">一般</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+        <div class="etable-row"><div class="ecell ecell-num">7</div><div class="ecell ecell-text" contenteditable="false">给水管路走向合理，连接处烫接平直密实</div><div class="ecell ecell-level"><span class="tag-gray">一般</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+        <div class="etable-row"><div class="ecell ecell-num">8</div><div class="ecell ecell-text" contenteditable="false">排水管支架间距≤1000mm，给水管吊筋间距≤1200mm</div><div class="ecell ecell-level"><span class="tag-gray">一般</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+        <div class="etable-row"><div class="ecell ecell-num">9</div><div class="ecell ecell-text" contenteditable="false">给水管打压试验+管道清洗，下水通水通球试验</div><div class="ecell ecell-level"><span class="tag-gray">一般</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+        <div class="etable-row"><div class="ecell ecell-num">10</div><div class="ecell ecell-text" contenteditable="false">强弱电线管辅材符合国标，有检测报告</div><div class="ecell ecell-level"><span class="tag-blue">必查</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+        <div class="etable-row"><div class="ecell ecell-num">11</div><div class="ecell ecell-text" contenteditable="false">线管内穿线不超过截面40%</div><div class="ecell ecell-level"><span class="tag-gray">一般</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+        <div class="etable-row"><div class="ecell ecell-num">12</div><div class="ecell ecell-text" contenteditable="false">强弱电严禁穿越同一暗盒，不得借零线接地线</div><div class="ecell ecell-level"><span class="tag-red">红线</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+        <div class="etable-row"><div class="ecell ecell-num">13</div><div class="ecell ecell-text" contenteditable="false">插座线不得串接</div><div class="ecell ecell-level"><span class="tag-gray">一般</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+        <div class="etable-row"><div class="ecell ecell-num">14</div><div class="ecell ecell-text" contenteditable="false">线管连接暗盒/配电箱用锁扣固定</div><div class="ecell ecell-level"><span class="tag-gray">一般</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+        <div class="etable-row"><div class="ecell ecell-num">15</div><div class="ecell ecell-text" contenteditable="false">线盒位置准确，相邻房间错位安装</div><div class="ecell ecell-level"><span class="tag-gray">一般</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+        <div class="etable-row"><div class="ecell ecell-num">16</div><div class="ecell ecell-text" contenteditable="false">阻燃柔性金属导管：动力≤800mm，照明≤1200mm</div><div class="ecell ecell-level"><span class="tag-gray">一般</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+        <div class="etable-row"><div class="ecell ecell-num">17</div><div class="ecell ecell-text" contenteditable="false">管线排布：电管在上、水管在下，强弱电分开</div><div class="ecell ecell-level"><span class="tag-gray">一般</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+        <div class="etable-row"><div class="ecell ecell-num">18</div><div class="ecell ecell-text" contenteditable="false">水管/电管/消防线管/龙骨不得共用吊架</div><div class="ecell ecell-level"><span class="tag-gray">一般</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+        <div class="etable-row"><div class="ecell ecell-num">19</div><div class="ecell ecell-text" contenteditable="false">走廊强弱电桥架水平间距>300mm，上下>150mm</div><div class="ecell ecell-level"><span class="tag-gray">一般</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+        <div class="etable-row"><div class="ecell ecell-num">20</div><div class="ecell ecell-text" contenteditable="false">桥架穿越楼板用防火材料封堵</div><div class="ecell ecell-level"><span class="tag-blue">必查</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+        <div class="etable-row"><div class="ecell ecell-num">21</div><div class="ecell ecell-text" contenteditable="false">硬管之间不允许软管连接</div><div class="ecell ecell-level"><span class="tag-gray">一般</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+        <div class="etable-row"><div class="ecell ecell-num">22</div><div class="ecell ecell-text" contenteditable="false">配电箱内粘贴系统图</div><div class="ecell ecell-level"><span class="tag-gray">一般</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+    </div></div>
+
+    <div class="text-block" style="font-size:12px;color:#999;border-top:1px solid #f0f0f0">
+      <p>来源：华住集团《总包服务节点》节点7 · 防水、贴砖检查 · 共22条</p>
+      <p>说明：等级"必查"为不可绕过项，"重点"为扣分重项，"一般"为常规项。红线项触犯则整个验收不过。</p>
+    </div>
+  </div>
+</div>
+
+<!--========== Tab3 华住验收 ==========-->
+<div class="tab-content" id="tab-huazhu">
+
+  <!-- 红线项 -->
+  <div class="chapter">
+    <div class="chapter-title chapter-red">🚫 红线项（触犯则整个验收不过）</div>
+    <div class="etable">
+<div class="etable-row etable-header">
+    <div class="ecell ecell-num">#</div>
+    <div class="ecell ecell-text">检查内容</div>
+    <div class="ecell ecell-level">等级</div>
+    <div class="ecell ecell-actions">操作</div>
+  </div>
+  <div class="etable-row"><div class="ecell ecell-num" style="color:#c62828">1</div><div class="ecell ecell-text" contenteditable="false"><strong style="color:#c62828">闭水48小时无渗漏</strong> — 防水施工完成后闭水48小时，无渗漏现象方为合格</div><div class="ecell ecell-level"><span class="tag-red">红线</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+      <div class="etable-row"><div class="ecell ecell-num" style="color:#c62828">2</div><div class="ecell ecell-text" contenteditable="false"><strong style="color:#c62828">卫生间地面必须湿铺</strong> — 卫生间、阳台、厨房地面需采用湿铺工艺，干铺直接验收不过</div><div class="ecell ecell-level"><span class="tag-red">红线</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+      <div class="etable-row"><div class="ecell ecell-num" style="color:#c62828">3</div><div class="ecell ecell-text" contenteditable="false"><strong style="color:#c62828">防水上翻高度达标</strong> — 花洒淋浴≥1800mm，顶喷淋浴至吊顶，台盆处≥1400mm，其他≥400mm</div><div class="ecell ecell-level"><span class="tag-red">红线</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+      <div class="etable-row"><div class="ecell ecell-num" style="color:#c62828">4</div><div class="ecell ecell-text" contenteditable="false"><strong style="color:#c62828">2处以上渗漏水=不合格</strong> — 屋顶面、外墙面、卫生间防水工程，出现2处以上漏水直接不合格</div><div class="ecell ecell-level"><span class="tag-red">红线</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+      <div class="etable-row"><div class="ecell ecell-num" style="color:#c62828">5</div><div class="ecell ecell-text" contenteditable="false"><strong style="color:#c62828">墙砖压地砖</strong> — 铺贴顺序先墙后地，墙砖压地砖，不得出现朝天缝</div><div class="ecell ecell-level"><span class="tag-red">红线</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+    </div>
+  </div>
+
+  <!-- 隐蔽检查 -->
+  <div class="chapter">
+    <div class="chapter-title chapter-blue">🔍 隐蔽检查（封板前查，华住来查）</div>
+    <div class="etable">
+<div class="etable-row etable-header">
+    <div class="ecell ecell-num">#</div>
+    <div class="ecell ecell-text">检查内容</div>
+    <div class="ecell ecell-level">等级</div>
+    <div class="ecell ecell-actions">操作</div>
+  </div>
+  <div class="etable-row"><div class="ecell ecell-num">1</div><div class="ecell ecell-text" contenteditable="false">隔墙砌筑到顶，顶部斜砖砌顶，灰缝饱满</div><div class="ecell ecell-level"><span class="tag-blue">必查</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+      <div class="etable-row"><div class="ecell ecell-num">2</div><div class="ecell ecell-text" contenteditable="false">轻钢龙骨安装在地梁上，减震垫满贴，竖骨间距符合标准</div><div class="ecell ecell-level"><span class="tag-blue">必查</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+      <div class="etable-row"><div class="ecell ecell-num">3</div><div class="ecell ecell-text" contenteditable="false">隔音岩棉填塞密实无缝隙，容重≥24kg/m³</div><div class="ecell ecell-level"><span class="tag-orange">重点</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+      <div class="etable-row"><div class="ecell ecell-num">4</div><div class="ecell ecell-text" contenteditable="false">新旧墙体搭接处挂钢丝网，搭接≥150mm</div><div class="ecell ecell-level"><span class="tag-orange">重点</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+      <div class="etable-row"><div class="ecell ecell-num">5</div><div class="ecell ecell-text" contenteditable="false">穿墙孔洞须填实，管线槽封堵严密</div><div class="ecell ecell-level"><span class="tag-gray">一般</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+      <div class="etable-row"><div class="ecell ecell-num">6</div><div class="ecell ecell-text" contenteditable="false">防水涂刷均匀，上翻高度达标，闭水48小时无渗漏</div><div class="ecell ecell-level"><span class="tag-red">必查</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+    </div>
+  </div>
+
+  <!-- 竣工检查 -->
+  <div class="chapter">
+    <div class="chapter-title chapter-orange">📊 竣工检查（交付查，华住来查）</div>
+    <div class="etable">
+<div class="etable-row etable-header">
+    <div class="ecell ecell-num">#</div>
+    <div class="ecell ecell-text">检查内容</div>
+    <div class="ecell ecell-level">等级</div>
+    <div class="ecell ecell-actions">操作</div>
+  </div>
+  <div class="etable-row"><div class="ecell ecell-num">1</div><div class="ecell ecell-text" contenteditable="false">砌体无结构性开裂、倾斜</div><div class="ecell ecell-level"><span class="tag-red">红线</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+      <div class="etable-row"><div class="ecell ecell-num">2</div><div class="ecell ecell-text" contenteditable="false">墙体灰缝饱满，无透明缝、瞎缝</div><div class="ecell ecell-level"><span class="tag-orange">重点</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+      <div class="etable-row"><div class="ecell ecell-num">3</div><div class="ecell ecell-text" contenteditable="false">抹灰面平整度≤3mm，无空鼓开裂</div><div class="ecell ecell-level"><span class="tag-orange">重点</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+      <div class="etable-row"><div class="ecell ecell-num">4</div><div class="ecell ecell-text" contenteditable="false">隔墙顶部斜砖砌顶到位</div><div class="ecell ecell-level"><span class="tag-gray">一般</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+      <div class="etable-row"><div class="ecell ecell-num">5</div><div class="ecell ecell-text" contenteditable="false">轻钢龙骨安装符合设计要求，无松动</div><div class="ecell ecell-level"><span class="tag-orange">重点</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+      <div class="etable-row"><div class="ecell ecell-num">6</div><div class="ecell ecell-text" contenteditable="false">隔音岩棉填塞密实，无遗漏区域</div><div class="ecell ecell-level"><span class="tag-orange">重点</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+      <div class="etable-row"><div class="ecell ecell-num">7</div><div class="ecell ecell-text" contenteditable="false">钢丝网搭接≥150mm，固定牢固</div><div class="ecell ecell-level"><span class="tag-gray">一般</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+      <div class="etable-row"><div class="ecell ecell-num">8</div><div class="ecell ecell-text" contenteditable="false">门洞过梁板搭接≥150mm，无开裂</div><div class="ecell ecell-level"><span class="tag-orange">重点</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+      <div class="etable-row"><div class="ecell ecell-num">9</div><div class="ecell ecell-text" contenteditable="false">墙地面防水层完好，闭水无渗漏</div><div class="ecell ecell-level"><span class="tag-red">红线</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+      <div class="etable-row"><div class="ecell ecell-num">10</div><div class="ecell ecell-text" contenteditable="false">成品保护到位，无污染破损</div><div class="ecell ecell-level"><span class="tag-gray">一般</span></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+    </div>
+  </div>
+
+  <!-- 扣分重灾区 -->
+  <div class="chapter">
+    <div class="chapter-title" style="border-left-color:#f9a825;background:#fff8e1;color:#f9a825">⚠️ 扣分重灾区（真实项目高频扣分项）</div>
+    <div class="etable">
+<div class="etable-row etable-header">
+    <div class="ecell ecell-num">#</div>
+    <div class="ecell ecell-text">检查内容</div>
+    <div class="ecell ecell-level">等级</div>
+    <div class="ecell ecell-actions">操作</div>
+  </div>
+  <div class="etable-row"><div class="ecell ecell-num" style="color:#c62828;font-weight:600">1</div><div class="ecell ecell-text" contenteditable="false"><strong style="color:#c62828">墙体开裂</strong> — 砌体结构性开裂，扣分最高，可能直接验收不过</div>
+        <div class="ecell ecell-level"></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+      <div class="etable-row"><div class="ecell ecell-num" style="color:#c62828;font-weight:600">2</div><div class="ecell ecell-text" contenteditable="false"><strong style="color:#c62828">抹灰面空鼓</strong> — 大面积空鼓扣分高，需返工处理</div>
+        <div class="ecell ecell-level"></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+      <div class="etable-row"><div class="ecell ecell-num" style="color:#ef6c00;font-weight:600">3</div><div class="ecell ecell-text" contenteditable="false">灰缝不饱满/透明缝 — 影响隔音效果，扣分中</div>
+        <div class="ecell ecell-level"></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+      <div class="etable-row"><div class="ecell ecell-num" style="color:#ef6c00;font-weight:600">4</div><div class="ecell ecell-text" contenteditable="false">隔音岩棉漏填 — 隔音测试不过关需返工，扣分中高</div>
+        <div class="ecell ecell-level"></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+      <div class="etable-row"><div class="ecell ecell-num" style="color:#ef6c00;font-weight:600">5</div><div class="ecell ecell-text" contenteditable="false">新旧墙体搭接处未挂网 — 后期开裂风险大，扣分中</div>
+        <div class="ecell ecell-level"></div>
+        <div class="ecell ecell-actions">
+          <button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button>
+          <button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>
+        </div>
+  </div>
+    </div>
+    <div class="text-block" style="font-size:12px;color:#999;border-top:1px solid #f0f0f0">
+      <p>来源：华住集团质检表811行扣分细项 · 竣工验收必备项28条 · 隐蔽验收必备项22条</p>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div class="fmt-toolbar" id="fmtToolbar" onmousedown="event.preventDefault()">
+  <button onmousedown="event.preventDefault()" onclick="fmt('bold')" title="加粗"><b>B</b></button>
+  <select onmousedown="event.preventDefault()" onchange="fmt('fontSize', this.value)" title="字号">
+    <option value="2">小</option>
+    <option value="3" selected>正常</option>
+    <option value="5">大</option>
+    <option value="7">特大</option>
+  </select>
+  <input type="color" onmousedown="event.preventDefault()" onchange="fmt('foreColor', this.value)" value="#c62828" title="字体颜色">
+  <button onmousedown="event.preventDefault()" onclick="fmt('hiliteColor','#fff59d')" title="背景色">🖍</button>
+  <button onmousedown="event.preventDefault()" onclick="fmt('justifyLeft')" title="左对齐">⇤</button>
+  <button onmousedown="event.preventDefault()" onclick="fmt('justifyCenter')" title="居中">⇔</button>
+  <button onmousedown="event.preventDefault()" onclick="fmt('removeFormat')" title="清除格式">⌫</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="img-viewer" id="imgViewer">
+  <div class="img-viewer-mask" onclick="closeViewer()"></div>
+  <img class="img-viewer-img" id="imgViewerImg" src="" alt="">
+  <div class="img-viewer-close" onclick="closeViewer()">×</div>
+</div>
+
+<input type="file" id="fileInput" accept="image/*" style="display:none">
+<input type="file" id="jsonInput" accept=".json" style="display:none">
+
+<script>
+var isEditing = false;
+
+// ===== 可编辑表格管理 =====
+function initTables() {
+  document.querySelectorAll('.etable').forEach(function(table) {
+    // 跳过已初始化的
+    if (table.querySelector('.etable-header')) return;
+    
+    var rows = table.querySelectorAll('.etable-row');
+    if (rows.length === 0) return;
+    
+    // 插入header行
+    var hdr = document.createElement('div');
+    hdr.className = 'etable-row etable-header';
+    hdr.innerHTML = '<div class="ecell ecell-num">#</div><div class="ecell ecell-text">检查内容</div><div class="ecell ecell-level">等级</div><div class="ecell ecell-actions">操作</div>';
+    table.insertBefore(hdr, rows[0]);
+    
+    // 给每行添加操作按钮
+    var dataRows = table.querySelectorAll('.etable-row:not(.etable-header)');
+    dataRows.forEach(function(row) {
+      addActionsToRow(row);
+    });
+  });
+}
+
+function addActionsToRow(row) {
+  if (row.querySelector('.ecell-actions')) return;
+  
+  // 检查是否有 ecell-level
+  var levelCell = row.querySelector('.ecell-level');
+  if (!levelCell) {
+    // 没有等级列，插入空的
+    var textCell = row.querySelector('.ecell-text');
+    if (textCell) {
+      var emptyLevel = document.createElement('div');
+      emptyLevel.className = 'ecell ecell-level';
+      textCell.parentNode.insertBefore(emptyLevel, textCell.nextSibling);
+      levelCell = emptyLevel;
+    }
+  }
+  
+  // 创建操作按钮单元格
+  var actions = document.createElement('div');
+  actions.className = 'ecell ecell-actions';
+  actions.innerHTML = '<button class="eadd" onclick="eaddRow(this)" title="插入整行">➕</button><button class="edel" onclick="edelRow(this)" title="删除整行">✖</button>';
+  
+  // 插在最后
+  if (levelCell) {
+    levelCell.parentNode.insertBefore(actions, levelCell.nextSibling);
+  }
+}
+
+
+// ====== 等级下拉框 ======
+var LEVEL_COLORS = {"tag-blue":"#1565c0","tag-red":"#c62828","tag-orange":"#ef6c00","tag-gray":"#9e9e9e"};
+var LEVEL_NAMES = {"tag-blue":"必查","tag-red":"红线","tag-orange":"重点","tag-gray":"一般"};
+var LEVEL_ORDER = ["tag-blue","tag-red","tag-orange","tag-gray"];
+
+function makeLevelSelect(cls) {
+  if (!cls) cls = "tag-gray";
+  var color = LEVEL_COLORS[cls] || "#9e9e9e";
+  var opts = "";
+  for (var i = 0; i < LEVEL_ORDER.length; i++) {
+    var s = (LEVEL_ORDER[i] === cls) ? " selected" : "";
+    opts += "<option value=\"" + LEVEL_ORDER[i] + "\"" + s + ">" + LEVEL_NAMES[LEVEL_ORDER[i]] + "</option>";
+  }
+  return "<select class=\"level-select\" onchange=\"applyLevel(this)\" style=\"background:" + color + ";color:#fff;border:none;border-radius:3px;padding:2px 8px;font-size:11px;font-weight:600;cursor:pointer;outline:none;\">" + opts + "</select>";
+}
+
+function applyLevel(select) {
+  var cls = select.value;
+  select.style.background = LEVEL_COLORS[cls] || "#9e9e9e";
+  select.style.color = "#fff";
+}
+
+function convertLevelToSelect() {
+  document.querySelectorAll(".etable-row:not(.etable-header) .ecell-level").forEach(function(cell) {
+    if (cell.querySelector(".level-select")) return;
+    var span = cell.querySelector("span");
+    if (!span) { cell.innerHTML = makeLevelSelect("tag-gray"); return; }
+    var cls = "tag-gray";
+    span.className.split(" ").forEach(function(c) {
+      if (c.indexOf("tag-") === 0) cls = c;
+    });
+    cell.innerHTML = makeLevelSelect(cls);
+  });
+}
+
+function eaddRow(btn) {
+  var row = btn.closest('.etable-row');
+  if (!row || row.classList.contains('etable-header')) return;
+  var table = row.closest('.etable');
+  if (!table) return;
+  var newRow = row.cloneNode(true);
+  var textCell = newRow.querySelector('.ecell-text');
+  if (textCell) textCell.innerHTML = '<em>新检查项</em>';
+  var levelCell = newRow.querySelector('.ecell-level');
+  if (levelCell) levelCell.innerHTML = makeLevelSelect('tag-gray');
+  // 重新绑定按钮
+  var addBtn = newRow.querySelector('.eadd');
+  var delBtn = newRow.querySelector('.edel');
+  if (addBtn) addBtn.onclick = function(){ eaddRow(this); };
+  if (delBtn) delBtn.onclick = function(){ edelRow(this); };
+  row.parentNode.insertBefore(newRow, row.nextSibling);
+  renumberTable(table);
+  showToast('➕ 已插入新行');
+}
+
+function edelRow(btn) {
+  var row = btn.closest('.etable-row');
+  if (!row || row.classList.contains('etable-header')) return;
+  var table = row.closest('.etable');
+  if (!table) return;
+  var dataRows = table.querySelectorAll('.etable-row:not(.etable-header)');
+  if (dataRows.length <= 1) { showToast('⚠️ 至少保留一行'); return; }
+  if (!confirm('确认删除此行？')) return;
+  row.remove();
+  renumberTable(table);
+  showToast('🗑 已删除行');
+}
+
+function renumberTable(table) {
+  var rows = table.querySelectorAll('.etable-row:not(.etable-header)');
+  rows.forEach(function(row, idx) {
+    var numCell = row.querySelector('.ecell-num');
+    if (numCell) numCell.textContent = idx + 1;
+  });
+}
+
+var pendingCardImg = null;
+
+// ===== Tab切换 =====
+document.querySelectorAll('.layer-tab').forEach(function(tab) {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.layer-tab').forEach(function(t) { t.classList.remove('active'); });
+    document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+    tab.classList.add('active');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+// ===== URL hash 自动切换Tab =====
+(function() {
+  var hash = window.location.hash;
+  if (hash && hash.indexOf('tab-') >= 0) {
+    var tabName = hash.replace('#tab-', '');
+    var tab = document.querySelector('.layer-tab[data-tab="' + tabName + '"]');
+    if (tab) {
+      document.querySelectorAll('.layer-tab').forEach(function(t) { t.classList.remove('active'); });
+      document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+      tab.classList.add('active');
+      document.getElementById(hash.replace('#', '')).classList.add('active');
+    }
+  }
+})();
+
+// ===== 自查打勾 =====
+function toggleCheck(el) {
+  var span = el.querySelector('span');
+  if (!span) return;
+  if (span.classList.contains('checked')) {
+    span.textContent = '□是 □否';
+    span.classList.remove('checked');
+  } else {
+    span.textContent = '✅ 是';
+    span.classList.add('checked');
+  }
+}
+
+function bindCardDescs() {
+  document.querySelectorAll('.card-desc').forEach(function(el) {
+    el.addEventListener('mousedown', function(e) { e.stopPropagation(); });
+    // 单击：只 focus，让浏览器自动把光标放到点击位置（不强制末尾、不全选）
+    el.addEventListener('mousedown', function(e) {
+      if (document.body.classList.contains('editing')) {
+        // 不阻止默认行为，让浏览器原生处理光标位置
+        return;
+      }
+    });
+    el.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (document.body.classList.contains('editing')) {
+        this.focus();
+        // 不主动设置 range，浏览器会保持 mousedown 时定位的光标
+      }
+    });
+    // 双击：全选（方便替换整段）
+    el.addEventListener('dblclick', function(e) {
+      e.stopPropagation();
+      if (document.body.classList.contains('editing')) {
+        this.focus();
+        var range = document.createRange();
+        range.selectNodeContents(this);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+    });
+  });
+  // 同样为 .text-block 设置：单击用浏览器原生光标位置（点击哪里光标就在哪），双击全选
+  document.querySelectorAll('.text-block').forEach(function(el) {
+    el.addEventListener('mousedown', function(e) {
+      if (document.body.classList.contains('editing')) return;  // 编辑模式不阻止默认，让浏览器定位光标
+      e.stopPropagation();
+    });
+    el.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (document.body.classList.contains('editing')) {
+        this.focus();
+      }
+    });
+    el.addEventListener('dblclick', function(e) {
+      e.stopPropagation();
+      if (document.body.classList.contains('editing')) {
+        this.focus();
+        var range = document.createRange();
+        range.selectNodeContents(this);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+    });
+  });
+}
+
+function toggleEdit() {
+  isEditing = !isEditing;
+  var container = document.getElementById('tab-standard');
+  var editBtn = document.getElementById('editBtn');
+  var saveBtn = document.getElementById('saveBtn');
+  if (isEditing) {
+    container.classList.add('editing');
+    document.body.classList.add('editing');
+    editBtn.textContent = '🔒 退出编辑';
+    editBtn.classList.add('active');
+    saveBtn.classList.add('active');
+    document.querySelectorAll('.text-block').forEach(function(el) { el.setAttribute('contenteditable', 'true'); });
+    document.querySelectorAll('.card-desc').forEach(function(el) {
+      el.setAttribute('contenteditable', 'true');
+      el.style.pointerEvents = 'auto';
+      el.style.userSelect = 'text';
+    });
+    document.querySelectorAll('.ecell-text').forEach(function(el) { el.setAttribute('contenteditable', 'true'); });
+    showToast('✏️ 已进入编辑模式');
+  } else {
+    container.classList.remove('editing');
+    document.body.classList.remove('editing');
+    editBtn.textContent = '🖊 编辑';
+    editBtn.classList.remove('active');
+    saveBtn.classList.remove('active');
+    document.querySelectorAll('.text-block, .card-desc').forEach(function(el) { el.setAttribute('contenteditable', 'false'); });
+    document.querySelectorAll('.ecell-text').forEach(function(el) { el.setAttribute('contenteditable', 'false'); });
+    document.getElementById('fmtToolbar').classList.remove('show');
+    showToast('👁 已退出编辑模式');
+  }
+}
+
+function saveData() {
+  var pageName = document.querySelector('.header h1').textContent || '';
+  var data = {
+    standard: document.getElementById('tab-standard').innerHTML,
+    selfcheck: document.getElementById('tab-selfcheck').innerHTML,
+    huazhu: document.getElementById('tab-huazhu').innerHTML,
+    savedAt: new Date().toLocaleString()
+  };
+  var html = JSON.stringify(data);
+  try {
+    localStorage.setItem(pageName, JSON.stringify({
+      html: html, savedAt: new Date().toLocaleString()
+    }));
+  } catch(e) {
+    console.error('localStorage保存失败', e);
+  }
+  tcbSave(pageName, html).then(function(ok) {
+    if (ok) {
+      showToast('✅ 已保存到服务器（' + new Date().toLocaleTimeString() + '）');
+    } else {
+      showToast('❌ 云端失败：' + (window.__TCB_ERR || '未知') + '（已存本地）');
+    }
+  }).catch(function(err) {
+    showToast('❌ 云端异常：' + (err && err.message || err));
+  });
+}
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(function() { t.classList.remove('show'); }, 2500);
+}
+
+function exportData() {
+  var pageName = document.querySelector('.header h1').textContent || '工种卡';
+  var data = {
+    pageName: pageName,
+    standard: document.getElementById('tab-standard').innerHTML,
+    selfcheck: document.getElementById('tab-selfcheck').innerHTML,
+    huazhu: document.getElementById('tab-huazhu').innerHTML,
+    savedAt: new Date().toLocaleString()
+  };
+  var json = JSON.stringify(data, null, 2);
+  var blob = new Blob([json], { type: 'application/json' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  var now = new Date();
+  var dateStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
+  a.download = pageName + '_' + dateStr + '.json';
+  a.click();
+  showToast('📤 已导出JSON文件');
+}
+function importData() { document.getElementById('jsonInput').click(); }
+document.getElementById('jsonInput').addEventListener('change', function(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      var data = JSON.parse(ev.target.result);
+      if (data.html) {
+        document.getElementById('tab-standard').innerHTML = data.html;
+        showToast('📥 已导入备份内容');
+      }
+    } catch(err) { showToast('❌ 导入失败：文件格式错误'); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+});
+
+var savedRange = null;
+function restoreSelection() {
+  if (savedRange) {
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(savedRange);
+  }
+}
+document.addEventListener('selectionchange', function() {
+  var sel = window.getSelection();
+  if (sel && sel.rangeCount > 0 && !sel.isCollapsed) {
+    savedRange = sel.getRangeAt(0).cloneRange();
+  }
+});
+
+function fmt(cmd, value) {
+  if (cmd === 'foreColor' && value) {
+    if (value.startsWith('rgb')) {
+      var m = value.match(/[0-9]+/g);
+      if (m && m.length >= 3) {
+        value = '#' + [m[0], m[1], m[2]].map(function(n) {
+          return parseInt(n).toString(16).padStart(2, '0');
+        }).join('');
+      }
+    } else if (!value.startsWith('#')) {
+      value = '#' + value;
+    }
+  }
+  restoreSelection();
+  var sel = window.getSelection();
+  if (!sel || sel.rangeCount === 0 || sel.isCollapsed) {
+    showToast('⚠️ 请先用鼠标选中要标红的文字，再点颜色');
+    return;
+  }
+  try {
+    document.execCommand(cmd, false, value || null);
+  } catch (e) {
+    console.warn('execCommand failed:', cmd, value, e);
+  }
+}
+
+document.addEventListener('mouseup', function() {
+  if (!isEditing) return;
+  var sel = window.getSelection();
+  var toolbar = document.getElementById('fmtToolbar');
+  if (sel && !sel.isCollapsed && sel.rangeCount > 0) {
+    var range = sel.getRangeAt(0);
+    var rect = range.getBoundingClientRect();
+    if (rect.width > 0) {
+      toolbar.style.top = (window.scrollY + rect.top - 45) + 'px';
+      toolbar.style.left = (window.scrollX + rect.left + rect.width/2 - 100) + 'px';
+      toolbar.classList.add('show');
+    }
+  } else { toolbar.classList.remove('show'); }
+});
+
+function changeImage(btn) {
+  var card = btn.closest('.card');
+  if (!card) card = btn;
+  pendingCardImg = card;
+  // 高亮当前选中的卡片
+  document.querySelectorAll('.card-img').forEach(function(el) { el.classList.remove('selected'); });
+  var imgDiv = card.querySelector('.card-img');
+  if (imgDiv) imgDiv.classList.add('selected');
+  // 只有点换图按钮才打开文件选择器
+  document.getElementById('fileInput').click();
+}
+
+// ====== 粘贴图片支持 ======
+function replaceCardImage(imgEl, file) {
+  if (!file || !file.type.startsWith('image/')) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    imgEl.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+document.addEventListener('paste', function(e) {
+  var container = document.querySelector('#tab-standard');
+  if (!container || !container.classList.contains('editing')) return;
+  var items = e.clipboardData.items;
+  for (var i = 0; i < items.length; i++) {
+    if (items[i].type.startsWith('image/')) {
+      var file = items[i].getAsFile();
+      // 优先使用最近点击的卡片（pendingCardImg）
+      var targetImg = null;
+      if (pendingCardImg) {
+        targetImg = pendingCardImg.querySelector('.card-img img');
+      }
+      if (!targetImg) {
+        var active = document.activeElement;
+        if (active && active.tagName === 'IMG' && active.closest('.card-img')) {
+          targetImg = active;
+        }
+      }
+      if (targetImg) {
+        replaceCardImage(targetImg, file);
+        e.preventDefault();
+        return;
+      }
+      var firstImg = document.querySelector('.card-img img');
+      if (firstImg) {
+        replaceCardImage(firstImg, file);
+        e.preventDefault();
+        return;
+      }
+    }
+  }
+});
+
+// ====== 为卡片图片绑定拖拽 ======
+function setupDragDrop() {
+  document.querySelectorAll('.card-img').forEach(function(wrapper) {
+    if (wrapper._dragSetup) return;
+    wrapper._dragSetup = true;
+    wrapper.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      this.style.outline = '3px dashed #fdd835';
+    });
+    wrapper.addEventListener('dragleave', function(e) {
+      e.preventDefault();
+      this.style.outline = 'none';
+    });
+    wrapper.addEventListener('drop', function(e) {
+      e.preventDefault();
+      this.style.outline = 'none';
+      var files = e.dataTransfer.files;
+      if (files.length > 0) {
+        var img = this.querySelector('img');
+        if (img) replaceCardImage(img, files[0]);
+      }
+    });
+    var img = wrapper.querySelector('img');
+    if (img) img.setAttribute('tabindex', '0');
+    // 编辑模式下点击图片即选中（高亮+记录pendingCardImg），不弹任何对话框
+    wrapper.addEventListener('click', function(e) {
+      if (!document.body.classList.contains('editing')) return;
+      // 阻止事件冒泡到 changeImage（如果是通过点击卡片 img 触发）
+      e.stopPropagation();
+      document.querySelectorAll('.card-img').forEach(function(el) { el.classList.remove('selected'); });
+      this.classList.add('selected');
+      var card = this.closest('.card');
+      if (card) pendingCardImg = card;
+    });
+  });
+}
+
+// 全局阻止拖拽默认行为
+document.addEventListener('dragenter', function(e) { e.preventDefault(); });
+document.addEventListener('dragover', function(e) { e.preventDefault(); });
+document.addEventListener('drop', function(e) { e.preventDefault(); });
+document.getElementById('fileInput').addEventListener('change', function(e) {
+  var file = e.target.files[0];
+  if (!file) { pendingCardImg = null; e.target.value = ''; return; }
+  var target = pendingCardImg;
+  pendingCardImg = null;
+  if (!target) {
+    var placeholders = document.querySelectorAll('.card-img.placeholder');
+    if (placeholders.length > 0) target = placeholders[placeholders.length - 1].closest('.card');
+  }
+  if (!target) { showToast('❌ 找不到目标卡片'); e.target.value = ''; return; }
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    var imgDiv = target.querySelector('.card-img');
+    if (imgDiv) {
+      imgDiv.innerHTML = '<img src="' + ev.target.result + '" alt="图片">';
+      imgDiv.classList.remove('placeholder');
+      showToast('✅ 图片已上传');
+    } else { showToast('❌ 上传失败：找不到图片位置'); }
+  };
+  reader.onerror = function() { showToast('❌ 文件读取失败'); };
+  reader.readAsDataURL(file);
+  e.target.value = '';
+});
+
+function deleteCard(btn) {
+  if (!confirm('确认删除这张图？')) return;
+  var card = btn.closest('.card');
+  if (card) {
+    document.querySelectorAll('.card-img').forEach(function(el) { el.classList.remove('selected'); });
+    card.remove(); showToast('🗑 已删除');
+  }
+}
+
+document.addEventListener('mousedown', function(e) {
+  if (e.target.closest('.card-desc')) {
+    if (document.body.classList.contains('editing')) return;
+  }
+  if (e.target.closest('.card-tools') || e.target.closest('.toolbar') || e.target.closest('.add-card-btn')) {
+    e.preventDefault();
+  }
+}, true);
+
+function addCard(btn, section) {
+  var cardsContainer = btn.closest('.add-card-bar').previousElementSibling;
+  var isErr = section.indexOf('错误') !== -1;
+  var card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML =
+    '<div class="card-tools">' +
+    '  <button class="card-tool-btn" onclick="changeImage(this)">📷 换图</button>' +
+    '  <button class="card-tool-btn del" onclick="deleteCard(this)">🗑 删除</button>' +
+    '</div>' +
+    '<div class="card-img placeholder">📋 点此上传 / Ctrl+V 粘贴图片</div>' +
+    '<div class="card-desc ' + (isErr ? 'err' : 'ok') + '">点击编辑说明文字</div>';
+  cardsContainer.appendChild(card);
+  var newDesc = card.querySelector('.card-desc');
+  if (newDesc) {
+    newDesc.addEventListener('mousedown', function(e) {
+      if (document.body.classList.contains('editing')) return;
+      e.stopPropagation();
+    });
+    newDesc.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (document.body.classList.contains('editing')) {
+        this.focus();
+      }
+    });
+    newDesc.addEventListener('dblclick', function(e) {
+      e.stopPropagation();
+      if (document.body.classList.contains('editing')) {
+        this.focus();
+        var range = document.createRange();
+        range.selectNodeContents(this);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+    });
+  }
+  card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  showToast('📋 新图例已添加');
+  card.style.outline = '3px solid #ff9800';
+  card.style.outlineOffset = '2px';
+  setTimeout(function() { card.style.outline = ''; card.style.outlineOffset = ''; }, 3000);
+}
+
+// 大图预览
+document.addEventListener('click', function(e) {
+  if (isEditing) return;
+  var img = e.target.closest('.card-img img');
+  if (img) {
+    document.getElementById('imgViewerImg').src = img.src;
+    document.getElementById('imgViewer').classList.add('show');
+  }
+});
+function closeViewer() { document.getElementById('imgViewer').classList.remove('show'); }
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeViewer();
+});
+
+window.addEventListener('load', bindCardDescs);
+
+// ====== CloudBase 云数据库模块 ======
+const TCB_ENV_ID = 'huazhu-standards-d8e5rk0f490105a';
+const TCB_COLLECTION = 'card_data';
+
+let tcbApp = null;
+let tcbDb = null;
+
+async function tcbInit() {
+  if (tcbApp) return tcbApp;
+  var waitCount = 0;
+  while (typeof cloudbase === 'undefined' && waitCount < 50) {
+    await new Promise(function(r) { setTimeout(r, 100); });
+    waitCount++;
+  }
+  if (typeof cloudbase === 'undefined') {
+    console.warn('[CloudBase] SDK加载超时,使用本地模式');
+    return null;
+    window.__TCB_ERR = 'SDK加载失败(网络问题?)';
+  }
+  try {
+    tcbApp = cloudbase.init({ env: TCB_ENV_ID, persistence: 'local' });
+    var auth = tcbApp.auth();
+    var loginState = await auth.getLoginState();
+    if (!loginState) {
+      await auth.anonymousAuthProvider().signIn();
+      console.log('[CloudBase] 匿名登录成功');
+    }
+    tcbDb = tcbApp.database();
+    console.log('[CloudBase] 初始化成功', TCB_ENV_ID);
+    return tcbApp;
+  } catch (e) {
+    console.error('[CloudBase] 初始化失败', e);
+    showToast('⚠️ 云端连接失败:' + e.message + '（已保存到本地）');
+    return null;
+  }
+}
+
+async function tcbLoad(key) {
+  try {
+    await tcbInit();
+    if (!tcbDb) return null;
+    const res = await tcbDb.collection(TCB_COLLECTION).where({ key: key }).limit(1).get();
+    if (res.data && res.data.length > 0) {
+      console.log('[CloudBase] 加载成功', key, '长度', res.data[0].html.length);
+      return res.data[0].html;
+    }
+    return null;
+  } catch (e) {
+    console.error('[CloudBase] 加载失败', e);
+    return null;
+  }
+}
+
+async function tcbSave(key, html) {
+  try {
+    await tcbInit();
+    if (!tcbDb) return false;
+    const exist = await tcbDb.collection(TCB_COLLECTION).where({ key: key }).limit(1).get();
+    const data = {
+      key: key,
+      html: html,
+      updatedAt: new Date().toISOString()
+    };
+    if (exist.data && exist.data.length > 0) {
+      await tcbDb.collection(TCB_COLLECTION).doc(exist.data[0]._id).set(data);
+    } else {
+      await tcbDb.collection(TCB_COLLECTION).add(data);
+    }
+    console.log('[CloudBase] 保存成功', key, '长度', html.length);
+    return true;
+  } catch (e) {
+    console.error('[CloudBase] 保存失败', e);
+    window.__TCB_ERR = (e && e.message) ? e.message : String(e);
+    return false;
+  }
+}
+
+window.tcbLoad = tcbLoad;
+window.tcbSave = tcbSave;
+
+// ====== 页面加载时从云端恢复 ======
+window.addEventListener('load', function() {
+  setTimeout(function() {
+    var pageName = document.title || document.querySelector('title').textContent || '';
+    if (!pageName) pageName = document.querySelector('.header h1').textContent || '';
+    tcbLoad(pageName).then(function(cloudHtml) {
+      function restoreTabs(data) {
+        try {
+          var multi = JSON.parse(data);
+          if (multi && multi.standard) {
+            document.getElementById('tab-standard').innerHTML = multi.standard;
+            if (multi.selfcheck) document.getElementById('tab-selfcheck').innerHTML = multi.selfcheck;
+            if (multi.huazhu) document.getElementById('tab-huazhu').innerHTML = multi.huazhu;
+            return true;
+          }
+        } catch(e) {}
+        return false;
+      }
+      if (cloudHtml && cloudHtml.length > 200) {
+        if (!restoreTabs(cloudHtml)) {
+          document.getElementById('tab-standard').innerHTML = cloudHtml;
+        }
+        showToast('☁️ 已从云端恢复编辑内容');
+        localStorage.setItem(pageName, JSON.stringify({ html: cloudHtml, savedAt: new Date().toLocaleString() }));
+      } else {
+        var saved = localStorage.getItem(pageName);
+        if (saved) {
+          try {
+            var data = JSON.parse(saved);
+            if (data.html && data.html.length > 200) {
+              restoreTabs(data.html);
+              showToast('📂 已从本地恢复上次编辑内容');
+            }
+          } catch(e) {}
+        }
+      }
+      initTables();
+      convertLevelToSelect();
+      bindCardDescs();
+initTables();
+      convertLevelToSelect();
+      setupDragDrop();
+    });
+  }, 300);
+});</script>
+</body>
+</html>
